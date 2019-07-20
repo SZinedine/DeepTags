@@ -4,8 +4,8 @@
  *	extract values of YAML lines retrieved from MD files
  */
 
-#include "yaml-cpp/yaml.h"
-#include "common.hpp"
+//#include "yaml-cpp/yaml.h"
+#include "common.h"
 
 typedef std::vector< StringList > Tags;
 
@@ -44,6 +44,9 @@ bool extract_favorited(const std::string& fav);
  *      output: {"Notebooks", "sheets, "random"}
  * 
  * use in this way: split("Notebooks/sheets/random", "/");
+ *
+ * since I have dropped the usage of yaml-cpp, this function
+ * is also used to separate the tags block by passing ", " as a delimiter.
  * 
  * function found in: 
       https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c

@@ -2,7 +2,7 @@
 #define FILESCONTAINER_H
 
 #include <QListWidget>
-#include "back/element.hpp"
+#include "../back/element.h"
 #include <QMouseEvent>
 #include "fileitem.h"
 
@@ -20,6 +20,7 @@ public slots:
     void openFile(QListWidgetItem* item);
     void showContextMenu(const QPoint& p);
     void clearView();
+    void removeItem(QListWidgetItem* item);
 
 private:
     void mousePressEvent(QMouseEvent *event);		// to capture right clicks
@@ -28,6 +29,7 @@ private:
 signals:
     void rightClick(QPoint pos);
     void numberOfElementsChanged();
+    void removedItem(Element* item);
 };
 
 #endif // FILESCONTAINER_H

@@ -1,21 +1,31 @@
-#include "extract.hpp"
+#include "extract.h"
+#include "yaml.h"
 
-StringList extract_tags(const std::string& t) {
-    YAML::Node node = YAML::Load(t);
-    auto tag = node["tags"];
-    StringList list;
-    for (auto i : tag) 
-        list.push_back( i.as<std::string>() );
+/**
+ * The content of the extract functions are commented out
+ * they are replaced by sister functions in yaml.h
+ * that doesn't use yaml-cpp that I have dropped.
+ */
 
-    return list;
+StringList extract_tags(const std::string& t) {         ///////
+//     YAML::Node node = YAML::Load(t);
+//     auto tag = node["tags"];
+//     StringList list;
+//     for (auto i : tag) 
+//         list.push_back( i.as<std::string>() );
+// 
+//     return list;
+    
+    return extract_tags_(t);
 }
 
-std::string extract_title(const std::string& tit) {
-    YAML::Node node = YAML::Load(tit);
-    return node["title"].as<std::string>();
+std::string extract_title(const std::string& tit) {     /////////
+    // YAML::Node node = YAML::Load(tit);
+    // return node["title"].as<std::string>();
+    return extract_title_(tit);
 }
 
-StringList split_single_tag (const std::string& s, const std::string& delimiter) {
+StringList split_single_tag(const std::string& s, const std::string& delimiter) {
     std::size_t pos_start = 0, pos_end, delim_len = delimiter.length();
     std::string token;
     StringList res;
@@ -30,16 +40,18 @@ StringList split_single_tag (const std::string& s, const std::string& delimiter)
     return res;
 }
 
-bool extract_pinned(const std::string& pi) {
-    if (pi.empty()) return false;
-    YAML::Node node = YAML::Load(pi);
-    return node["pinned"].as<bool>();
+bool extract_pinned(const std::string& pi) {        ////////
+//     if (pi.empty()) return false;
+//     YAML::Node node = YAML::Load(pi);
+//     return node["pinned"].as<bool>();
+    return extract_pinned_(pi);
 }
 
-bool extract_favorited(const std::string& fav) {
-    if (fav.empty()) return false;
-    YAML::Node node = YAML::Load(fav);
-    return node["favorited"].as<bool>();
+bool extract_favorited(const std::string& fav) {        /////////
+//     if (fav.empty()) return false;
+//     YAML::Node node = YAML::Load(fav);
+//     return node["favorited"].as<bool>();
+    return extract_favorited_(fav);
 }
 
 std::string find_title_inheader(const StringList& header) {

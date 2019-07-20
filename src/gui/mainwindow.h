@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QLabel>
 #include <QString>
+#include <QSplitter>
 #include "tagscontainer.h"
 #include "filescontainer.h"
 #include "opendirs.h"
@@ -43,15 +44,20 @@ private:
     inline void openElement(Element* element)			{	tagsContainer->addElement(element);		}
     inline void openElements(const ElementsList& els)	{	tagsContainer->addElements(els);		}
     inline void changeNumberOfFilesLabel()				{	nbFiles->setText(QString( QString::number(filesContainer->count()) + QString(" files") ));					}
-    void about();
+    void about();								// displays a dialog with the author information in it
+    void saveSplitterSize();					// saves the size of the widgets inside the splitter
+    void loadSplitterSize();					// loads the size of the widgets inside the splitter
 
 
 private:
     TagsContainer *tagsContainer;
     FilesContainer* filesContainer;
+    QSplitter* splitter;
     OpenDirs* openDirs;
     QPushButton* clearTagsButton;
     QPushButton* reloadButton;
+    QPushButton* expandButton;
+    QPushButton* collapseButton;
     QLabel* nbFiles;
     QMenu* menuFile;
         QAction* loadDirAction;

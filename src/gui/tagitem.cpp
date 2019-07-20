@@ -18,3 +18,9 @@ bool TagItem::contains(Element* e) const {
         if (*e == *i) return true;
     return false;
 }
+
+void TagItem::removeElement(Element *element) {
+    for (int i = 0 ; i < m_elements->size() ; i++)
+        if (*m_elements->at(i) == *element)
+            m_elements->remove(i);
+}

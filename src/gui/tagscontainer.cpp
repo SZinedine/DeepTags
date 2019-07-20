@@ -2,6 +2,7 @@
 #include "tagitem.h"
 #include <QDebug>
 #include <iostream>
+#include <QAbstractItemView>
 
 TagsContainer::TagsContainer(QWidget* parent)
     :QTreeWidget(parent)
@@ -9,7 +10,9 @@ TagsContainer::TagsContainer(QWidget* parent)
     construct();
     createBasicTags();
     prnt = nullptr;
-    setMaximumWidth(250);
+    setMaximumWidth(400);
+    setMinimumWidth(50);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
 void TagsContainer::init() {
@@ -18,10 +21,28 @@ void TagsContainer::init() {
 }
 
 void TagsContainer::construct() {
-    connect(this, &TagsContainer::itemClicked,				// display the files in the FilesContainer when an item is clicked
-            this, [=](QTreeWidgetItem *item){
-        emit(  (itemSelected( real(item)->elements() ))  );		// QVector<Element*>*
-    });
+    connect(this, &TagsContainer::itemSelectionChanged,
+            this, [=](){	selected();		});
+}
+
+void TagsContainer::selected() {
+    QList<QTreeWidgetItem*> lst = selectedItems();
+    if (lst.isEmpty())			return;
+    else if (lst.size() == 1)	emit itemSelected( real(lst.at(0))->elements() );
+    if(lst.isEmpty() || lst.size() == 1) return;
+
+    auto shared = [=](const QList<QTreeWidgetItem*>& items, Element* el){
+        for (QTreeWidgetItem* i : items)
+            if ( !real(i)->contains(el) ) return false;
+        return true;
+    };
+    QVector<Element*> *res = new QVector<Element*>();
+    QVector<Element*> *first = real(lst.at(0))->elements();
+    for (Element* e : *first)
+        if (shared(lst, e)) res->push_back(e);
+
+    emit itemSelected(res);
+    delete res;
 }
 
 int TagsContainer::find(const QString &label, QTreeWidgetItem* parent) {
@@ -53,7 +74,7 @@ void TagsContainer::addElement(Element* element) {
      */
 
     if (alreadyAdded(element)) {
-        std::cerr << "already exist: " << element->path() << "\n";
+//        std::cerr << "already exist: " << element->path() << "\n";
         return;
     }
     const Tags& tags = element->tags();
@@ -81,7 +102,8 @@ void TagsContainer::addElement(Element* element) {
                 // grab a topLevelItem or a sub Item depending on the level of deepness (i variable)
                 QTreeWidgetItem* foundItem = (level == 0) ? topLevelItem(index) : prnt->child(index);
                 TagItem* castedItem = real(foundItem);
-                castedItem->addFile(element);
+                if (!castedItem->contains(element))
+                    castedItem->addFile(element);
                 prnt = foundItem;
                 break;
             }
@@ -114,6 +136,18 @@ bool TagsContainer::alreadyAdded(Element* element) {
     TagItem* item = real(topLevelItem( find(basicTags[0], this) ));
     return item->contains(element);
 }
+
+
+void TagsContainer::removeElement(Element* element) {
+    QTreeWidgetItemIterator it(this);
+    while (*it) {
+        (real(*it))->removeElement(element);
+        it++;
+    }
+}
+
+
+
 
 
 

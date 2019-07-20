@@ -10,6 +10,7 @@
 FilesContainer::FilesContainer(QWidget *parent)
     : QListWidget(parent)
 {
+    setUniformItemSizes(true);
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &FilesContainer::itemDoubleClicked, this, &FilesContainer::openFile);
     connect(this, &FilesContainer::rightClick, this, &FilesContainer::showContextMenu);
@@ -69,8 +70,9 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     QPoint globalPos = mapToGlobal(pos);
 
     QMenu* menu = new QMenu;
-    menu->addAction("Open",   this, 	[=](){ 	openFile(itemAt(pos)); });
-    menu->addAction("Remove", this,		[=](){	});
+    menu->addAction("Open",   this, 	[=](){ 	openFile(itemAt(pos)); 		});
+    menu->addAction("Remove", this,		[=](){	removeItem(itemAt(pos)); 	});
+//    menu->addAction("Remove", this,		[=](){	std::thread( [=](){removeItem(itemAt(pos));} ).detach();	}   );
 
     menu->exec(globalPos);
 }
@@ -81,7 +83,7 @@ void FilesContainer::sortAndPin() {
 
     QVector<int> pinned;
     for (int i = 0 ; i < count() ; i++)		// look for pinned elements and get their indexes into pinned:QVector
-        if ( real(item(i))->pinned() )		//////
+        if ( real(item(i))->pinned() )
             pinned.push_back(i);
 
     int index = 0;
@@ -92,5 +94,8 @@ void FilesContainer::sortAndPin() {
     }
 }
 
-
+void FilesContainer::removeItem(QListWidgetItem* item) {
+    emit removedItem(real(item)->element());
+    delete takeItem(row(item));
+}
 

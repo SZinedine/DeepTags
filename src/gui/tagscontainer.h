@@ -23,9 +23,11 @@ public:
     inline void addElements(const ElementsList& elements)		{	for (auto i : elements) addElement( i );		}
     void addElement(Element* element);
     bool alreadyAdded(Element* element);
+    void selected();
 
 public slots:
     void init();		// remove all the tags and create the basic ones
+    void removeElement(Element* element);
 
 signals:
     void itemSelected(QVector<Element*> *item);

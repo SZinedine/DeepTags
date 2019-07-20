@@ -9,7 +9,8 @@
 #include <QDebug>
 #include <QStatusBar>
 #include <QMessageBox>
-#include "back/element.hpp"
+#include "../back/element.h"
+#include <QGridLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     openAlwaysOpeningDirs();
     loadSettings();
+    loadSplitterSize();
 }
 
 void MainWindow::setupCentral() {
@@ -30,11 +32,16 @@ void MainWindow::setupCentral() {
     tagsContainer = new TagsContainer;
     tagsContainer->setHeaderHidden(true);
     filesContainer = new FilesContainer;
+    splitter = new QSplitter;
+    splitter->setChildrenCollapsible(false);
 
     clearTagsButton = new QPushButton("clear", this);
     clearTagsButton->setMaximumWidth(60);
     reloadButton = new QPushButton("Reload", this);
     reloadButton->setMaximumWidth(60);
+
+    expandButton = new QPushButton("exp");
+    collapseButton = new QPushButton("col");
 
     QStatusBar* statusB = statusBar();
     nbFiles = new QLabel("0 files");
@@ -48,9 +55,17 @@ void MainWindow::setupLayout() {
     centralWidget()->setLayout(layout);
 
     // containers
-    QHBoxLayout* containersLayout = new QHBoxLayout;
-    containersLayout->addWidget(tagsContainer);
-    containersLayout->addWidget(filesContainer);
+    splitter->addWidget(tagsContainer);
+    splitter->addWidget(filesContainer);
+
+    QVBoxLayout* colLayout = new QVBoxLayout;
+    colLayout->addWidget(expandButton);
+    colLayout->addWidget(collapseButton);
+    colLayout->setAlignment(Qt::AlignTop);
+
+    QHBoxLayout *views = new QHBoxLayout;
+    views->addLayout(colLayout);
+    views->addWidget(splitter);
 
     // widgets above the containers
     QHBoxLayout *above = new QHBoxLayout;
@@ -60,13 +75,16 @@ void MainWindow::setupLayout() {
     above->setAlignment(Qt::AlignLeft);
     //
     layout->addLayout(above);
-    layout->addLayout(containersLayout);
+//    layout->addLayout(colLayout);
+    layout->addWidget(splitter);
 }
 
 void MainWindow::setupSignals() {
     connect(tagsContainer, 		&TagsContainer::itemSelected, 	filesContainer, 	&FilesContainer::addFiles	);
-    connect(tagsContainer, 		&TagsContainer::itemSelected, 	this, 				[=](){	changeNumberOfFilesLabel();}  );
-    connect(filesContainer, 	&FilesContainer::numberOfElementsChanged,this, 		[=](){	changeNumberOfFilesLabel();}  );
+    connect(tagsContainer, 		&TagsContainer::itemSelected, 	this, 				[=](){	changeNumberOfFilesLabel();	}  	);
+    connect(filesContainer, 	&FilesContainer::numberOfElementsChanged,this, 		[=](){	changeNumberOfFilesLabel();	}  	);
+    connect(filesContainer, 	&FilesContainer::removedItem,	tagsContainer, 		&TagsContainer::removeElement);
+    connect(splitter,			&QSplitter::splitterMoved,		this,				[=](){	saveSplitterSize();});
     connect(clearTagsButton, 	&QPushButton::clicked, 			tagsContainer, 		&TagsContainer::init		);
     connect(clearTagsButton, 	&QPushButton::clicked, 			filesContainer,		&FilesContainer::clearView	);
     connect(reloadButton, 		&QPushButton::clicked, 			this, 				[=](){  reloadContent();}	);
@@ -133,7 +151,7 @@ void MainWindow::writeSettings() {
     s.endGroup();
 
     s.beginGroup("Main");
-    s.setValue("windowsize", QVariant(size()));
+    s.setValue("windowsize", QVariant(size()));				// size of the window
     s.endGroup();
 }
 
@@ -248,7 +266,8 @@ void MainWindow::askForMarkdownEditor() {
 
 void MainWindow::openDirsDialog() {
     OpenDirs* openDirs = new OpenDirs;
-    openDirs->exec();
+    int res = openDirs->exec();
+    if (res == 1) openAlwaysOpeningDirs();
     delete openDirs;
 }
 
@@ -274,3 +293,19 @@ void MainWindow::about() {
     str.append("<b>website: </b> https://github.com/SZinedine <br>");
     QMessageBox::about(this, "About", str);
 }
+
+
+void MainWindow::saveSplitterSize() {
+    QSettings s;
+    s.beginGroup("Main");
+    s.setValue("splitterSizes", splitter->saveState());
+    s.endGroup();
+}
+
+void MainWindow::loadSplitterSize() {
+    QSettings s;
+    s.beginGroup("Main");
+    splitter->restoreState(s.value("splitterSizes").toByteArray());
+    s.endGroup();
+}
+

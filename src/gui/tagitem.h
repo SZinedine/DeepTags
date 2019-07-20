@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QTreeWidgetItem>
-#include "./back/element.hpp"
+#include "../back/element.h"
 #include <QDebug>
 #include <QVector>
 
@@ -21,6 +21,7 @@ public:
     inline int number() const					{	return m_elements->size();		}
     inline void remove(Element* e)				{	m_elements->removeAll(e);		}
     bool contains(Element* e) const;
+    void removeElement(Element* element);
 
 private:
     char prevent_padding_warning[4];

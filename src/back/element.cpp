@@ -1,4 +1,4 @@
-#include "element.hpp"
+#include "element.h"
 
 Element* construct_single_element(const fs::path& path) {
     const StringList header = getHeader(path);  // the complete header of the file

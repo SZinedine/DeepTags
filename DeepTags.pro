@@ -23,34 +23,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++17 -lstdc++fs -pthread
-LIBS += -L/usr/local/lib -lyaml-cpp		# These would probably have to be changed
-INCLUDEPATH = -I/usr/local/include
+#LIBS += -L/usr/local/lib -lyaml-cpp		# These would probably have to be changed
+#INCLUDEPATH = -I/usr/local/include
 
 SUBDIRS = src src/back
 PARENT_DIR = $${PWD}/
 SRC_DIR = $${PARENT_DIR}/src
+GUI_DIR = $${SRC_DIR}/gui
 BACK_DIR = $${SRC_DIR}/back/
-BACK_HEADERS = $${BACK_DIR}/common.hpp $${BACK_DIR}/element.hpp $${BACK_DIR}/extract.hpp $${BACK_DIR}/fetch.hpp $${BACK_DIR}/headers.hpp
-BACK_SOURCES = $${BACK_DIR}/element.cpp $${BACK_DIR}/extract.cpp $${BACK_DIR}/fetch.cpp $${BACK_DIR}/headers.cpp
 
-SOURCES += \
-        $${SRC_DIR}/fileitem.cpp \
-        $${SRC_DIR}/filescontainer.cpp \
-        $${SRC_DIR}/main.cpp \
-        $${SRC_DIR}/mainwindow.cpp \
-        $${SRC_DIR}/opendirs.cpp \
-        $${SRC_DIR}/tagitem.cpp \
-        $${SRC_DIR}/tagscontainer.cpp \
-        $${BACK_SOURCES}
+BACK_HEADERS =  $${BACK_DIR}/common.h $${BACK_DIR}/element.h \
+                $${BACK_DIR}/extract.h $${BACK_DIR}/fetch.h \
+                $${BACK_DIR}/headers.h $${BACK_DIR}/yaml.h
+BACK_SOURCES =  $${BACK_DIR}/element.cpp $${BACK_DIR}/extract.cpp \
+                $${BACK_DIR}/fetch.cpp $${BACK_DIR}/headers.cpp \
+                $${BACK_DIR}/yaml.cpp
+GUI_HEADERS  =  $${GUI_DIR}/fileitem.h $${GUI_DIR}/filescontainer.h \
+                $${GUI_DIR}/mainwindow.h $${GUI_DIR}/opendirs.h \
+                $${GUI_DIR}/tagitem.h $${GUI_DIR}/tagscontainer.h
+GUI_SOURCES  =  $${GUI_DIR}/fileitem.cpp $${GUI_DIR}/filescontainer.cpp \
+                $${GUI_DIR}/mainwindow.cpp $${GUI_DIR}/opendirs.cpp \
+                $${GUI_DIR}/tagitem.cpp $${GUI_DIR}/tagscontainer.cpp
 
-HEADERS += \
-        $${SRC_DIR}/fileitem.h \
-        $${SRC_DIR}/filescontainer.h \
-        $${SRC_DIR}/mainwindow.h \
-        $${SRC_DIR}/opendirs.h \
-        $${SRC_DIR}/tagitem.h \
-        $${SRC_DIR}/tagscontainer.h \
-        $${BACK_HEADERS}
+
+SOURCES += $${SRC_DIR}/main.cpp $${BACK_SOURCES} $${GUI_SOURCES}
+
+HEADERS += $${BACK_HEADERS} $${GUI_HEADERS}
 
 DESTDIR = $${PARENT_DIR}/tmp_bin
 OBJECTS_DIR = $${PARENT_DIR}/tmp_obj

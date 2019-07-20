@@ -3,3 +3,4 @@ Makefile
 .qmake.stash
 tmp_bin/
 tmp_obj/
+qrc_DeepTags.cpp

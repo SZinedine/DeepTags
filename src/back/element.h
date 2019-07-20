@@ -1,10 +1,10 @@
 #ifndef ELEMENT_HPP
 #define ELEMENT_HPP
 
-#include "fetch.hpp"
-#include "headers.hpp"
-#include "extract.hpp"
-#include "common.hpp"
+#include "fetch.h"
+#include "headers.h"
+#include "extract.h"
+#include "common.h"
 
 class Element {
 public:
@@ -24,8 +24,10 @@ public:
     inline void setPinned(const bool& p)	{	m_pin = p;			}
     inline void setFavorite(const bool& f)	{	m_favorite = f;		}
 
-    bool operator==(const Element& other) {	return path() == other.path(); }
+    bool operator==(const Element& other) {	return m_path.string() == other.path().string(); }
     bool operator!=(const Element& other) {	return path() != other.path(); }
+    bool operator==(const Element* other) {	return m_path.string() == other->path().string(); }
+    bool operator!=(const Element* other) {	return path() != other->path(); }
 
 private:
     fs::path m_path;

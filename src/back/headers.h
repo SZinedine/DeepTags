@@ -5,7 +5,7 @@
  *	verify if a file as a header and return the header of the file in a list of strings
  */
 
-#include "common.hpp"
+#include "common.h"
 
 
 /**

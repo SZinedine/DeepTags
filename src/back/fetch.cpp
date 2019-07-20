@@ -1,4 +1,4 @@
-#include "fetch.hpp"
+#include "fetch.h"
 
 bool isMD(const fs::path &f) {
     std::string ext = std::string(f.extension());

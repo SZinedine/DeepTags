@@ -4,12 +4,14 @@
 
 What DeepTags does NOT do is opening and editing Markdown files. However, an external program can be easily set in order to open them directly from the program.
 
+**Note:** DeepTags is tested on Linux, there is no guarantee that it would work on another platform.
+
 ![Screenshot of DeepTags on a Linux machine running plasma 5](Screenshot.png)
 
 ## Dependencies
 
 - Qt framwork (>=)5.9
-- [yaml-cpp](https://github.com/jbeder/yaml-cpp)
+
 
 ## Download and compile
 
