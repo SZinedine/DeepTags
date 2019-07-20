@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=0.1
+Type=Application
+Name=DeepTags
+Comment=organize Markdown documents by tags
+TryExec=DeepTags
+Exec=DeepTags
+Icon=DeepTags
+Terminal=false
