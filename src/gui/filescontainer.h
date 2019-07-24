@@ -2,7 +2,7 @@
 #define FILESCONTAINER_H
 
 #include <QListWidget>
-#include "../back/element.h"
+#include "../element/element.h"
 #include <QMouseEvent>
 #include "fileitem.h"
 
@@ -16,8 +16,7 @@ public:
 
 public slots:
     void addFiles(QVector<Element*>* items);
-    void addFile(Element* item);
-    void openFile(QListWidgetItem* item);
+    void openFile(QListWidgetItem* item);			// open the file in a Markdown Editor (to be set beforehand)
     void showContextMenu(const QPoint& p);
     void clearView();
     void removeItem(QListWidgetItem* item);
@@ -25,6 +24,7 @@ public slots:
 private:
     void mousePressEvent(QMouseEvent *event);		// to capture right clicks
     void sortAndPin();								// pin the necessary files
+    void addFile(Element* item);
 
 signals:
     void rightClick(QPoint pos);

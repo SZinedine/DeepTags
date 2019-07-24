@@ -30,14 +30,10 @@ SUBDIRS = src src/back
 PARENT_DIR = $${PWD}/
 SRC_DIR = $${PARENT_DIR}/src
 GUI_DIR = $${SRC_DIR}/gui
-BACK_DIR = $${SRC_DIR}/back/
+ELEM_DIR = $${SRC_DIR}/element/
 
-BACK_HEADERS =  $${BACK_DIR}/common.h $${BACK_DIR}/element.h \
-                $${BACK_DIR}/extract.h $${BACK_DIR}/fetch.h \
-                $${BACK_DIR}/headers.h $${BACK_DIR}/yaml.h
-BACK_SOURCES =  $${BACK_DIR}/element.cpp $${BACK_DIR}/extract.cpp \
-                $${BACK_DIR}/fetch.cpp $${BACK_DIR}/headers.cpp \
-                $${BACK_DIR}/yaml.cpp
+ELEM_HEADERS =  $${ELEM_DIR}/element.h $${ELEM_DIR}/elementabstract.h
+ELEM_SOURCES =  $${ELEM_DIR}/element.cpp $${ELEM_DIR}/elementabstract.cpp
 GUI_HEADERS  =  $${GUI_DIR}/fileitem.h $${GUI_DIR}/filescontainer.h \
                 $${GUI_DIR}/mainwindow.h $${GUI_DIR}/opendirs.h \
                 $${GUI_DIR}/tagitem.h $${GUI_DIR}/tagscontainer.h
@@ -46,9 +42,9 @@ GUI_SOURCES  =  $${GUI_DIR}/fileitem.cpp $${GUI_DIR}/filescontainer.cpp \
                 $${GUI_DIR}/tagitem.cpp $${GUI_DIR}/tagscontainer.cpp
 
 
-SOURCES += $${SRC_DIR}/main.cpp $${BACK_SOURCES} $${GUI_SOURCES}
+SOURCES += $${SRC_DIR}/main.cpp $${ELEM_SOURCES} $${GUI_SOURCES}
 
-HEADERS += $${BACK_HEADERS} $${GUI_HEADERS}
+HEADERS += $${ELEM_HEADERS} $${GUI_HEADERS}
 
 DESTDIR = $${PARENT_DIR}/tmp_bin
 OBJECTS_DIR = $${PARENT_DIR}/tmp_obj

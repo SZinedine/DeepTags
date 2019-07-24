@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <iostream>
 #include <QAbstractItemView>
+#include <QApplication>
 
 TagsContainer::TagsContainer(QWidget* parent)
     :QTreeWidget(parent)
@@ -25,13 +26,14 @@ void TagsContainer::construct() {
             this, [=](){	selected();		});
 }
 
+
 void TagsContainer::selected() {
     QList<QTreeWidgetItem*> lst = selectedItems();
     if (lst.isEmpty())			return;
     else if (lst.size() == 1)	emit itemSelected( real(lst.at(0))->elements() );
     if(lst.isEmpty() || lst.size() == 1) return;
 
-    auto shared = [=](const QList<QTreeWidgetItem*>& items, Element* el){
+    auto shared = [](const QList<QTreeWidgetItem*>& items, Element* el) -> bool {
         for (QTreeWidgetItem* i : items)
             if ( !real(i)->contains(el) ) return false;
         return true;
@@ -45,12 +47,13 @@ void TagsContainer::selected() {
     delete res;
 }
 
+
 int TagsContainer::find(const QString &label, QTreeWidgetItem* parent) {
     for (int i = 0 ; i < parent->childCount() ; i++) {
         const TagItem* item = real(parent->child(i));
-        if( item->label() == label ) return i;
+        if( item->label() == label ) return i;		// return the index of the found element
     }
-    return -1;
+    return -1;		// return -1 if it doesn't exist
 }
 
 
@@ -63,34 +66,60 @@ int TagsContainer::find(const QString &label, QTreeWidget *parent) {
 }
 
 
-void TagsContainer::addElement(Element* element) {
-    /*
-     * retrieve Tags from the element
-     * iterate thtough the Tags :
-     * 		if the first doesn't exist, create it and append the element into it.
-     *  	else append the element into it.
-     * continue the iteration by verifying if the following tag exist...
-     *
-     */
+void TagsContainer::addElements(const ElementsList& elements) {
+    emit loadingFiles();
+    int i = 0;
+    for (Element* e : elements ) {
+        addElement( e );
 
-    if (alreadyAdded(element)) {
-//        std::cerr << "already exist: " << element->path() << "\n";
-        return;
+        {	// sort every once in awhile
+            i++;
+            if (i%500 == 0) {
+                sort();
+                qApp->processEvents();
+            }
+        }
     }
+    sort();
+    emit filesLoaded();
+}
+
+
+void TagsContainer::addElement(Element* element) {
+/**
+  * retrieve the tags of the Element. all the work will be based on them
+  * add the element to "All Notes" tag.
+  * add it to untagged if it hasn't any tags.
+  * add it to favorite if is favorited.
+  *
+  * iterate through the Tags (vector of vectors)
+  * single tag treatment:
+  * 	* create a TagItem if it doesn't exist (index == -1)
+  * 		* add it to topLevel if level == 0
+  * 		* add it to prnt (previous parent) if level != 0
+  * 	* append the entire Element to another item if it exists
+  * 		* find the item to append to (by using the level variable)
+  * 		* verify if the found item doesn't contain the Element.
+  * 			* append it to it if it doesn't
+*/
+
+    if (!element) return;
+    if (alreadyAdded(element)) return;
+    else  addToSpecificTopLevel(element, cnv_allNotes);	// add to All Notes if it isn't there
+
     const Tags& tags = element->tags();
 
-    addToSpecificTopLevel(element, cnv_allNotes);
     if (element->favorited())	addToSpecificTopLevel(element, cnv_favorite);
     if (tags.empty()) addToSpecificTopLevel(element, cnv_untagged);
 
     for (const StringList& chain : tags) {
-
         for (std::string::size_type level = 0 ; level < chain.size() ; level++) {
-            const QString particle = QString(chain.at(level).c_str());
-            int index = (level == 0) ? find(particle, this) : find(particle, prnt);
+
+            const QString particle = QString(chain.at(level).c_str());					// hold the current item name to be treated
+            int index = (level == 0) ? find(particle, this) : find(particle, prnt);		// if we are in the index 0 of the vector, that means that we have to search for the item in the top level
 
             switch (index) {
-            case -1: {
+            case -1: {			// create the tag
                 TagItem *newItem = new TagItem(particle);
                 newItem->addFile(element);
                 if (level == 0)	addTopLevelItem(newItem);
@@ -98,7 +127,7 @@ void TagsContainer::addElement(Element* element) {
                 prnt = newItem;
                 break;
             }
-            default:
+            default:			// append Element to an existing tag
                 // grab a topLevelItem or a sub Item depending on the level of deepness (i variable)
                 QTreeWidgetItem* foundItem = (level == 0) ? topLevelItem(index) : prnt->child(index);
                 TagItem* castedItem = real(foundItem);
@@ -110,8 +139,10 @@ void TagsContainer::addElement(Element* element) {
         }
         prnt = nullptr;
     }
-    sort();
+    qApp->processEvents();
+    emit itemAdded();
 }
+
 
 void TagsContainer::addToSpecificTopLevel(Element *e, const QString &name) {
     int index = find(name, this);
@@ -145,8 +176,6 @@ void TagsContainer::removeElement(Element* element) {
         it++;
     }
 }
-
-
 
 
 

@@ -9,15 +9,6 @@ TagItem::TagItem(const QString& label, TagItem* parent)
     m_elements = new QVector<Element*>();
 }
 
-void TagItem::addFile(Element *element) {
-    m_elements->push_back(element);
-}
-
-bool TagItem::contains(Element* e) const {
-    for(Element* i : *m_elements)
-        if (*e == *i) return true;
-    return false;
-}
 
 void TagItem::removeElement(Element *element) {
     for (int i = 0 ; i < m_elements->size() ; i++)

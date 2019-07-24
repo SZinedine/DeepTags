@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QTreeWidgetItem>
-#include "../back/element.h"
+#include "../element/element.h"
 #include <QDebug>
 #include <QVector>
 
@@ -13,14 +13,14 @@ public:
     TagItem();
     TagItem(const QString& label, TagItem* parent=nullptr);
 
-    void addFile(Element* element);
+    inline void addFile(Element* element)		{	m_elements->push_back(element);	}
     inline void addFiles(QVector<Element*> els) {	for (auto i : els) addFile(i);	}
     inline void setLabel(const QString& label)	{	setText(0, label);				}
-    inline QVector<Element*>* elements() 		{	return m_elements;				}
+    inline QVector<Element*>* elements() const	{	return m_elements;				}
     inline QString label() const				{	return text(0);					}
     inline int number() const					{	return m_elements->size();		}
     inline void remove(Element* e)				{	m_elements->removeAll(e);		}
-    bool contains(Element* e) const;
+    inline bool contains(Element* e) const		{	return m_elements->contains(e);	}
     void removeElement(Element* element);
 
 private:

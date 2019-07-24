@@ -19,7 +19,6 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent=nullptr);
-
     void closeEvent(QCloseEvent* event);
 
 private:
@@ -27,10 +26,13 @@ private:
     void setupLayout();
     void setupMenu();
     void setupSignals();
+    void load();
     void loadDir();								// open the files of a directory from the filesystem
     void loadFiles();							// open files from the filesystem
-    void writeSettings();						// save the opened files to open in the next start
-    void loadSettings();						// retrieve the list of saved files (paths) and load them into the app
+    void saveOpenedFiles();						// save the opened files to open in the next start
+    void loadOpenedFiles();						// retrieve the list of saved files (paths) and load them into the app
+    void saveUiSettings();						// save the size of the window and the state of the splitter
+    void loadUiSettings();
     QStringList currentPaths() const;			// retrieve all the filepaths loaded
     void saveLastDir(const QString& complete);	// save the opened directory
     void saveLastFile(const QString& complete);	// save the directory of the opened file
@@ -41,13 +43,12 @@ private:
     void askForMarkdownEditor();				// ask the user to input the markdown editor with which the files will be opened when clicked on
     void openDirsDialog();						// open OpenDir and ask the user for directory paths to open on every startup
     void openAlwaysOpeningDirs();				// open the directories saved by OpenDirs
-    inline void openElement(Element* element)			{	tagsContainer->addElement(element);		}
     inline void openElements(const ElementsList& els)	{	tagsContainer->addElements(els);		}
     inline void changeNumberOfFilesLabel()				{	nbFiles->setText(QString( QString::number(filesContainer->count()) + QString(" files") ));					}
     void about();								// displays a dialog with the author information in it
-    void saveSplitterSize();					// saves the size of the widgets inside the splitter
-    void loadSplitterSize();					// loads the size of the widgets inside the splitter
 
+signals:
+    void started();								// emited at the en of the constructor
 
 private:
     TagsContainer *tagsContainer;

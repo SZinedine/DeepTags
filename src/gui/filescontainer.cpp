@@ -20,13 +20,13 @@ FilesContainer::FilesContainer(QWidget *parent)
 void FilesContainer::addFile(Element* item) {
     FileItem *f = new FileItem(item);
     addItem(f);
-    sortAndPin();
 }
 
 void FilesContainer::addFiles(QVector<Element*>* items) {
     clearView();
     for (Element* i : *items)
         addFile(i);
+    sortAndPin();
     emit numberOfElementsChanged();
 }
 

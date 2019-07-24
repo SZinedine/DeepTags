@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <QStatusBar>
 #include <QMessageBox>
-#include "../back/element.h"
+#include "../element/element.h"
 #include <QGridLayout>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -20,9 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
     setupMenu();
     setupSignals();
 
-    openAlwaysOpeningDirs();
-    loadSettings();
-    loadSplitterSize();
+    loadUiSettings();
+
+    emit started();
 }
 
 void MainWindow::setupCentral() {
@@ -84,7 +84,7 @@ void MainWindow::setupSignals() {
     connect(tagsContainer, 		&TagsContainer::itemSelected, 	this, 				[=](){	changeNumberOfFilesLabel();	}  	);
     connect(filesContainer, 	&FilesContainer::numberOfElementsChanged,this, 		[=](){	changeNumberOfFilesLabel();	}  	);
     connect(filesContainer, 	&FilesContainer::removedItem,	tagsContainer, 		&TagsContainer::removeElement);
-    connect(splitter,			&QSplitter::splitterMoved,		this,				[=](){	saveSplitterSize();});
+    connect(splitter,			&QSplitter::splitterMoved,		this,				[=](){	saveUiSettings();});
     connect(clearTagsButton, 	&QPushButton::clicked, 			tagsContainer, 		&TagsContainer::init		);
     connect(clearTagsButton, 	&QPushButton::clicked, 			filesContainer,		&FilesContainer::clearView	);
     connect(reloadButton, 		&QPushButton::clicked, 			this, 				[=](){  reloadContent();}	);
@@ -94,6 +94,7 @@ void MainWindow::setupSignals() {
     connect(setMdReaderAction,	&QAction::triggered,			this,				[=](){askForMarkdownEditor();});
     connect(setAlwaysOpeningDirsAction, &QAction::triggered,	this,				[=](){ openDirsDialog(); }	);
     connect(aboutAction,		&QAction::triggered,			this,				&MainWindow::about			);
+    connect(this,				&MainWindow::started,			this,				&MainWindow::load,		Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection) );
 }
 
 void MainWindow::setupMenu() {
@@ -118,12 +119,21 @@ void MainWindow::setupMenu() {
 }
 
 
+void MainWindow::load() {
+    qApp->processEvents();
+    openAlwaysOpeningDirs();
+    loadOpenedFiles();
+}
+
 void MainWindow::loadDir() {
     QString p = QFileDialog::getExistingDirectory(this, tr("Open Directory"), getLastDir());
 
     if (p.isEmpty()) return;
     saveLastDir(p);		// save it for future usage
-    ElementsList elements = construct_list_elements( fetch_files(p.toStdString()) );
+//    ElementsList elements = construct_list_elements( fetch_files(p.toStdString()) );
+    ElementsList elements = Element::construct_list_elements( Element::fetch_files(p.toStdString()) );
+
+
     openElements(elements);
 }
 
@@ -135,7 +145,8 @@ void MainWindow::loadFiles() {
     ElementsList elements;
     for (const QString& s : files) {
         fs::path p(s.toStdString());
-        elements.push_back( construct_single_element(p) );
+        if (fs::exists(p))
+            elements.push_back( new Element(p) );
     }
 
     if ( elements.empty() ) return;
@@ -144,19 +155,31 @@ void MainWindow::loadFiles() {
 }
 
 
-void MainWindow::writeSettings() {
+void MainWindow::saveOpenedFiles() {
     QSettings s;
     s.beginGroup("paths");
     s.setValue("filepaths", QVariant(currentPaths()) );		// save the files
     s.endGroup();
 
+}
+
+void MainWindow::saveUiSettings() {
+    QSettings s;
     s.beginGroup("Main");
     s.setValue("windowsize", QVariant(size()));				// size of the window
+    s.setValue("splitterSizes", splitter->saveState());
     s.endGroup();
 }
 
+void MainWindow::loadUiSettings() {
+    QSettings s;
+    s.beginGroup("Main");
+    splitter->restoreState(s.value("splitterSizes").toByteArray());
+    resize(s.value("windowsize").toSize());
+    s.endGroup();
+}
 
-void MainWindow::loadSettings() {
+void MainWindow::loadOpenedFiles() {
 
     // get the saved StringList of filepaths
     QSettings s;
@@ -164,15 +187,11 @@ void MainWindow::loadSettings() {
     const QStringList strl = s.value("filepaths").toStringList();
     s.endGroup();
     if (!strl.empty()) openStringListPaths(strl);
-
-    s.beginGroup("Main");
-    resize(s.value("windowsize").toSize());
-    s.endGroup();
 }
 
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-    writeSettings();
+    saveOpenedFiles();
     event->accept();
 }
 
@@ -201,6 +220,7 @@ void MainWindow::saveLastDir(const QString &complete) {
     s.endGroup();
 }
 
+
 QString MainWindow::getLastDir() const {
     QSettings s;
     s.beginGroup("Main");
@@ -208,7 +228,6 @@ QString MainWindow::getLastDir() const {
     s.endGroup();
     return (d.isEmpty()) ? QDir::homePath() : d;
 }
-
 
 
 void MainWindow::saveLastFile(const QString &complete) {
@@ -229,10 +248,14 @@ QString MainWindow::getLastFile() const {
 
 
 void MainWindow::openStringListPaths(const QStringList& strlist) {
-    for (const QString& i : strlist){
+    ElementsList res;
+
+    for (const QString& i : strlist) {
         if(!QFile::exists(i)) continue;			// added after the crash that happens after a non existant file is being loaded
-        openElement(construct_single_element( fs::path( i.toStdString() ) ));
+        res.push_back(new Element( fs::path( i.toStdString() ) ));
     }
+
+    openElements(res);
 }
 
 
@@ -273,13 +296,15 @@ void MainWindow::openDirsDialog() {
 
 void MainWindow::openAlwaysOpeningDirs() {
 
+    ElementsList list;
     QStringList sl = OpenDirs::savedTextList();
-    for (const QString& s : sl) {
+    for (const QString& s : sl) {		// iterate through all the dirs, fetch the files and put them in a single container
         if(!QDir(s).exists(s)) continue;
-        PathsList paths = fetch_files(s.toStdString());
-        ElementsList elsLst = construct_list_elements(paths);
-        openElements(elsLst);
+        PathsList paths = Element::fetch_files(s.toStdString());
+        ElementsList el = Element::construct_list_elements(paths);
+        list.insert(list.end(), el.begin(), el.end());
     }
+    openElements(list);			// call openElements only once.
 }
 
 
@@ -292,20 +317,5 @@ void MainWindow::about() {
     str.append("<b>E-mail: </b> saibi.zineddine@yahoo.com<br>");
     str.append("<b>website: </b> https://github.com/SZinedine <br>");
     QMessageBox::about(this, "About", str);
-}
-
-
-void MainWindow::saveSplitterSize() {
-    QSettings s;
-    s.beginGroup("Main");
-    s.setValue("splitterSizes", splitter->saveState());
-    s.endGroup();
-}
-
-void MainWindow::loadSplitterSize() {
-    QSettings s;
-    s.beginGroup("Main");
-    splitter->restoreState(s.value("splitterSizes").toByteArray());
-    s.endGroup();
 }
 
