@@ -6,10 +6,7 @@ Element::Element(const fs::path& path, const std::string& title, const Tags tags
     : ElementAbstract(path, title, tags, pinned, favorited)
 {}
 
-Element::Element(const fs::path& path) :ElementAbstract()
-{
-    setup(path);
-}
+Element::Element(const fs::path& path) :ElementAbstract() {	setup(path); }
 
 Element::Element(const Element& other)
     : ElementAbstract()
@@ -22,6 +19,7 @@ Element::Element(const Element& other)
 }
 
 void Element::setup(const fs::path& path) {
+    m_path = path;
     const StringList header = getHeader(path);  // the complete header of the file
     setTitle( extract_title( find_title_inheader(header) ) );
     StringList tags_list = extract_tags( find_tags_inheader(header) );
@@ -40,20 +38,46 @@ ElementsList Element::construct_list_elements(const PathsList& f) {
 }
 
 
-
 bool Element::hasHeader(const fs::path& fi) {
     std::ifstream myfile(fi);
-    if (!myfile.is_open()) {
+    if (!myfile.is_open())
         std::cerr
             << "the following file failed to open:\n"
             << "    " << fi << "\n";
-    }
+
     std::string line;
-    std::getline(myfile, line);
+    int headerItems = 0;	// lines between the header markers
+    int headerMarker = 0;
+    while (std::getline(myfile, line)) {
+        if (headerMarker == 2) 	break;
+        if (headerMarker == 1) 	headerItems++;
+        if (line == "---")	    headerMarker++;
+    }
     myfile.close();
-    std::cout << "'" << line << "'" << std::endl;
-    return (line == "---");
+    if (headerMarker == 2 && (headerItems < 7 && headerItems >= 1))
+        return true;
+    else return false;
 }
+
+
+int Element::nbItemsInHeader(const fs::path& fi) {
+    std::ifstream myfile(fi);
+    if (!myfile.is_open())
+        std::cerr
+            << "the following file failed to open:\n"
+            << "    " << fi << "\n";
+    std::string line;
+    int headerItems = 0;	// lines between the header markers
+    int headerMarker = 0;
+    while (std::getline(myfile, line)) {
+        if (headerMarker == 2) 	break;
+        if (headerMarker == 1) 	headerItems++;
+        if (line == "---")	    headerMarker++;
+    }
+    myfile.close();
+    return headerItems;
+}
+
 
 StringList Element::getHeader(const fs::path fi) {
     StringList header;
@@ -222,8 +246,6 @@ Tags Element::parse_tags(StringList& raw_tags) {
 }
 
 
-
-
 void Element::ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
         [](int ch) {
@@ -244,18 +266,114 @@ void Element::rtrim(std::string &s) {
     rtrim(s);
 }
 
-/*** Operator overloading ***/
 
+std::string Element::combineTags(const StringList& chain) {
+    std::string res = "";
+    for (StringList::size_type i = 0 ; i < chain.size() ; i++) {
+        res.append(chain[i]);
+        if (i != chain.size()-1) res.append("/");
+    }
+    return res;
+}
 
+/**
+ * extract file's tags
+ * append the new tag into the list
+ * get the file's text.
+ *
+ */
+bool Element::appendTag(const std::string &tag) {
+    if (!validTagToAdd(tag)) return false;
+    auto arrayToTagString = [](const StringList& lst){
+        std::string str = "tags: [";
+        for (StringList::size_type i = 0 ; i < lst.size() ; i++) {
+            str.append(lst[i]);
+            if (i != lst.size()-1) str.append(", ");
+        }
+        str.append("]");
+        return str;
+    };
 
-bool operator==(const Element& first, const Element& second) {
-     return ( first.path().string() == second.path().string() );
+    const StringList header = getHeader(m_path);
+    const std::string raw_tag_header = find_tags_inheader(header);
+
+    StringList tags = extract_tags(raw_tag_header);
+
+    for (const std::string& i : tags)	// verify if the file doesn't contain the tag
+        if (tag == i) return false;
+    tags.push_back(tag);
+
+    const std::string res = arrayToTagString(tags);
+    bool ret = findReplace(raw_tag_header, res);	// write the changes into the file
+
+    reload();
+    return ret;
 }
 
 
-bool operator!=(const Element& first, const Element& second) {
-     return !( first == second );
+bool Element::findReplace(const std::string& old_str, const std::string& new_str) {
+    StringList entire_file;
+    std::ifstream file(m_path);
+    if (!file.is_open()) return false;
+
+    // copy the file line by line to a vector
+    std::string line;
+    while (std::getline(file, line))
+        entire_file.push_back(line);
+    file.close();
+
+    // replace the string in the vector
+    bool found = false;
+    for (std::string& s : entire_file) {
+        if (s == old_str) {
+            s = new_str;
+            found = true;
+            break;
+        }
+    }
+    if (!found) return false;
+
+    // write the result
+    std::ofstream f(m_path);
+    if (!f.is_open()) return false;
+
+    for (std::string& i : entire_file) {
+        f << i << "\n";
+    }
+
+    return true;
 }
+
+
+
+bool Element::validTagToAdd(const std::string& tag) {
+    if (tag.size() < 9) return true;
+    StringList lst = {"All Notes", "Notebooks", "Favorite", "Untagged"};
+    for (const std::string& s : lst)
+        if (s == tag) {
+            std::cerr << "Error. Cannot add a basic tag to a file\n";
+            return false;
+        }
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

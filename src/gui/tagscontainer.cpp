@@ -4,6 +4,9 @@
 #include <iostream>
 #include <QAbstractItemView>
 #include <QApplication>
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QDrag>
 
 TagsContainer::TagsContainer(QWidget* parent)
     :QTreeWidget(parent)
@@ -14,6 +17,18 @@ TagsContainer::TagsContainer(QWidget* parent)
     setMaximumWidth(400);
     setMinimumWidth(50);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    setDragEnabled(true);
+    setAcceptDrops(true);
+    setDragDropMode(DragDrop);
+    setDropIndicatorShown(true);
+}
+
+TagsContainer::~TagsContainer() {
+    auto lst = real( topLevelItem( find(cnv_allNotes, this) ) )->elements();
+    if (lst->isEmpty()) return;
+    for (Element* i : *lst)
+        if (i) delete i;
 }
 
 void TagsContainer::init() {
@@ -22,7 +37,7 @@ void TagsContainer::init() {
 }
 
 void TagsContainer::construct() {
-    connect(this, &TagsContainer::itemSelectionChanged,
+    connect(this, &TagsContainer::itemClicked,
             this, [=](){	selected();		});
 }
 
@@ -177,6 +192,65 @@ void TagsContainer::removeElement(Element* element) {
     }
 }
 
+void TagsContainer::reloadElement(Element* element) {
+    removeElement(element);
+    ElementsList es;
+    es.push_back(element);
+    addElements(es);
+}
+
+
+
+void TagsContainer::dragEnterEvent(QDragEnterEvent *event) {
+    if (event->mimeData()->hasText())
+        event->accept();
+    else
+        event->ignore();
+}
+
+
+void TagsContainer::dragMoveEvent(QDragMoveEvent *event) {
+    if (event->mimeData()->hasText()) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
+
+
+void TagsContainer::dropEvent(QDropEvent *event) {
+    if (event->mimeData()->hasText()) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
+
+
+void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
+    TagItem *item = real(currentItem());
+    if (!item) return;
+
+    TagItem* i = item;
+    QStringList strl;
+    while (true) {
+        if (!i) break;
+        strl.prepend(i->label());
+        i = real(i->parent());
+    }
+    std::vector<std::string> str;
+    for (auto i : strl) str.push_back(i.toStdString());
+    QString s = QString::fromStdString( Element::combineTags(str) );
+
+    QMimeData *mimeData = new QMimeData;
+    mimeData->setText(s);
+
+    QDrag *drag = new QDrag(this);
+    drag->setMimeData(mimeData);
+    drag->exec(Qt::CopyAction);
+}
 
 
 

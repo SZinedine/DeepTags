@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include "../element/element.h"
 #include <QGridLayout>
+#include <QMovie>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -36,22 +37,37 @@ void MainWindow::setupCentral() {
     splitter->setChildrenCollapsible(false);
 
     clearTagsButton = new QPushButton("clear", this);
+    clearTagsButton->setToolTip("Clear All files");
     clearTagsButton->setMaximumWidth(60);
     reloadButton = new QPushButton("Reload", this);
+    reloadButton->setToolTip("Reload current files");
     reloadButton->setMaximumWidth(60);
 
-    expandButton = new QPushButton("exp");
-    collapseButton = new QPushButton("col");
+    expandButton = new QPushButton(QIcon(":images/expand.png"), "", this);
+    expandButton->setToolTip("Expand All ");
+    collapseButton = new QPushButton(QIcon(":images/collapse.png"), "", this);
+    collapseButton->setToolTip("Collapse All");
+    expandButton->setMaximumWidth(30);
+    collapseButton->setMaximumWidth(30);
 
     QStatusBar* statusB = statusBar();
     nbFiles = new QLabel("0 files");
     statusB->addPermanentWidget(nbFiles);
 
+    spinnerLabel = new QLabel;
+    QMovie *movie = new QMovie(":images/spinner.gif");
+    spinnerLabel->setMovie(movie);
+    movie->setScaledSize(QSize(20, 20));
+    movie->start();
+    statusB->addPermanentWidget(spinnerLabel);
+    spinnerLabel->setVisible(false);
+
+
     setMinimumSize(500, 300);
 }
 
 void MainWindow::setupLayout() {
-    QVBoxLayout* layout = new QVBoxLayout;
+    QGridLayout* layout = new QGridLayout;
     centralWidget()->setLayout(layout);
 
     // containers
@@ -62,10 +78,9 @@ void MainWindow::setupLayout() {
     colLayout->addWidget(expandButton);
     colLayout->addWidget(collapseButton);
     colLayout->setAlignment(Qt::AlignTop);
-
-    QHBoxLayout *views = new QHBoxLayout;
-    views->addLayout(colLayout);
-    views->addWidget(splitter);
+    colLayout->setContentsMargins(0, 0, 0, 0);
+    expandButton->setContentsMargins(0, 0, 0, 0);
+    collapseButton->setContentsMargins(0, 0, 0, 0);
 
     // widgets above the containers
     QHBoxLayout *above = new QHBoxLayout;
@@ -74,9 +89,9 @@ void MainWindow::setupLayout() {
     above->addSpacing(200);
     above->setAlignment(Qt::AlignLeft);
     //
-    layout->addLayout(above);
-//    layout->addLayout(colLayout);
-    layout->addWidget(splitter);
+    layout->addLayout(above, 0, 1, Qt::AlignLeft);
+    layout->addLayout(colLayout, 1, 0);
+    layout->addWidget(splitter, 1, 1, 7, 7);
 }
 
 void MainWindow::setupSignals() {
@@ -84,6 +99,7 @@ void MainWindow::setupSignals() {
     connect(tagsContainer, 		&TagsContainer::itemSelected, 	this, 				[=](){	changeNumberOfFilesLabel();	}  	);
     connect(filesContainer, 	&FilesContainer::numberOfElementsChanged,this, 		[=](){	changeNumberOfFilesLabel();	}  	);
     connect(filesContainer, 	&FilesContainer::removedItem,	tagsContainer, 		&TagsContainer::removeElement);
+    connect(filesContainer,		&FilesContainer::elementChanged,	tagsContainer,		&TagsContainer::reloadElement);
     connect(splitter,			&QSplitter::splitterMoved,		this,				[=](){	saveUiSettings();});
     connect(clearTagsButton, 	&QPushButton::clicked, 			tagsContainer, 		&TagsContainer::init		);
     connect(clearTagsButton, 	&QPushButton::clicked, 			filesContainer,		&FilesContainer::clearView	);
@@ -94,15 +110,36 @@ void MainWindow::setupSignals() {
     connect(setMdReaderAction,	&QAction::triggered,			this,				[=](){askForMarkdownEditor();});
     connect(setAlwaysOpeningDirsAction, &QAction::triggered,	this,				[=](){ openDirsDialog(); }	);
     connect(aboutAction,		&QAction::triggered,			this,				&MainWindow::about			);
-    connect(this,				&MainWindow::started,			this,				&MainWindow::load,		Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection) );
+    connect(this,				&MainWindow::started,			this,				&MainWindow::load,
+            Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection) );
+    connect(expandButton,		&QPushButton::clicked,			tagsContainer,		&TagsContainer::expandAll	);
+    connect(collapseButton,		&QPushButton::clicked,			tagsContainer,		&TagsContainer::collapseAll	);
+    // show the spinner in the status bar when the files are loading
+    connect(tagsContainer,		&TagsContainer::loadingFiles,	this,				[=](){  spinnerLabel->setVisible(true);});
+    connect(tagsContainer,		&TagsContainer::filesLoaded,	spinnerLabel,		&QLabel::hide				);
+    // enable and disable some buttons and actions when files are loading
+    connect(tagsContainer, 		&TagsContainer::loadingFiles,	this,
+            [=](){
+        reloadButton->setDisabled(true);
+        loadDirAction->setDisabled(true);
+        loadFileAction->setDisabled(true);
+        setAlwaysOpeningDirsAction->setDisabled(true);
+    });
+    connect(tagsContainer, 		&TagsContainer::filesLoaded,	this,
+            [=](){
+        reloadButton->setDisabled(false);
+        loadDirAction->setDisabled(false);
+        loadFileAction->setDisabled(false);
+        setAlwaysOpeningDirsAction->setDisabled(false);
+    });
 }
 
 void MainWindow::setupMenu() {
     menuFile 			= new QMenu;
     menuFile = menuBar()->addMenu("File");
-    loadDirAction 		= new QAction("Load Directory", this);
-    loadFileAction 		= new QAction("Load a File", this);
-    quitAction 			= new QAction("Quit", this);
+    loadDirAction 		= new QAction(QIcon(":images/addFolder.png"), "Load Directory", this);
+    loadFileAction 		= new QAction(QIcon(":images/addFile.png"), "Load a File", this);
+    quitAction 			= new QAction(QIcon(":images/quit.png"), "Quit", this);
     menuFile->addActions({loadDirAction, loadFileAction, quitAction});
 
     menuEdit 			= new QMenu;
@@ -130,9 +167,7 @@ void MainWindow::loadDir() {
 
     if (p.isEmpty()) return;
     saveLastDir(p);		// save it for future usage
-//    ElementsList elements = construct_list_elements( fetch_files(p.toStdString()) );
     ElementsList elements = Element::construct_list_elements( Element::fetch_files(p.toStdString()) );
-
 
     openElements(elements);
 }
@@ -160,7 +195,6 @@ void MainWindow::saveOpenedFiles() {
     s.beginGroup("paths");
     s.setValue("filepaths", QVariant(currentPaths()) );		// save the files
     s.endGroup();
-
 }
 
 void MainWindow::saveUiSettings() {

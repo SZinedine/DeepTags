@@ -20,7 +20,7 @@ public:
     inline QString label() const				{	return text(0);					}
     inline int number() const					{	return m_elements->size();		}
     inline void remove(Element* e)				{	m_elements->removeAll(e);		}
-    inline bool contains(Element* e) const		{	return m_elements->contains(e);	}
+    bool contains(Element* e);
     void removeElement(Element* element);
 
 private:

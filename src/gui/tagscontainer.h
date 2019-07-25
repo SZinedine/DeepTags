@@ -17,6 +17,7 @@ class TagsContainer : public QTreeWidget
     Q_OBJECT
 public:
     TagsContainer(QWidget* parent=nullptr);
+    ~TagsContainer() override;
 
     static inline TagItem* real(QTreeWidgetItem* item)			{	return dynamic_cast<TagItem*>(item);			}
     inline void createBasicTags() 		{ 	for (const QString& i : basicTags) addTopLevelItem( new TagItem(i) ); 	}
@@ -27,6 +28,7 @@ public:
 public slots:
     void init();		// remove all the tags and create the basic ones
     void removeElement(Element* element);
+    void reloadElement(Element* element);
 
 signals:
     void itemSelected(QVector<Element*> *item);			// when one or multiple tags are selected, send their content to be displayed
@@ -42,6 +44,10 @@ private:
     int find(const QString& label, QTreeWidget* parent);
     void pinBasicItems();
     void sort();		// sort and pin the basic items
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    void startDrag(Qt::DropActions supportedActions) override;
 
 private:
     QTreeWidgetItem* prnt;		// keep track on the previous parent when the items are added

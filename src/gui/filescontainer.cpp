@@ -6,6 +6,9 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <thread>
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QInputDialog>
 
 FilesContainer::FilesContainer(QWidget *parent)
     : QListWidget(parent)
@@ -14,8 +17,11 @@ FilesContainer::FilesContainer(QWidget *parent)
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &FilesContainer::itemDoubleClicked, this, &FilesContainer::openFile);
     connect(this, &FilesContainer::rightClick, this, &FilesContainer::showContextMenu);
+    setAcceptDrops(true);
+    setDropIndicatorShown(true);
 }
 
+FilesContainer::~FilesContainer() { clear(); }
 
 void FilesContainer::addFile(Element* item) {
     FileItem *f = new FileItem(item);
@@ -37,6 +43,7 @@ void FilesContainer::clearView() {
 
 void FilesContainer::openFile(QListWidgetItem* item) {
     // retrieve the name of the Markdown reader
+    if (!item) return;
     QSettings s;
     s.beginGroup("Main");
     QString prog = s.value("MarkDownReader").toString().simplified();
@@ -67,14 +74,15 @@ void FilesContainer::mousePressEvent(QMouseEvent *event) {
 }
 
 void FilesContainer::showContextMenu(const QPoint& pos) {
+    if (count() == 0) return;
     QPoint globalPos = mapToGlobal(pos);
 
     QMenu* menu = new QMenu;
     menu->addAction("Open",   this, 	[=](){ 	openFile(itemAt(pos)); 		});
     menu->addAction("Remove", this,		[=](){	removeItem(itemAt(pos)); 	});
-//    menu->addAction("Remove", this,		[=](){	std::thread( [=](){removeItem(itemAt(pos));} ).detach();	}   );
-
+    menu->addAction("Add a new tag", this, [=](){	appendNewTagToItem(itemAt(pos));	});
     menu->exec(globalPos);
+    delete menu;
 }
 
 
@@ -95,7 +103,97 @@ void FilesContainer::sortAndPin() {
 }
 
 void FilesContainer::removeItem(QListWidgetItem* item) {
+    if (!item) return;
     emit removedItem(real(item)->element());
     delete takeItem(row(item));
 }
+
+
+
+void FilesContainer::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasText() && count() > 0)
+        event->accept();
+    else
+        event->ignore();
+}
+
+
+void FilesContainer::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (event->mimeData()->hasText()) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
+
+
+void FilesContainer::dropEvent(QDropEvent *event)
+{
+    if (event->mimeData()->hasText()) {
+        if (count() == 0) return;
+        QPoint pos = event->pos();
+        FileItem* item = real(itemAt(pos));
+        if (!item) return;
+
+        const QString tag = event->mimeData()->text();
+        const QString actionText = QString("Add the tag '") + tag + QString("'");
+
+        // context menu
+        QMenu* menu = new QMenu;
+        menu->addAction(actionText, this, [=](){	appendTagToItem(tag, item);		});
+        menu->exec(mapToGlobal( event->pos()) );
+
+        delete menu;
+
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+
+    } else
+        event->ignore();
+}
+
+
+void FilesContainer::appendTagToItem(const QString& tag, FileItem* item) {
+    if (!item) return;
+    item->element()->appendTag( tag.toStdString() );
+    emit elementChanged(item->element());
+    item->setText(QString::fromStdString(item->element()->title()));
+}
+
+
+void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
+    const QString lb = "Write the new Tag to append";
+    QString tag = QInputDialog::getText(this, "Append New Tag",
+                                         lb,
+                                         QLineEdit::Normal);
+    if (tag.isEmpty()) return;
+    appendTagToItem(tag, real(item));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

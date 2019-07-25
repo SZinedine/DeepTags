@@ -6,8 +6,6 @@
 #include <vector>
 #include <filesystem>
 
-// key value regex : ^(title|tags|pinned|favorited):\s[\"\'\[]?(.+)[\"\'\]]?[\n|\r|\r\n]
-
 namespace fs = std::filesystem;
 
 class Element;
@@ -22,7 +20,7 @@ public:
     ElementAbstract();
     ElementAbstract(const fs::path& path, const std::string& title, const Tags tags, const bool& pinned=false, const bool& favorited=false);
     ElementAbstract(const ElementAbstract& other);
-    virtual ~ElementAbstract(){}
+    ~ElementAbstract(){}
 
     // accessers
     inline fs::path path() 		const	{	return m_path;		}
@@ -36,8 +34,6 @@ public:
     inline void setTags(const Tags &tags)			{	m_tags = tags;		}
     inline void setPinned(const bool &pinned)		{	m_pinned = pinned;	}
     inline void setFavorited(const bool& favorited)	{	m_favorited = favorited;}
-
-
 
 private:
     void setup(const fs::path& path, const std::string& title, const Tags tags, const bool& pinned=false, const bool& favorited=false);

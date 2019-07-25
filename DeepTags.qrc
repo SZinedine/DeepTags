@@ -2,5 +2,11 @@
     <qresource prefix="/">
         <file>images/icon128.png</file>
         <file>images/icon256.png</file>
+        <file>images/collapse.png</file>
+        <file>images/expand.png</file>
+        <file>images/addFile.png</file>
+        <file>images/addFolder.png</file>
+        <file>images/quit.png</file>
+        <file>images/spinner.gif</file>
     </qresource>
 </RCC>

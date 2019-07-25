@@ -11,7 +11,7 @@ class FilesContainer : public QListWidget
     Q_OBJECT
 public:
     explicit FilesContainer(QWidget *parent=nullptr);
-
+    ~FilesContainer() override;
     static inline FileItem* real(QListWidgetItem* item)	{	return dynamic_cast<FileItem*>(item);	}
 
 public slots:
@@ -20,16 +20,22 @@ public slots:
     void showContextMenu(const QPoint& p);
     void clearView();
     void removeItem(QListWidgetItem* item);
+    void appendTagToItem(const QString& tag, FileItem* item);
+    void appendNewTagToItem(QListWidgetItem* item);
 
 private:
-    void mousePressEvent(QMouseEvent *event);		// to capture right clicks
-    void sortAndPin();								// pin the necessary files
+    void mousePressEvent(QMouseEvent *event) override;		// to capture right clicks
+    void sortAndPin();										// pin the necessary files
     void addFile(Element* item);
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 signals:
     void rightClick(QPoint pos);
     void numberOfElementsChanged();
     void removedItem(Element* item);
+    void elementChanged(Element* element);
 };
 
 #endif // FILESCONTAINER_H

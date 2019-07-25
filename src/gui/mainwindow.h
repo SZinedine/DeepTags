@@ -60,6 +60,7 @@ private:
     QPushButton* expandButton;
     QPushButton* collapseButton;
     QLabel* nbFiles;
+    QLabel* spinnerLabel;
     QMenu* menuFile;
         QAction* loadDirAction;
         QAction* loadFileAction;

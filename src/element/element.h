@@ -3,7 +3,6 @@
 
 #include "elementabstract.h"
 
-
 class Element : public ElementAbstract
 {
 public:
@@ -12,16 +11,28 @@ public:
     Element(const Element& other);
 
     static ElementsList construct_list_elements(const PathsList& f);
-    inline void reload() {  setup( path() );  }
+    inline void reload() 						{  	setup( path() );  				}
+    inline bool equalTo(Element* e) const		{	return ( m_path == e->m_path);	}
+    inline bool equalTo(const Element& e)const	{	return ( m_path == e.m_path);	}
 
+    /**
+     * check if a file has a Notable like header
+     */
     static bool hasHeader(const fs::path& fi);
+    /**
+     * how many header items a file has
+     */
+    static int nbItemsInHeader(const fs::path& fi);
     /**
      * get the header of a file, each line in a string
      * and everything in a vector of strings.
      * NOTE: a header is the lines inside two lines of "---"
      */
     static StringList getHeader(const fs::path fi);
-    static bool isMD(const fs::path &f);		// verify if the file has a markdown extension
+    /**
+     * verify if the file has a markdown extension
+     */
+    static bool isMD(const fs::path &f);
     /**
      * scans all the files of a directory and return the markdown files inside a list of paths
      */
@@ -38,19 +49,18 @@ public:
     /** Extract the title from a string in this form: "title: this is the title"
      */
     static std::string extract_title(const std::string& tit);
-
     /**
      * receives : "pinned: true"
      * returns  : bool(true)
      */
     static bool extract_pinned(const std::string& pi);
     static bool extract_favorited(const std::string& fav);
-    /* receive this:
+    /**
+     * receive this:
      * "tags: [Notebooks/sheets/random, status/infinite, type/all]"
      * return the items between braquets and put them in a vector of strings
      */
     static StringList extract_tags(const std::string& s);
-
     /**
      * split a single string into particles and return them in a vector of strings
      * for example:
@@ -78,7 +88,6 @@ public:
     /* functions that receives the list of header lines
      * each of them is designed to find a particular line
      ********************************************************/
-
     /**
      * search in a list of headers (returned by getHeader) for the line "title:"
      * and return the title (using extract_title)
@@ -86,7 +95,7 @@ public:
     static std::string find_title_inheader(const StringList& header);
     /**
      * search in a list of headers (returned by getHeader) for the line "tags:"
-     * and return the title (using extract_ta)
+     * and return it
      */
     static std::string find_tags_inheader(const StringList& header);
     /**
@@ -99,16 +108,46 @@ public:
      * and return the title (using extract_favorited)
      */
     static std::string find_favorite_inheader(const StringList& header);
-
-    
     /**
      * remove trailing spaces
      * found in: https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
      */
     static void trim(std::string &s);
 
+    bool operator==(const Element& other) { return equalTo(other); }
+
+
+    /**********************************
+     * writing methods				  *
+     **********************************/
+
+    /**
+     * receives: {"Notebooks", "summaries", "history"}
+     * returns:  "Notebooks/summaries/history"
+     */
+    static std::string combineTags(const StringList& chain);
+    /**
+     * receives: ["shallow/deep", "something/nothing"
+     * returns : "tags: [shallow/deep, something/nothing]"
+     * it returns a string writable into a file to replace its previous tag
+     */
+    void combineTagsIntoString(const StringList& tgs);
+    /**
+     * abstraction function to append a tag into a file
+     */
+    bool appendTag(const std::string& tag);
+    bool findReplace(const std::string& old_str, const std::string& new_str);
+    /**
+     * don't add the basic tags
+     */
+    bool validTagToAdd(const std::string& tag);
+
+
 private:
-    void setup(const fs::path& path);	// construct the object by calling all the appropriate functions
+    /**
+     * construct the object (this) by calling all the appropriate functions
+     */
+    void setup(const fs::path& path);
     /**
      * Some lines are surrounded with quotations,
      * call this function on every title to remove them
@@ -118,7 +157,5 @@ private:
     static void rtrim(std::string &s);
 };
 
-bool operator==(const Element& first, const Element& second);
-bool operator!=(const Element& first, const Element& second);
 
 #endif // Element_H
