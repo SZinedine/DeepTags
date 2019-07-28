@@ -9,14 +9,13 @@
 #include <QLabel>
 #include <QString>
 #include <QSplitter>
+#include <QLineEdit>
 #include "tagscontainer.h"
 #include "filescontainer.h"
-#include "opendirs.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     MainWindow(QWidget *parent=nullptr);
     void closeEvent(QCloseEvent* event);
@@ -26,7 +25,7 @@ private:
     void setupLayout();
     void setupMenu();
     void setupSignals();
-    void load();
+    void load();								// open saved files and always openning dirs at startup
     void loadDir();								// open the files of a directory from the filesystem
     void loadFiles();							// open files from the filesystem
     void saveOpenedFiles();						// save the opened files to open in the next start
@@ -43,9 +42,11 @@ private:
     void askForMarkdownEditor();				// ask the user to input the markdown editor with which the files will be opened when clicked on
     void openDirsDialog();						// open OpenDir and ask the user for directory paths to open on every startup
     void openAlwaysOpeningDirs();				// open the directories saved by OpenDirs
+    void newFiles();							// open ElementDialog to create a new file by asking the user for information about the file
+    void search();								// called everytime the user write in the search LineEdit. it searches in titles of loaded files and displays them
+    void about();								// displays a dialog with the author information in it
     inline void openElements(const ElementsList& els)	{	tagsContainer->addElements(els);		}
     inline void changeNumberOfFilesLabel()				{	nbFiles->setText(QString( QString::number(filesContainer->count()) + QString(" files") ));					}
-    void about();								// displays a dialog with the author information in it
 
 signals:
     void started();								// emited at the en of the constructor
@@ -54,14 +55,15 @@ private:
     TagsContainer *tagsContainer;
     FilesContainer* filesContainer;
     QSplitter* splitter;
-    OpenDirs* openDirs;
     QPushButton* clearTagsButton;
     QPushButton* reloadButton;
+    QLineEdit* searchLineEdit;
     QPushButton* expandButton;
     QPushButton* collapseButton;
     QLabel* nbFiles;
     QLabel* spinnerLabel;
     QMenu* menuFile;
+        QAction* newFileAction;
         QAction* loadDirAction;
         QAction* loadFileAction;
         QAction* quitAction;

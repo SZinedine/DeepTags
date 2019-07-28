@@ -21,7 +21,9 @@ public slots:
     void clearView();
     void removeItem(QListWidgetItem* item);
     void appendTagToItem(const QString& tag, FileItem* item);
+    void overrideTags(const StringList& tags, FileItem* item);
     void appendNewTagToItem(QListWidgetItem* item);
+    void editElement(QListWidgetItem* item);
 
 private:
     void mousePressEvent(QMouseEvent *event) override;		// to capture right clicks

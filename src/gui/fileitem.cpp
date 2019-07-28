@@ -11,5 +11,5 @@ FileItem::FileItem(Element* element, FilesContainer* parent)
 
 void FileItem::setElement(Element *element) {
     m_element = element;
-    setText( QString::fromStdString(element->title()) );
+    setLabel(m_element->title());
 }

@@ -9,9 +9,11 @@
 #include <QDebug>
 #include <QStatusBar>
 #include <QMessageBox>
-#include "../element/element.h"
 #include <QGridLayout>
 #include <QMovie>
+#include "../element/element.h"
+#include "opendirs.h"
+#include "elementdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -42,6 +44,10 @@ void MainWindow::setupCentral() {
     reloadButton = new QPushButton("Reload", this);
     reloadButton->setToolTip("Reload current files");
     reloadButton->setMaximumWidth(60);
+
+    searchLineEdit = new QLineEdit;
+    searchLineEdit->setMaximumWidth(200);
+    searchLineEdit->setPlaceholderText("Search");
 
     expandButton = new QPushButton(QIcon(":images/expand.png"), "", this);
     expandButton->setToolTip("Expand All ");
@@ -86,12 +92,39 @@ void MainWindow::setupLayout() {
     QHBoxLayout *above = new QHBoxLayout;
     above->addWidget(clearTagsButton);
     above->addWidget(reloadButton);
-    above->addSpacing(200);
     above->setAlignment(Qt::AlignLeft);
+
+    QHBoxLayout* srchLayout = new QHBoxLayout;
+    srchLayout->addWidget(searchLineEdit);
+    srchLayout->setAlignment(Qt::AlignRight);
+    above->addLayout(srchLayout);
+
     //
     layout->addLayout(above, 0, 1, Qt::AlignLeft);
     layout->addLayout(colLayout, 1, 0);
     layout->addWidget(splitter, 1, 1, 7, 7);
+}
+
+void MainWindow::setupMenu() {
+    menuFile 			= new QMenu;
+    menuFile = menuBar()->addMenu("File");
+    newFileAction		= new QAction(QIcon(":images/newFile.png"), "New File", this);
+    loadDirAction 		= new QAction(QIcon(":images/addFolder.png"), "Load Directory", this);
+    loadFileAction 		= new QAction(QIcon(":images/addFile.png"), "Load a File", this);
+    quitAction 			= new QAction(QIcon(":images/quit.png"), "Quit", this);
+    menuFile->addActions({newFileAction, loadDirAction, loadFileAction, quitAction});
+
+    menuEdit 			= new QMenu;
+    setMdReaderAction 	= new QAction("Set MarkDown Reader");
+    setAlwaysOpeningDirsAction = new QAction("Set Always Opening Directories on Startup");
+    menuEdit = menuBar()->addMenu("Edit");
+    menuEdit->addAction(setMdReaderAction);
+    menuEdit->addAction(setAlwaysOpeningDirsAction);
+
+    menuHelp 			= new QMenu;
+    aboutAction			= new QAction("About");
+    menuHelp = menuBar()->addMenu("Help");
+    menuHelp->addAction(aboutAction);
 }
 
 void MainWindow::setupSignals() {
@@ -104,6 +137,8 @@ void MainWindow::setupSignals() {
     connect(clearTagsButton, 	&QPushButton::clicked, 			tagsContainer, 		&TagsContainer::init		);
     connect(clearTagsButton, 	&QPushButton::clicked, 			filesContainer,		&FilesContainer::clearView	);
     connect(reloadButton, 		&QPushButton::clicked, 			this, 				[=](){  reloadContent();}	);
+    connect(searchLineEdit, 	&QLineEdit::textEdited,			this, 				[=](){  search();}	);
+    connect(newFileAction, 		&QAction::triggered, 			this, 				[=](){  newFiles();		}	);
     connect(loadDirAction, 		&QAction::triggered, 			this, 				[=](){  loadDir(); 		}	);
     connect(loadFileAction, 	&QAction::triggered, 			this, 				[=](){  loadFiles();	}	);
     connect(quitAction, 		&QAction::triggered, 			this, 				&QMainWindow::close	 		);
@@ -132,27 +167,6 @@ void MainWindow::setupSignals() {
         loadFileAction->setDisabled(false);
         setAlwaysOpeningDirsAction->setDisabled(false);
     });
-}
-
-void MainWindow::setupMenu() {
-    menuFile 			= new QMenu;
-    menuFile = menuBar()->addMenu("File");
-    loadDirAction 		= new QAction(QIcon(":images/addFolder.png"), "Load Directory", this);
-    loadFileAction 		= new QAction(QIcon(":images/addFile.png"), "Load a File", this);
-    quitAction 			= new QAction(QIcon(":images/quit.png"), "Quit", this);
-    menuFile->addActions({loadDirAction, loadFileAction, quitAction});
-
-    menuEdit 			= new QMenu;
-    setMdReaderAction 	= new QAction("Set MarkDown Reader");
-    setAlwaysOpeningDirsAction = new QAction("Set Always Opening Directories on Startup");
-    menuEdit = menuBar()->addMenu("Edit");
-    menuEdit->addAction(setMdReaderAction);
-    menuEdit->addAction(setAlwaysOpeningDirsAction);
-
-    menuHelp 			= new QMenu;
-    aboutAction			= new QAction("About");
-    menuHelp = menuBar()->addMenu("Help");
-    menuHelp->addAction(aboutAction);
 }
 
 
@@ -197,6 +211,16 @@ void MainWindow::saveOpenedFiles() {
     s.endGroup();
 }
 
+void MainWindow::loadOpenedFiles() {
+
+    // get the saved StringList of filepaths
+    QSettings s;
+    s.beginGroup("paths");
+    const QStringList strl = s.value("filepaths").toStringList();
+    s.endGroup();
+    if (!strl.empty()) openStringListPaths(strl);
+}
+
 void MainWindow::saveUiSettings() {
     QSettings s;
     s.beginGroup("Main");
@@ -211,22 +235,6 @@ void MainWindow::loadUiSettings() {
     splitter->restoreState(s.value("splitterSizes").toByteArray());
     resize(s.value("windowsize").toSize());
     s.endGroup();
-}
-
-void MainWindow::loadOpenedFiles() {
-
-    // get the saved StringList of filepaths
-    QSettings s;
-    s.beginGroup("paths");
-    const QStringList strl = s.value("filepaths").toStringList();
-    s.endGroup();
-    if (!strl.empty()) openStringListPaths(strl);
-}
-
-
-void MainWindow::closeEvent(QCloseEvent *event) {
-    saveOpenedFiles();
-    event->accept();
 }
 
 
@@ -255,6 +263,15 @@ void MainWindow::saveLastDir(const QString &complete) {
 }
 
 
+
+void MainWindow::saveLastFile(const QString &complete) {
+    QSettings s;
+    s.beginGroup("Main");
+    s.setValue("DirLastOpenedFile", QVariant(complete));
+    s.endGroup();
+}
+
+
 QString MainWindow::getLastDir() const {
     QSettings s;
     s.beginGroup("Main");
@@ -263,13 +280,6 @@ QString MainWindow::getLastDir() const {
     return (d.isEmpty()) ? QDir::homePath() : d;
 }
 
-
-void MainWindow::saveLastFile(const QString &complete) {
-    QSettings s;
-    s.beginGroup("Main");
-    s.setValue("DirLastOpenedFile", QVariant(complete));
-    s.endGroup();
-}
 
 QString MainWindow::getLastFile() const {
     QSettings s;
@@ -281,6 +291,15 @@ QString MainWindow::getLastFile() const {
 }
 
 
+
+void MainWindow::reloadContent() {
+    QStringList lst = currentPaths();
+    tagsContainer->clear();
+    filesContainer->clearView();
+    tagsContainer->createBasicTags();
+    openStringListPaths(lst);
+}
+
 void MainWindow::openStringListPaths(const QStringList& strlist) {
     ElementsList res;
 
@@ -290,15 +309,6 @@ void MainWindow::openStringListPaths(const QStringList& strlist) {
     }
 
     openElements(res);
-}
-
-
-void MainWindow::reloadContent() {
-    QStringList lst = currentPaths();
-    tagsContainer->clear();
-    filesContainer->clearView();
-    tagsContainer->createBasicTags();
-    openStringListPaths(lst);
 }
 
 
@@ -342,6 +352,41 @@ void MainWindow::openAlwaysOpeningDirs() {
 }
 
 
+void MainWindow::newFiles() {
+    ElementDialog* dialog = new ElementDialog(this);
+    auto out = dialog->exec();
+    if (out == ElementDialog::Rejected) return;
+
+    Element * e = new Element(dialog->path());
+    ElementsList lst;
+    if (!e) return;
+    lst.push_back(e);
+    openElements(lst);
+}
+
+
+void MainWindow::search() {
+    auto lower = [](const std::string s) { 	// to lower case
+        return QString::fromStdString(s).toLower().toStdString();
+    };
+    filesContainer->clear();
+    if (searchLineEdit->text().isEmpty())
+        return;
+    tagsContainer->clearSelection();
+
+    std::string keyword = searchLineEdit->text().toLower().toStdString();
+    auto* lst = TagsContainer::real( tagsContainer->topLevelItem(0) )->elements();
+    QVector<Element*>* res = new QVector<Element*>();
+
+    for (Element* e : *lst)	// search the "All Notes" elements' titles to find matches for the keyword
+        if (lower( e->title() ).find(keyword) != std::string::npos )
+            res->push_back(e);
+
+    filesContainer->addFiles(res);		// display the results
+}
+
+
+
 void MainWindow::about() {
     QString str = "";
     str.append("<br><b>Name: </b>DeepTags<br>");
@@ -351,5 +396,13 @@ void MainWindow::about() {
     str.append("<b>E-mail: </b> saibi.zineddine@yahoo.com<br>");
     str.append("<b>website: </b> https://github.com/SZinedine <br>");
     QMessageBox::about(this, "About", str);
+}
+
+
+
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    saveOpenedFiles();
+    event->accept();
 }
 

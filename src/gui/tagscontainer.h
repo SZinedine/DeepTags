@@ -26,7 +26,10 @@ public:
     void selected();			// if multiple tags are selected, construct a list of Elements they share and send it to FilesContainer
 
 public slots:
-    void init();		// remove all the tags and create the basic ones
+    /**
+     * remove all the tags and create the basic ones
+     */
+    void init();
     void removeElement(Element* element);
     void reloadElement(Element* element);
 

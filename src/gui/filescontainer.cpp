@@ -9,6 +9,7 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QInputDialog>
+#include "elementdialog.h"
 
 FilesContainer::FilesContainer(QWidget *parent)
     : QListWidget(parent)
@@ -80,6 +81,7 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     QMenu* menu = new QMenu;
     menu->addAction("Open",   this, 	[=](){ 	openFile(itemAt(pos)); 		});
     menu->addAction("Remove", this,		[=](){	removeItem(itemAt(pos)); 	});
+    menu->addAction("edit", this,		[=](){	editElement(itemAt(pos)); 	});
     menu->addAction("Add a new tag", this, [=](){	appendNewTagToItem(itemAt(pos));	});
     menu->exec(globalPos);
     delete menu;
@@ -164,6 +166,15 @@ void FilesContainer::appendTagToItem(const QString& tag, FileItem* item) {
 }
 
 
+void FilesContainer::overrideTags(const StringList& tags, FileItem* item) {
+    if (!item) return;
+    item->element()->overrideTags(tags);
+    item->setText(QString::fromStdString(item->element()->title()));
+    item->element()->reload();
+    emit elementChanged(item->element());
+}
+
+
 void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
     const QString lb = "Write the new Tag to append";
     QString tag = QInputDialog::getText(this, "Append New Tag",
@@ -171,10 +182,26 @@ void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
                                          QLineEdit::Normal);
     if (tag.isEmpty()) return;
     appendTagToItem(tag, real(item));
+    real(item)->element()->reload();
+    emit elementChanged(real(item)->element());
 }
 
 
 
+void FilesContainer::editElement(QListWidgetItem* item) {
+    if (!item) return;
+    FileItem* it = real(item);
+    Element* e = it->element();
+    ElementDialog* edit = new ElementDialog(e, this);
+    const auto out = edit->exec();
+    if (out == ElementDialog::Rejected) return;
+
+    e->changeTitle(edit->title());
+    e->changePinned(edit->pinned());
+    e->changeFavorited(edit->favorited());
+    it->setLabel(e->title());
+    overrideTags(edit->tags(), it);
+}
 
 
 

@@ -1,7 +1,7 @@
 #include "gui/mainwindow.h"
 #include <QApplication>
 
-#define VERSION "0.2"
+#define VERSION "0.3"
 #define TITLEBAR "DeepTags v."
 #define NAME "DeepTags"
 #define WEBSITE "https://github.com/SZinedine"
