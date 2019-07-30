@@ -20,12 +20,14 @@ FilesContainer::FilesContainer(QWidget *parent)
     connect(this, &FilesContainer::rightClick, this, &FilesContainer::showContextMenu);
     setAcceptDrops(true);
     setDropIndicatorShown(true);
+    setItemDelegate(new CustomDelegateListWidget(this));
+    setIconSize(QSize(35, 20));
 }
 
 FilesContainer::~FilesContainer() { clear(); }
 
 void FilesContainer::addFile(Element* item) {
-    FileItem *f = new FileItem(item);
+    auto *f = new FileItem(item);
     addItem(f);
 }
 
@@ -51,8 +53,8 @@ void FilesContainer::openFile(QListWidgetItem* item) {
     s.endGroup();
 
     if (prog.isEmpty()) {	// warning and abort if the reader isn't set
-        QMessageBox::warning(parentWidget(), "Error",
-                             "You haven't set the Markdown Editor app.");
+        QMessageBox::warning(parentWidget(), tr("Error"),
+                             tr("You haven't set the Markdown Editor app."));
         return;
     }
 
@@ -69,6 +71,7 @@ void FilesContainer::openFile(QListWidgetItem* item) {
 void FilesContainer::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::RightButton) {
         QPoint qp(event->pos());
+        setCurrentItem( itemAt(qp) );		// select when right clicked
         emit rightClick(qp);
     }
     else QListWidget::mousePressEvent(event);
@@ -77,18 +80,49 @@ void FilesContainer::mousePressEvent(QMouseEvent *event) {
 void FilesContainer::showContextMenu(const QPoint& pos) {
     if (count() == 0) return;
     QPoint globalPos = mapToGlobal(pos);
+    QListWidgetItem* item = itemAt(pos);
+    if (!item) return;
+    FileItem* real_it = real(item);
+    auto abstraction = [=](){
+        real_it->element()->reload();
+        real_it->reload();
+        emit elementChanged(real_it->element());
+        sortAndPin();
+    };
+
+    QAction* pin = new QAction(tr("Pin to Top"));
+    QAction* fav = new QAction(tr("Favorite"));
+    pin->setCheckable(true);
+    fav->setCheckable(true);
+    pin->setChecked(real_it->pinned());
+    fav->setChecked(real_it->favorited());
+
+    connect(pin, &QAction::triggered, this, [=](){
+        real_it->element()->changePinned(pin->isChecked());
+        abstraction();
+    });
+    connect(fav, &QAction::triggered, this, [=](){
+        real_it->element()->changeFavorited(fav->isChecked());
+        abstraction();
+    });
 
     QMenu* menu = new QMenu;
-    menu->addAction("Open",   this, 	[=](){ 	openFile(itemAt(pos)); 		});
-    menu->addAction("Remove", this,		[=](){	removeItem(itemAt(pos)); 	});
-    menu->addAction("edit", this,		[=](){	editElement(itemAt(pos)); 	});
-    menu->addAction("Add a new tag", this, [=](){	appendNewTagToItem(itemAt(pos));	});
+    menu->addAction(tr("Open"),   this, 	[=](){ 	openFile(item); 		});
+    menu->addAction(tr("Remove"), this,		[=](){	removeItem(item); 	});
+    menu->addAction(tr("Edit"), this,		[=](){	editElement(item); 	});
+    menu->addSeparator();
+    menu->addAction(tr("Add a new tag"), this, [=](){	appendNewTagToItem(item);	});
+    menu->addAction(pin);
+    menu->addAction(fav);
     menu->exec(globalPos);
     delete menu;
+    delete pin;
+    delete fav;
 }
 
 
 void FilesContainer::sortAndPin() {
+    QListWidgetItem* current = currentItem();
     sortItems(Qt::AscendingOrder);
 
     QVector<int> pinned;
@@ -102,6 +136,7 @@ void FilesContainer::sortAndPin() {
         insertItem(index, item);
         index++;
     }
+    if (current) setCurrentItem(current);
 }
 
 void FilesContainer::removeItem(QListWidgetItem* item) {
@@ -139,15 +174,15 @@ void FilesContainer::dropEvent(QDropEvent *event)
         QPoint pos = event->pos();
         FileItem* item = real(itemAt(pos));
         if (!item) return;
+        setCurrentItem(item);
 
         const QString tag = event->mimeData()->text();
-        const QString actionText = QString("Add the tag '") + tag + QString("'");
+        const QString actionText = QString(tr("Add the tag") + QString(" '") + tag + QString("'"));
 
         // context menu
         QMenu* menu = new QMenu;
         menu->addAction(actionText, this, [=](){	appendTagToItem(tag, item);		});
         menu->exec(mapToGlobal( event->pos()) );
-
         delete menu;
 
         event->setDropAction(Qt::CopyAction);
@@ -176,8 +211,8 @@ void FilesContainer::overrideTags(const StringList& tags, FileItem* item) {
 
 
 void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
-    const QString lb = "Write the new Tag to append";
-    QString tag = QInputDialog::getText(this, "Append New Tag",
+    const QString lb = tr("Write the new Tag to append");
+    QString tag = QInputDialog::getText(this, tr("Append New Tag"),
                                          lb,
                                          QLineEdit::Normal);
     if (tag.isEmpty()) return;
@@ -192,31 +227,28 @@ void FilesContainer::editElement(QListWidgetItem* item) {
     if (!item) return;
     FileItem* it = real(item);
     Element* e = it->element();
-    ElementDialog* edit = new ElementDialog(e, this);
+    auto *edit = new ElementDialog(e, this);
     const auto out = edit->exec();
     if (out == ElementDialog::Rejected) return;
 
     e->changeTitle(edit->title());
     e->changePinned(edit->pinned());
     e->changeFavorited(edit->favorited());
-    it->setLabel(e->title());
+    it->reload();
     overrideTags(edit->tags(), it);
+    sortAndPin();
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+FileItem* FilesContainer::itemFromPath(const fs::path& path) {
+    for (int i = 0 ; i < count() ; i++) {
+        FileItem* current = real(item(i));
+        if (current->path() == path) return current;
+    }
+    return nullptr;
+}
 
 
 

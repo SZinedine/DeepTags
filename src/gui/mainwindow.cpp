@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::setupCentral() {
-    QWidget* widget = new QWidget;
+    auto* widget = new QWidget;
     setCentralWidget(widget);
 
     tagsContainer = new TagsContainer;
@@ -38,21 +38,21 @@ void MainWindow::setupCentral() {
     splitter = new QSplitter;
     splitter->setChildrenCollapsible(false);
 
-    clearTagsButton = new QPushButton("clear", this);
-    clearTagsButton->setToolTip("Clear All files");
+    clearTagsButton = new QPushButton(tr("clear"), this);
+    clearTagsButton->setToolTip(tr("Clear All files"));
     clearTagsButton->setMaximumWidth(60);
-    reloadButton = new QPushButton("Reload", this);
-    reloadButton->setToolTip("Reload current files");
+    reloadButton = new QPushButton(tr("Reload"), this);
+    reloadButton->setToolTip(tr("Reload current files"));
     reloadButton->setMaximumWidth(60);
 
     searchLineEdit = new QLineEdit;
     searchLineEdit->setMaximumWidth(200);
-    searchLineEdit->setPlaceholderText("Search");
+    searchLineEdit->setPlaceholderText(tr("Search"));
 
     expandButton = new QPushButton(QIcon(":images/expand.png"), "", this);
-    expandButton->setToolTip("Expand All ");
+    expandButton->setToolTip(tr("Expand All"));
     collapseButton = new QPushButton(QIcon(":images/collapse.png"), "", this);
-    collapseButton->setToolTip("Collapse All");
+    collapseButton->setToolTip(tr("Collapse All"));
     expandButton->setMaximumWidth(30);
     collapseButton->setMaximumWidth(30);
 
@@ -61,7 +61,7 @@ void MainWindow::setupCentral() {
     statusB->addPermanentWidget(nbFiles);
 
     spinnerLabel = new QLabel;
-    QMovie *movie = new QMovie(":images/spinner.gif");
+    auto *movie = new QMovie(":images/spinner.gif");
     spinnerLabel->setMovie(movie);
     movie->setScaledSize(QSize(20, 20));
     movie->start();
@@ -80,7 +80,7 @@ void MainWindow::setupLayout() {
     splitter->addWidget(tagsContainer);
     splitter->addWidget(filesContainer);
 
-    QVBoxLayout* colLayout = new QVBoxLayout;
+    auto *colLayout = new QVBoxLayout;
     colLayout->addWidget(expandButton);
     colLayout->addWidget(collapseButton);
     colLayout->setAlignment(Qt::AlignTop);
@@ -89,12 +89,12 @@ void MainWindow::setupLayout() {
     collapseButton->setContentsMargins(0, 0, 0, 0);
 
     // widgets above the containers
-    QHBoxLayout *above = new QHBoxLayout;
+    auto *above = new QHBoxLayout;
     above->addWidget(clearTagsButton);
     above->addWidget(reloadButton);
     above->setAlignment(Qt::AlignLeft);
 
-    QHBoxLayout* srchLayout = new QHBoxLayout;
+    auto *srchLayout = new QHBoxLayout;
     srchLayout->addWidget(searchLineEdit);
     srchLayout->setAlignment(Qt::AlignRight);
     above->addLayout(srchLayout);
@@ -107,32 +107,39 @@ void MainWindow::setupLayout() {
 
 void MainWindow::setupMenu() {
     menuFile 			= new QMenu;
-    menuFile = menuBar()->addMenu("File");
-    newFileAction		= new QAction(QIcon(":images/newFile.png"), "New File", this);
-    loadDirAction 		= new QAction(QIcon(":images/addFolder.png"), "Load Directory", this);
-    loadFileAction 		= new QAction(QIcon(":images/addFile.png"), "Load a File", this);
-    quitAction 			= new QAction(QIcon(":images/quit.png"), "Quit", this);
+    menuFile = menuBar()->addMenu(tr("&File"));
+    newFileAction		= new QAction(QIcon(":images/newFile.png"), tr("&New File"), this);
+    loadDirAction 		= new QAction(QIcon(":images/addFolder.png"), tr("Import Directory"), this);
+    loadFileAction 		= new QAction(QIcon(":images/addFile.png"), tr("Import File"), this);
+    quitAction 			= new QAction(QIcon(":images/quit.png"), tr("&Quit"), this);
     menuFile->addActions({newFileAction, loadDirAction, loadFileAction, quitAction});
 
     menuEdit 			= new QMenu;
-    setMdReaderAction 	= new QAction("Set MarkDown Reader");
-    setAlwaysOpeningDirsAction = new QAction("Set Always Opening Directories on Startup");
+    setMdReaderAction 	= new QAction(tr("Set MarkDown Reader"));
+    setAlwaysOpeningDirsAction = new QAction(tr("Set Always Opening Directories on Startup"));
     menuEdit = menuBar()->addMenu("Edit");
     menuEdit->addAction(setMdReaderAction);
     menuEdit->addAction(setAlwaysOpeningDirsAction);
 
     menuHelp 			= new QMenu;
-    aboutAction			= new QAction("About");
-    menuHelp = menuBar()->addMenu("Help");
+    aboutAction			= new QAction(tr("&About"));
+    menuHelp = menuBar()->addMenu(tr("Help"));
     menuHelp->addAction(aboutAction);
 }
 
 void MainWindow::setupSignals() {
+    // when the current tag is removed from a file, the vie
+    // it is important that this function remains in this place
+    // commented because weird things happen
+//    connect(filesContainer,		&FilesContainer::elementChanged,this,				[=](){
+//        auto elements = tagsContainer->real(tagsContainer->currentItem())->elements();
+//        filesContainer->addFiles(elements);
+//    } );
     connect(tagsContainer, 		&TagsContainer::itemSelected, 	filesContainer, 	&FilesContainer::addFiles	);
     connect(tagsContainer, 		&TagsContainer::itemSelected, 	this, 				[=](){	changeNumberOfFilesLabel();	}  	);
     connect(filesContainer, 	&FilesContainer::numberOfElementsChanged,this, 		[=](){	changeNumberOfFilesLabel();	}  	);
     connect(filesContainer, 	&FilesContainer::removedItem,	tagsContainer, 		&TagsContainer::removeElement);
-    connect(filesContainer,		&FilesContainer::elementChanged,	tagsContainer,		&TagsContainer::reloadElement);
+    connect(filesContainer,		&FilesContainer::elementChanged,tagsContainer,		&TagsContainer::reloadElement);
     connect(splitter,			&QSplitter::splitterMoved,		this,				[=](){	saveUiSettings();});
     connect(clearTagsButton, 	&QPushButton::clicked, 			tagsContainer, 		&TagsContainer::init		);
     connect(clearTagsButton, 	&QPushButton::clicked, 			filesContainer,		&FilesContainer::clearView	);
@@ -147,8 +154,8 @@ void MainWindow::setupSignals() {
     connect(aboutAction,		&QAction::triggered,			this,				&MainWindow::about			);
     connect(this,				&MainWindow::started,			this,				&MainWindow::load,
             Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection) );
-    connect(expandButton,		&QPushButton::clicked,			tagsContainer,		&TagsContainer::expandAll	);
-    connect(collapseButton,		&QPushButton::clicked,			tagsContainer,		&TagsContainer::collapseAll	);
+    connect(expandButton,		&QPushButton::clicked,			tagsContainer,		&TagsContainer::expandItems	);
+    connect(collapseButton,		&QPushButton::clicked,			tagsContainer,		&TagsContainer::collapseItems);
     // show the spinner in the status bar when the files are loading
     connect(tagsContainer,		&TagsContainer::loadingFiles,	this,				[=](){  spinnerLabel->setVisible(true);});
     connect(tagsContainer,		&TagsContainer::filesLoaded,	spinnerLabel,		&QLabel::hide				);
@@ -174,6 +181,7 @@ void MainWindow::load() {
     qApp->processEvents();
     openAlwaysOpeningDirs();
     loadOpenedFiles();
+    tagsContainer->loadCollapseOrExpand();		// remember if the items are expanded/collapsed the last time
 }
 
 void MainWindow::loadDir() {
@@ -188,7 +196,7 @@ void MainWindow::loadDir() {
 
 
 void MainWindow::loadFiles() {
-    QStringList files = QFileDialog::getOpenFileNames(this, QString("Open Files"), getLastFile());
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Files"), getLastFile());
     if (files.isEmpty()) return;
 
     ElementsList elements;
@@ -247,7 +255,7 @@ QStringList MainWindow::currentPaths() const {
     while(*it) {
         TagItem* item = TagsContainer::real(*it);
         QVector<Element*>* elements = item->elements();
-        for (Element* e : *elements) paths.append( QString(e->path().c_str()) );
+        for (Element* e : *elements) paths.append( QString(e->path().string().c_str()) );
         it++;
     }
     paths.removeDuplicates();
@@ -320,8 +328,8 @@ void MainWindow::askForMarkdownEditor() {
     ss.endGroup();
 
     // launch the dialog
-    QString prog = QInputDialog::getText(this, "Markdown Editor",
-                                         "Name/Path of the Markdown Reader to use \t\t",
+    QString prog = QInputDialog::getText(this, tr("Markdown Reader"),
+                                         tr("Name/Path of the Markdown Reader to use") + "\t\t",
                                          QLineEdit::Normal, previous);
     // save the new command
     if (prog.isEmpty()) return;
@@ -362,11 +370,12 @@ void MainWindow::newFiles() {
     if (!e) return;
     lst.push_back(e);
     openElements(lst);
+    delete dialog;
 }
 
 
 void MainWindow::search() {
-    auto lower = [](const std::string s) { 	// to lower case
+    auto lower = [](const std::string &s) { 	// to lower case
         return QString::fromStdString(s).toLower().toStdString();
     };
     filesContainer->clear();
@@ -376,13 +385,14 @@ void MainWindow::search() {
 
     std::string keyword = searchLineEdit->text().toLower().toStdString();
     auto* lst = TagsContainer::real( tagsContainer->topLevelItem(0) )->elements();
-    QVector<Element*>* res = new QVector<Element*>();
+    auto *res = new QVector<Element*>();
 
     for (Element* e : *lst)	// search the "All Notes" elements' titles to find matches for the keyword
         if (lower( e->title() ).find(keyword) != std::string::npos )
             res->push_back(e);
 
     filesContainer->addFiles(res);		// display the results
+    delete res;
 }
 
 
@@ -403,6 +413,7 @@ void MainWindow::about() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     saveOpenedFiles();
+    saveUiSettings();
     event->accept();
 }
 

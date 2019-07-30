@@ -7,6 +7,9 @@
         <file>images/addFile.png</file>
         <file>images/addFolder.png</file>
         <file>images/newFile.png</file>
+        <file>images/favorite.png</file>
+        <file>images/pin.png</file>
+        <file>images/favpin.png</file>
         <file>images/quit.png</file>
         <file>images/spinner.gif</file>
     </qresource>

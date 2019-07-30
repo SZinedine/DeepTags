@@ -30,21 +30,27 @@ public:
     /**
      * Get info
      */
-    inline std::string title() 	const	{	return m_title->text().simplified().toStdString(); 	}
-    inline bool pinned()	const		{	return m_pinned->isChecked();		}
-    inline bool favorited()	const 		{	return m_favorited->isChecked();	}
-    StringList tags() const;
-    inline Element* element() 			{	return m_element;					}
-    inline std::string path()			{	return m_path->text().toStdString();}
+    [[nodiscard]] inline std::string title()const	{	return m_title->text().simplified().toStdString(); 	}
+    [[nodiscard]] inline bool pinned()		const	{	return m_pinned->isChecked();		}
+    [[nodiscard]] inline bool favorited()	const 	{	return m_favorited->isChecked();	}
+    [[nodiscard]] StringList tags() 		const;
+    [[nodiscard]] inline Element* element() 		{	return m_element;					}
+    [[nodiscard]] inline std::string path()			{	return m_path->text().toStdString();}
 
 private:
     void setup_forEditFile();
     void setup_forNewFile();
     /**
-     * create an element and assign to it all the necessary information
+     * replaces accept() for the new file dialog
+     * saves the necessary info beforehand
      */
     void save();
-    QString getLastDir() const;
+    /**
+     * replaces accept() for the editing of files
+     * purpose: check if the file string isn't empty before saving
+     */
+    void accept_();
+    [[nodiscard]] QString getLastDir() const;
 
     Element* m_element;
     QDialogButtonBox* buttons;

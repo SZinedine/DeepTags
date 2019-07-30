@@ -8,7 +8,7 @@ class Element : public BaseElement
 {
 public:
     Element(const fs::path& path);
-    Element(const fs::path& path, const std::string& title, const Tags tags, const bool& pinned=false, const bool& favorited=false);
+    Element(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned=false, const bool& favorited=false);
     Element(const Element& other);
     bool operator==(const Element& other) { return equalTo(other); }
     inline void reload() 						{  	setup( path() );  				}
@@ -35,10 +35,10 @@ public:
     /**
      * Check if a line exists in the file's header
      */
-    inline bool hasTagsLine() const		{	return hasTagItem(path());		}
-    inline bool hasTitleLine() const	{	return hasTitleItem(m_path);	}
-    inline bool hasPinnedLine() const	{	return hasPinnedItem(m_path);	}
-    inline bool hasFavoritedLine()const {	return hasFavoritedItem(m_path);}
+    [[nodiscard]] inline bool hasTagsLine() 	const {	return hasTagItem(path());		}
+    [[nodiscard]] inline bool hasTitleLine() 	const {	return hasTitleItem(m_path);	}
+    [[nodiscard]] inline bool hasPinnedLine() 	const {	return hasPinnedItem(m_path);	}
+    [[nodiscard]] inline bool hasFavoritedLine()const {	return hasFavoritedItem(m_path);}
     /**
      * append a non existing line to the file's header
      */
@@ -63,9 +63,9 @@ public:
     /**
      * remove entirely a specific item (line) from the file's header
      */
-    inline void removePinnedLine()		{	removePinnedItemFromHeader(m_path);		}
-    inline void removeFavoritedLine()	{	removeFavoritedItemFromHeader(m_path);	}
-    inline void removeTagsLine()		{	removeTagsItemFromHeader(m_path);		}
+    void removePinnedLine();
+    void removeFavoritedLine();
+    void removeTagsLine();
 
 private:
     inline bool findReplace(const std::string& old_str, const std::string& new_str)

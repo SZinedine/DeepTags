@@ -26,7 +26,7 @@ ElementDialog::ElementDialog(Element* element, QWidget* parent)
 
 
 void ElementDialog::setup_forEditFile() {
-    QFormLayout* layout = new QFormLayout;
+    auto *layout = new QFormLayout;
     setLayout(layout);
     layout->setRowWrapPolicy(QFormLayout::DontWrapRows);
     layout->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -42,14 +42,14 @@ void ElementDialog::setup_forEditFile() {
     m_tags = new QTextEdit;
 
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    connect(buttons, &QDialogButtonBox::accepted, this, &ElementDialog::accept);
+    connect(buttons, &QDialogButtonBox::accepted, this, [=](){	accept_();	 });
     connect(buttons, &QDialogButtonBox::rejected, this, &ElementDialog::reject);
 
-    layout->addRow("File Path: ", m_path);
-    layout->addRow("Title: ", m_title);
-    layout->addRow("Pinned: ", m_pinned);
-    layout->addRow("Favorite: ", m_favorited);
-    layout->addRow("Tags: ", m_tags);
+    layout->addRow(tr("File Path: "), m_path);
+    layout->addRow(tr("Title: "), m_title);
+    layout->addRow(tr("Pinned: "), m_pinned);
+    layout->addRow(tr("Favorite: "), m_favorited);
+    layout->addRow(tr("Tags: "), m_tags);
     layout->addRow(buttons);
 
     setListOfTags();
@@ -57,14 +57,14 @@ void ElementDialog::setup_forEditFile() {
 
 
 void ElementDialog::setup_forNewFile() {
-    QFormLayout* layout = new QFormLayout;
+    auto *layout = new QFormLayout;
     setLayout(layout);
     layout->setRowWrapPolicy(QFormLayout::DontWrapRows);
     layout->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
     layout->setLabelAlignment(Qt::AlignLeft);
 
     m_title = new QLineEdit(this);
-    m_title->setText("Untitled");
+    m_title->setText(tr("Untitled"));
     m_pinned = new QCheckBox;
     m_favorited = new QCheckBox;
     m_tags = new QTextEdit;
@@ -73,22 +73,22 @@ void ElementDialog::setup_forNewFile() {
     connect(buttons, &QDialogButtonBox::accepted, this, [=](){		save();		 });
     connect(buttons, &QDialogButtonBox::rejected, this, &ElementDialog::reject);
 
-    layout->addRow("Title: ", m_title);
-    layout->addRow("Pinned: ", m_pinned);
-    layout->addRow("Favorite: ", m_favorited);
-    layout->addRow("Tags: ", m_tags);
+    layout->addRow(tr("Title: "), m_title);
+    layout->addRow(tr("Pinned: "), m_pinned);
+    layout->addRow(tr("Favorite: "), m_favorited);
+    layout->addRow(tr("Tags: "), m_tags);
     layout->addRow(buttons);
 }
 
 
 void ElementDialog::save() {
     if (title().empty()) {
-        QMessageBox::warning(this, "Title didn't set", "You have to set at least the title to save the file");
+        QMessageBox::warning(this, tr("Title didn't set"), tr("You have to set at least the title to save the file"));
         return;
     }
 
     QString default_ = getLastDir() + QString("/") + m_title->text().simplified();
-    QString f = QFileDialog::getSaveFileName(this, "Save File", default_, "Text file (*.md *.MD *.markdown)");
+    QString f = QFileDialog::getSaveFileName(this, tr("Save File"), default_, "Text file (*.md *.MD *.markdown)");
 
     if (f.isEmpty()) return;
     m_path = new QLineEdit;
@@ -96,7 +96,7 @@ void ElementDialog::save() {
 
     const fs::path fsPath(f.toStdString());
     Element::createNewFile(fsPath, title());
-    Element* e = new Element(fsPath);
+    auto *e = new Element(fsPath);
     if (pinned()) e->addPinnedLine(true);
     if (favorited()) e->addFavoritedLine(true);
     const StringList t = tags();
@@ -110,7 +110,7 @@ void ElementDialog::setListOfTags() {
     auto header = Element::getHeader(m_element->path());
     auto lst = Element::extract_tags( Element::find_tags_inheader(header) );
 
-    for (auto i : lst)
+    for (const auto &i : lst)
         m_tags->append(QString::fromStdString(i));
 }
 
@@ -131,5 +131,15 @@ QString ElementDialog::getLastDir() const {
     s.endGroup();
     return (d.isEmpty()) ? QDir::homePath() : d;
 
+}
+
+
+void ElementDialog::accept_() {
+    if (m_title->text().isEmpty()){
+        QMessageBox::warning(this, tr("Title Empty"),
+                             tr("The title isn't set. It cannot be empty.")+QString("\t"));
+        return;
+    }
+    accept();
 }
 

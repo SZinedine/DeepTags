@@ -1,4 +1,4 @@
-BIN=tmp_bin/DeepTags
+BIN=bin/DeepTags
 PROG=DeepTags
 ICO=DeepTags.png
 DSKTP=DeepTags.desktop

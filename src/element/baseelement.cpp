@@ -1,6 +1,7 @@
 #include "baseelement.h"
 #include <fstream>
 #include <algorithm>
+#include <cctype>
 
 BaseElement::BaseElement() {
     m_path = "";
@@ -11,7 +12,7 @@ BaseElement::BaseElement() {
 
 }
 
-BaseElement::BaseElement(const fs::path& path, const std::string& title, const Tags tags, const bool& pinned, const bool& favorited) {
+BaseElement::BaseElement(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned, const bool& favorited) {
     setup(path, title, tags, pinned, favorited);
 }
 
@@ -25,7 +26,7 @@ BaseElement::BaseElement(const BaseElement& other) {
 
 
 
-void BaseElement::setup(const fs::path& path, const std::string& title, const Tags tags, const bool& pinned, const bool& favorited) {
+void BaseElement::setup(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned, const bool& favorited) {
     setPath(path);
     setTitle(title);
     setTags(tags);
@@ -34,7 +35,7 @@ void BaseElement::setup(const fs::path& path, const std::string& title, const Ta
 }
 
 
-void BaseElement::createNewFile(const std::string p, std::string title) {
+void BaseElement::createNewFile(const fs::path& p, std::string title) {
     trim(title);
     if (title.empty()) title = "untitled";
     const std::string title_line = makeTitleLine(title);
@@ -53,7 +54,7 @@ void BaseElement::createNewFile(const std::string p, std::string title) {
 
 
 
-StringList BaseElement::getHeader(const fs::path fi) {
+StringList BaseElement::getHeader(const fs::path& fi) {
     StringList header;
     std::ifstream myfile(fi);
     if (!myfile.is_open())
@@ -76,7 +77,7 @@ StringList BaseElement::getHeader(const fs::path fi) {
 
 
 bool BaseElement::isMD(const fs::path &f) {
-    std::string ext = std::string(f.extension());
+    std::string ext = std::string(f.extension().string());
     return ( ext == ".md" || ext == ".markdown" || ext == ".MD" );
 }
 
@@ -244,13 +245,13 @@ std::string BaseElement::makeTitleLine(std::string title) {
 
 std::string BaseElement::makePinnedLine(const bool& pinned) {
     if (pinned) return "pinned: true";
-    else		return "pinned: false";
+    return "pinned: false";
 }
 
 
 std::string BaseElement::makeFavoritedLine(const bool& favorited) {
     if (favorited) return "favorited: true";
-    else		return "favorited: false";
+    return "favorited: false";
 }
 
 std::string BaseElement::makeTagsLine(const StringList& lst) {
@@ -300,13 +301,22 @@ bool BaseElement::hasFavoritedItem(const fs::path& f) {
 
 
 bool BaseElement::validTagToAdd(const std::string& tag) {
-    if (tag.size() < 9) return true;
-    StringList lst = {"All Notes", "Notebooks", "Favorite", "Untagged"};
-    for (const std::string& s : lst)
+    // test if reserved tags
+    for (const std::string& s : {"All Notes", "Notebooks", "Favorite", "Untagged"})
         if (s == tag) {
             std::cerr << "Error. Cannot add a basic tag to a file\n";
             return false;
         }
+
+    // forbidden characters (,/)
+    auto hasChar = [tag](const std::string c){		// has one of the characters in the string
+        for (const auto& i : c)
+            if (tag.find(i) != std::string::npos) return true;
+        return false;
+    };
+
+    if (hasChar(",")) return false;
+
     return true;
 }
 
@@ -328,9 +338,7 @@ bool BaseElement::hasHeader(const fs::path& fi) {
         if (headerMarker == 2) 	break;
     }
     myfile.close();
-    if (headerMarker == 2 && (headerItems <= 8 && headerItems >= 1))
-        return true;
-    else return false;
+    return (headerMarker == 2 && (headerItems <= 8 && headerItems >= 1));
 }
 
 
@@ -404,8 +412,9 @@ void BaseElement::addTagsItem(std::string tagsLine, const fs::path& path) {
 
 
 
-void BaseElement::changeTitleInFile(std::string title, const fs::path path) {
+void BaseElement::changeTitleInFile(std::string title, const fs::path& path) {
     if (!hasTitleItem(path)) return;
+    if (title.empty()) return;
     trim(title);
     title = makeTitleLine(title);
     std::string old_line = find_title_inheader(getHeader(path));
@@ -504,7 +513,7 @@ void BaseElement::writeContentToFile(const StringList& content, const fs::path f
 
 
 std::string BaseElement::combineTags(const StringList& chain) {
-    std::string res = "";
+    std::string res;
     for (StringList::size_type i = 0 ; i < chain.size() ; i++) {
         res.append(chain[i]);
         if (i != chain.size()-1) res.append("/");

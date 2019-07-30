@@ -1,13 +1,16 @@
 #include "element.h"
 
-Element::Element(const fs::path& path, const std::string& title, const Tags tags, const bool& pinned, const bool& favorited)
+Element::Element(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned, const bool& favorited)
     : BaseElement(path, title, tags, pinned, favorited)
 {}
 
-Element::Element(const fs::path& path) :BaseElement() {	setup(path); }
+Element::Element(const fs::path& path)
+{
+    setup(path);
+}
 
 Element::Element(const Element& other)
-    : BaseElement()
+    : BaseElement(other)
 {
     m_path = other.m_path;
     m_title = other.m_title;
@@ -32,7 +35,6 @@ ElementsList Element::construct_list_elements(const PathsList& f) {
         if (!isMD(p)) continue;
         elems.push_back( new Element(p) );
     }
-
     return elems;
 }
 
@@ -45,6 +47,7 @@ void Element::initTags(const StringList& header) {
 
 
 bool Element::appendTag(std::string tag) {
+    trim(tag);
     if (!validTagToAdd(tag)) return false;
 
     const StringList header = getHeader(m_path);
@@ -78,8 +81,10 @@ void Element::overrideTags(const StringList& list) {
     const StringList header = getHeader(m_path);
     std::string old = find_tags_inheader(header);
     StringList valid;
-    for (const std::string& i : list)
+    for (std::string i : list) {
+        trim(i);
         if (validTagToAdd(i)) valid.push_back(i);
+    }
     const std::string newTag = makeTagsLine(valid);
 
     findReplace(old, newTag);
@@ -114,8 +119,13 @@ void Element::changeTitle(std::string title) {
 }
 
 void Element::changePinned(bool pinned) {
-    if (!hasPinnedLine()) {
+    setPinned(pinned);
+    if (!hasPinnedLine() && pinned) {
         addPinnedLine(pinned);
+        return;
+    }
+    if (!pinned) {
+        removePinnedLine();
         return;
     }
     changePinnedInFile(pinned, m_path);
@@ -123,12 +133,39 @@ void Element::changePinned(bool pinned) {
 }
 
 void Element::changeFavorited(bool favorited) {
-    if (!hasFavoritedLine()) {
+    setFavorited(favorited);
+    if (!hasFavoritedLine() && favorited) {
         addFavoritedLine(favorited);
+        return;
+    }
+    if (!favorited) {
+        removeFavoritedLine();
         return;
     }
     changeFavoritedInFile(favorited, m_path);
     reloadFavorited();
 }
+
+
+
+void Element::removePinnedLine() {
+    removePinnedItemFromHeader(m_path);
+    setPinned(false);
+}
+
+void Element::removeFavoritedLine() {
+    removeFavoritedItemFromHeader(m_path);
+    setFavorited(false);
+}
+
+void Element::removeTagsLine() {
+    removeTagsItemFromHeader(m_path);
+    setTags({{}});
+}
+
+
+
+
+
 
 

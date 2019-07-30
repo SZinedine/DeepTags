@@ -5,7 +5,7 @@
 #include "../element/element.h"
 #include <QMouseEvent>
 #include "fileitem.h"
-
+#include <QStyledItemDelegate>
 class FilesContainer : public QListWidget
 {
     Q_OBJECT
@@ -24,6 +24,7 @@ public slots:
     void overrideTags(const StringList& tags, FileItem* item);
     void appendNewTagToItem(QListWidgetItem* item);
     void editElement(QListWidgetItem* item);
+    FileItem* itemFromPath(const fs::path& path);
 
 private:
     void mousePressEvent(QMouseEvent *event) override;		// to capture right clicks
@@ -39,5 +40,23 @@ signals:
     void removedItem(Element* item);
     void elementChanged(Element* element);
 };
+
+
+/**
+ * subclass QStyledItemDel in order to align the item icons (favorite/pinned) to the right
+ */
+class CustomDelegateListWidget : public QStyledItemDelegate
+{
+    Q_OBJECT
+public:
+    explicit CustomDelegateListWidget(QObject *parent=nullptr) : QStyledItemDelegate(parent) {}
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+        QStyleOptionViewItem myOpt(option);
+        myOpt.decorationPosition = QStyleOptionViewItem::Right;
+        QStyledItemDelegate::paint(painter, myOpt, index);
+    }
+};
+
 
 #endif // FILESCONTAINER_H

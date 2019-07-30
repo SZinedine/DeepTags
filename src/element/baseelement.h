@@ -18,16 +18,16 @@ class BaseElement
 {
 public:
     BaseElement();
-    BaseElement(const fs::path& path, const std::string& title, const Tags tags, const bool& pinned=false, const bool& favorited=false);
+    BaseElement(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned=false, const bool& favorited=false);
     BaseElement(const BaseElement& other);
-    ~BaseElement(){}
+    ~BaseElement() = default;
 
     // accessers
-    inline fs::path path() 		const	{	return m_path;		}
-    inline std::string title() 	const	{	return m_title;		}
-    inline Tags tags() 			const	{	return m_tags;		}
-    inline bool pinned()		const	{	return m_pinned;	}
-    inline bool favorited()		const	{	return m_favorited;	}
+    [[nodiscard]] inline fs::path path() 	 const	{	return m_path;		}
+    [[nodiscard]] inline std::string title() const	{	return m_title;		}
+    [[nodiscard]] inline Tags tags() 		 const	{	return m_tags;		}
+    [[nodiscard]] inline bool pinned()		 const	{	return m_pinned;	}
+    [[nodiscard]] inline bool favorited()	 const	{	return m_favorited;	}
     // modifiers
     inline void setPath(const fs::path& path)		{	m_path = path;		}
     inline void setTitle(const std::string& title)	{	m_title = title;	}
@@ -35,7 +35,7 @@ public:
     inline void setPinned(const bool &pinned)		{	m_pinned = pinned;	}
     inline void setFavorited(const bool& favorited)	{	m_favorited = favorited;}
 
-    static void createNewFile(const std::string p, std::string title);
+    static void createNewFile(const fs::path& p, std::string title);
     
     /**
      * scans all the files of a directory and return the markdown files inside a list of paths
@@ -143,7 +143,7 @@ public:
      * it returns a string writable into a file to replace its previous tag
      * old function name: combineTagsIntoString
      */
-    static std::string makeTagsLine(const StringList& tgs);
+    static std::string makeTagsLine(const StringList& lst);
     
     
     
@@ -158,7 +158,10 @@ public:
     static bool hasPinnedItem(const fs::path& f);
     static bool hasFavoritedItem(const fs::path& f);
     /**
-     * check if the provided tags aren't the basic onces
+     * check if the provided tags:
+     * 	- aren't the basic onces
+     *  - don't contain forbidden characters (,)
+     * NOTE: it doesn't test tag particles., but complete nested tag ("one/two/three")
      */
     static bool validTagToAdd(const std::string& tag);
     /**
@@ -175,7 +178,7 @@ public:
      * and everything in a vector of strings.
      * NOTE: a header is the lines inside two lines of "---"
      */
-    static StringList getHeader(const fs::path fi);
+    static StringList getHeader(const fs::path& fi);
     /**
      * verify if the file has a markdown extension
      */
@@ -200,7 +203,7 @@ public:
      * the header item already exists in the header.
      * these functions are ment to change the value of the key
      */
-    static void changeTitleInFile(std::string title, const fs::path path);
+    static void changeTitleInFile(std::string title, const fs::path& path);
     static void changePinnedInFile(const bool& pinned, const fs::path path);
     static void changeFavoritedInFile(const bool& favorited, const fs::path path);
 
@@ -243,7 +246,7 @@ protected:
     static std::string toStr(const bool& b)		{	return ((b)?"true":"false");		}
 
 private:
-    void setup(const fs::path& path, const std::string& title, const Tags tags, const bool& pinned=false, const bool& favorited=false);
+    void setup(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned=false, const bool& favorited=false);
     static void ltrim(std::string &s);
     static void rtrim(std::string &s);
 

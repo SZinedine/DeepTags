@@ -1,7 +1,9 @@
 #include "gui/mainwindow.h"
 #include <QApplication>
+#include <QTranslator>
+#include <QLibraryInfo>
 
-#define VERSION "0.3"
+#define VERSION "0.3.1"
 #define TITLEBAR "DeepTags v."
 #define NAME "DeepTags"
 #define WEBSITE "https://github.com/SZinedine"
@@ -14,6 +16,12 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(VERSION);
     app.setOrganizationDomain(WEBSITE);
     app.setOrganizationName("SZ");
+
+//    QString locale = QLocale::system().name().section('_', 0, 0);
+//    QTranslator tran;
+////    tran.load("deeptags_fr");		// for test
+//    tran.load("deeptags_" + locale);
+//    app.installTranslator(&tran);
 
     MainWindow w;
     w.setWindowTitle(QString(TITLEBAR) + QString(VERSION));

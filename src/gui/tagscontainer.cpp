@@ -7,6 +7,7 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QDrag>
+#include <QSettings>
 
 TagsContainer::TagsContainer(QWidget* parent)
     :QTreeWidget(parent)
@@ -53,7 +54,7 @@ void TagsContainer::selected() {
             if ( !real(i)->contains(el) ) return false;
         return true;
     };
-    QVector<Element*> *res = new QVector<Element*>();
+    auto *res = new QVector<Element*>();
     QVector<Element*> *first = real(lst.at(0))->elements();
     for (Element* e : *first)
         if (shared(lst, e)) res->push_back(e);
@@ -120,7 +121,7 @@ void TagsContainer::addElement(Element* element) {
 
     if (!element) return;
     if (alreadyAdded(element)) return;
-    else  addToSpecificTopLevel(element, cnv_allNotes);	// add to All Notes if it isn't there
+    addToSpecificTopLevel(element, cnv_allNotes);	// add to All Notes if it isn't there
 
     const Tags& tags = element->tags();
 
@@ -135,7 +136,7 @@ void TagsContainer::addElement(Element* element) {
 
             switch (index) {
             case -1: {			// create the tag
-                TagItem *newItem = new TagItem(particle);
+                auto *newItem = new TagItem(particle);
                 newItem->addFile(element);
                 if (level == 0)	addTopLevelItem(newItem);
                 else		prnt->addChild(newItem);
@@ -190,9 +191,11 @@ void TagsContainer::removeElement(Element* element) {
         (real(*it))->removeElement(element);
         it++;
     }
+    removeEmptyItems();
 }
 
 void TagsContainer::reloadElement(Element* element) {
+    element->reload();
     removeElement(element);
     ElementsList es;
     es.push_back(element);
@@ -200,6 +203,15 @@ void TagsContainer::reloadElement(Element* element) {
 }
 
 
+void TagsContainer::removeEmptyItems() {
+    QTreeWidgetItemIterator it(this);
+    while (*it) {
+        TagItem* current = real(*it);
+        if (current->empty() && !current->isSpecial())
+            delete current;
+        it++;
+    }
+}
 
 void TagsContainer::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasText())
@@ -241,16 +253,69 @@ void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
         i = real(i->parent());
     }
     std::vector<std::string> str;
-    for (auto i : strl) str.push_back(i.toStdString());
+    for (const auto &i : strl) str.push_back(i.toStdString());
     QString s = QString::fromStdString( Element::combineTags(str) );
 
-    QMimeData *mimeData = new QMimeData;
+    auto *mimeData = new QMimeData;
     mimeData->setText(s);
 
-    QDrag *drag = new QDrag(this);
+    auto *drag = new QDrag(this);
     drag->setMimeData(mimeData);
     drag->exec(Qt::CopyAction);
 }
+
+
+
+
+
+void TagsContainer::collapseItems() {
+    collapseAll();
+    QSettings s;
+    s.beginGroup("Main");
+    s.setValue("expanded", false);
+    s.endGroup();
+}
+
+
+void TagsContainer::expandItems() {
+    expandAll();
+    QSettings s;
+    s.beginGroup("Main");
+    s.setValue("expanded", true);
+    s.endGroup();
+}
+
+
+void TagsContainer::loadCollapseOrExpand() {
+    QSettings s;
+    s.beginGroup("Main");
+    bool res = s.value("expanded", true).toBool();
+    s.endGroup();
+    if (res) expandAll();
+    else collapseAll();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

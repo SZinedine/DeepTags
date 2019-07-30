@@ -32,6 +32,10 @@ public slots:
     void init();
     void removeElement(Element* element);
     void reloadElement(Element* element);
+    void removeEmptyItems();
+    void collapseItems();								// remember if collapsed/expanded
+    void expandItems();
+    void loadCollapseOrExpand();
 
 signals:
     void itemSelected(QVector<Element*> *item);			// when one or multiple tags are selected, send their content to be displayed

@@ -1,6 +1,9 @@
 #include "tagitem.h"
 
-TagItem::TagItem() : QTreeWidgetItem(QStringList(""), 1500) { m_elements = new QVector<Element*>(); }
+TagItem::TagItem() : QTreeWidgetItem(QStringList(""), 1500)
+{
+    m_elements = new QVector<Element*>();
+}
 
 TagItem::TagItem(const QString& label, TagItem* parent)
     : QTreeWidgetItem(parent, QStringList(label), 1500)
@@ -19,5 +22,12 @@ void TagItem::removeElement(Element *element) {
 bool TagItem::contains(Element* e) {
     for (Element* i : *m_elements)
         if (*i == *e) return true;
+    return false;
+}
+
+
+bool TagItem::isSpecial() const {
+    for (const auto &i : {  "All Notes", "Notebooks", "Favorite", "Untagged"  })
+        if (label() == i) return true;
     return false;
 }

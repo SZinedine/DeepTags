@@ -17,11 +17,11 @@ void OpenDirs::construct() {
     QVBoxLayout* layout = new QVBoxLayout;
     setLayout(layout);
 
-    QLabel* label = new QLabel("Put the directories to open on startup\nOne directory in every line:");
+    QLabel* label = new QLabel(tr("Put the directories to open on startup\nOne directory in every line:"));
     textWidget = new QTextEdit(this);
     textWidget->setAcceptRichText(false);
-    okButton = new QPushButton("Ok");
-    cancelButton = new QPushButton("Cancel");
+    okButton = new QPushButton(tr("Ok"));
+    cancelButton = new QPushButton(tr("Cancel"));
 
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
     buttonsLayout->addWidget(okButton);
