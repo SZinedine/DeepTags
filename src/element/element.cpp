@@ -49,6 +49,10 @@ void Element::initTags(const StringList& header) {
 bool Element::appendTag(std::string tag) {
     trim(tag);
     if (!validTagToAdd(tag)) return false;
+    if (!hasTagsLine()) {
+        addTagsLine(StringList{tag});
+        return true;
+    }
 
     const StringList header = getHeader(m_path);
     const std::string raw_tag_header = find_tags_inheader(header);

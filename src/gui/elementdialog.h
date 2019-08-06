@@ -11,7 +11,7 @@
 /**
  * Dialog box that serves 2 purposes
  *   * create a new file (first constructor
- * 	 * edit the information of an already existing file
+ *      * edit the information of an already existing file
  */
 class ElementDialog : public QDialog
 {
@@ -30,12 +30,12 @@ public:
     /**
      * Get info
      */
-    [[nodiscard]] inline std::string title()const	{	return m_title->text().simplified().toStdString(); 	}
-    [[nodiscard]] inline bool pinned()		const	{	return m_pinned->isChecked();		}
-    [[nodiscard]] inline bool favorited()	const 	{	return m_favorited->isChecked();	}
-    [[nodiscard]] StringList tags() 		const;
-    [[nodiscard]] inline Element* element() 		{	return m_element;					}
-    [[nodiscard]] inline std::string path()			{	return m_path->text().toStdString();}
+    [[nodiscard]] inline std::string title()const   {    return m_title->text().simplified().toStdString(); }
+    [[nodiscard]] inline bool pinned()        const {    return m_pinned->isChecked();          }
+    [[nodiscard]] inline bool favorited()    const  {    return m_favorited->isChecked();       }
+    [[nodiscard]] StringList tags()         const;
+    [[nodiscard]] inline Element* element()         {    return m_element;                      }
+    [[nodiscard]] inline std::string path()         {    return m_path->text().toStdString();   }
 
 private:
     void setup_forEditFile();

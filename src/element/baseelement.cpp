@@ -579,4 +579,4 @@ void BaseElement::remove_quotations(std::string& str) {
         front = ' ';
         trim(str);
     }
-};
+}

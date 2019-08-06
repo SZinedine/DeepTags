@@ -48,8 +48,8 @@ void FilesContainer::openFile(QListWidgetItem* item) {
     // retrieve the name of the Markdown reader
     if (!item) return;
     QSettings s;
-    s.beginGroup("Main");
-    QString prog = s.value("MarkDownReader").toString().simplified();
+    s.beginGroup("main");
+    QString prog = s.value("markdown_reader").toString().simplified();
     s.endGroup();
 
     if (prog.isEmpty()) {	// warning and abort if the reader isn't set

@@ -126,8 +126,8 @@ StringList ElementDialog::tags() const {
 
 QString ElementDialog::getLastDir() const {
     QSettings s;
-    s.beginGroup("Main");
-    QString d = s.value("lastOpenedDir").toString();
+    s.beginGroup("main");
+    QString d = s.value("last_dir").toString();
     s.endGroup();
     return (d.isEmpty()) ? QDir::homePath() : d;
 

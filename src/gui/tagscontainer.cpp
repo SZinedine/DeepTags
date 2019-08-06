@@ -271,7 +271,7 @@ void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
 void TagsContainer::collapseItems() {
     collapseAll();
     QSettings s;
-    s.beginGroup("Main");
+    s.beginGroup("main");
     s.setValue("expanded", false);
     s.endGroup();
 }
@@ -280,7 +280,7 @@ void TagsContainer::collapseItems() {
 void TagsContainer::expandItems() {
     expandAll();
     QSettings s;
-    s.beginGroup("Main");
+    s.beginGroup("main");
     s.setValue("expanded", true);
     s.endGroup();
 }
@@ -288,7 +288,7 @@ void TagsContainer::expandItems() {
 
 void TagsContainer::loadCollapseOrExpand() {
     QSettings s;
-    s.beginGroup("Main");
+    s.beginGroup("main");
     bool res = s.value("expanded", true).toBool();
     s.endGroup();
     if (res) expandAll();

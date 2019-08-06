@@ -3,7 +3,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 
-#define VERSION "0.3.1"
+#define VERSION "0.3.2"
 #define TITLEBAR "DeepTags v."
 #define NAME "DeepTags"
 #define WEBSITE "https://github.com/SZinedine"
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     app.setApplicationDisplayName(NAME);
     app.setApplicationVersion(VERSION);
     app.setOrganizationDomain(WEBSITE);
-    app.setOrganizationName("SZ");
+    app.setOrganizationName(NAME);
 
 //    QString locale = QLocale::system().name().section('_', 0, 0);
 //    QTranslator tran;

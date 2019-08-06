@@ -24,11 +24,11 @@ BUILD_DIR = $${PARENT_DIR}/build
 ELEM_HEADERS =  $${ELEM_DIR}/element.h $${ELEM_DIR}/baseelement.h
 ELEM_SOURCES =  $${ELEM_DIR}/element.cpp $${ELEM_DIR}/baseelement.cpp
 GUI_HEADERS  =  $${GUI_DIR}/fileitem.h $${GUI_DIR}/filescontainer.h \
-                $${GUI_DIR}/mainwindow.h $${GUI_DIR}/opendirs.h \
+                $${GUI_DIR}/mainwindow.h \
                 $${GUI_DIR}/tagitem.h $${GUI_DIR}/tagscontainer.h \
                 $${GUI_DIR}/elementdialog.h
 GUI_SOURCES  =  $${GUI_DIR}/fileitem.cpp $${GUI_DIR}/filescontainer.cpp \
-                $${GUI_DIR}/mainwindow.cpp $${GUI_DIR}/opendirs.cpp \
+                $${GUI_DIR}/mainwindow.cpp \
                 $${GUI_DIR}/tagitem.cpp $${GUI_DIR}/tagscontainer.cpp \
                 $${GUI_DIR}/elementdialog.cpp
 
