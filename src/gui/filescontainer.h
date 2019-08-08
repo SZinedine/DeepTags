@@ -6,20 +6,25 @@
 #include <QMouseEvent>
 #include "fileitem.h"
 #include <QStyledItemDelegate>
+
 class FilesContainer : public QListWidget
 {
     Q_OBJECT
 public:
     explicit FilesContainer(QWidget *parent=nullptr);
     ~FilesContainer() override;
-    static inline FileItem* real(QListWidgetItem* item)	{	return dynamic_cast<FileItem*>(item);	}
+    static inline FileItem* real(QListWidgetItem* item)    {    return static_cast<FileItem*>(item);    }
 
 public slots:
     void addFiles(QVector<Element*>* items);
-    void openFile(QListWidgetItem* item);			// open the file in a Markdown Editor (to be set beforehand)
+    /**
+     *  open the file in a Markdown Editor (to be set beforehand)
+     */
+    void openFile(QListWidgetItem* item);
     void showContextMenu(const QPoint& p);
     void clearView();
-    void removeItem(QListWidgetItem* item);
+    void moveToTrash(QListWidgetItem* item);
+    void permanentlyDelete(QListWidgetItem* item);
     void appendTagToItem(const QString& tag, FileItem* item);
     void overrideTags(const StringList& tags, FileItem* item);
     void appendNewTagToItem(QListWidgetItem* item);
@@ -27,8 +32,14 @@ public slots:
     FileItem* itemFromPath(const fs::path& path);
 
 private:
-    void mousePressEvent(QMouseEvent *event) override;		// to capture right clicks
-    void sortAndPin();										// pin the necessary files
+    /**
+     *  pin the necessary files
+     */
+    void sortAndPin();
+    /**
+     *  to capture right clicks
+     */
+    void mousePressEvent(QMouseEvent *event) override;
     void addFile(Element* item);
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;
@@ -38,6 +49,8 @@ signals:
     void rightClick(QPoint pos);
     void numberOfElementsChanged();
     void removedItem(Element* item);
+    void deletedItem(Element* item);
+    void restoredElement(Element* e);
     void elementChanged(Element* element);
 };
 

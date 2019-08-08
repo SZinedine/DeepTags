@@ -52,18 +52,18 @@ void FilesContainer::openFile(QListWidgetItem* item) {
     QString prog = s.value("markdown_reader").toString().simplified();
     s.endGroup();
 
-    if (prog.isEmpty()) {	// warning and abort if the reader isn't set
+    if (prog.isEmpty()) {    // warning and abort if the reader isn't set
         QMessageBox::warning(parentWidget(), tr("Error"),
                              tr("You haven't set the Markdown Editor app."));
         return;
     }
 
-    prog.append(" ");	// space between the command name and the filepath
+    prog.append(" ");    // space between the command name and the filepath
     fs::path p = real(item)->path();
     std::string f = '"' + p.string() + '"';
 
     std::string command = prog.toStdString() + f;
-    std::thread( [=]{	std::system(command.c_str());	} )
+    std::thread( [=]{    std::system(command.c_str());    } )
             .detach();
 }
 
@@ -71,7 +71,7 @@ void FilesContainer::openFile(QListWidgetItem* item) {
 void FilesContainer::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::RightButton) {
         QPoint qp(event->pos());
-        setCurrentItem( itemAt(qp) );		// select when right clicked
+        setCurrentItem( itemAt(qp) );        // select when right clicked
         emit rightClick(qp);
     }
     else QListWidget::mousePressEvent(event);
@@ -83,6 +83,7 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     QListWidgetItem* item = itemAt(pos);
     if (!item) return;
     FileItem* real_it = real(item);
+
     auto abstraction = [=](){
         real_it->element()->reload();
         real_it->reload();
@@ -107,14 +108,28 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     });
 
     QMenu* menu = new QMenu;
-    menu->addAction(tr("Open"),   this, 	[=](){ 	openFile(item); 		});
-    menu->addAction(tr("Remove"), this,		[=](){	removeItem(item); 	});
-    menu->addAction(tr("Edit"), this,		[=](){	editElement(item); 	});
+    menu->addAction(tr("Open"),         this,   [=](){  openFile(item);           });
+    menu->addAction(tr("Edit"),         this,   [=](){  editElement(item);        });
     menu->addSeparator();
-    menu->addAction(tr("Add a new tag"), this, [=](){	appendNewTagToItem(item);	});
+    menu->addAction(tr("Add a new tag"),this,   [=](){  appendNewTagToItem(item); });
     menu->addAction(pin);
     menu->addAction(fav);
+    menu->addSeparator();
+
+    // if the element is deleted, that means that we are in the Trash tag
+    if (real_it->element()->deleted()) {
+        menu->addAction(tr("Restore"),         this,   [=](){
+            (real_it->element())->changeDeleted(false);
+           takeItem(row(item));
+           emit elementChanged(real_it->element());
+        });
+        menu->addAction(tr("Delete Permanently"),  this,   [=](){  permanentlyDelete(item);         });
+    }
+    else
+        menu->addAction(tr("Move to Trash"),   this,   [=](){  moveToTrash(item);         });
+
     menu->exec(globalPos);
+
     delete menu;
     delete pin;
     delete fav;
@@ -126,12 +141,13 @@ void FilesContainer::sortAndPin() {
     sortItems(Qt::AscendingOrder);
 
     QVector<int> pinned;
-    for (int i = 0 ; i < count() ; i++)		// look for pinned elements and get their indexes into pinned:QVector
+    // look for pinned elements and get their indexes into pinned:QVector
+    for (int i = 0 ; i < count() ; i++)
         if ( real(item(i))->pinned() )
             pinned.push_back(i);
 
     int index = 0;
-    for(const int& i : pinned) {		// take the items and pin them
+    for(const int& i : pinned) {        // take the items and pin them
         QListWidgetItem* item = takeItem(i);
         insertItem(index, item);
         index++;
@@ -139,12 +155,28 @@ void FilesContainer::sortAndPin() {
     if (current) setCurrentItem(current);
 }
 
-void FilesContainer::removeItem(QListWidgetItem* item) {
+void FilesContainer::moveToTrash(QListWidgetItem* item) {
     if (!item) return;
-    emit removedItem(real(item)->element());
+    auto e = real(item)->element();
+    e->changeDeleted(true);
+    emit elementChanged(e);
     delete takeItem(row(item));
 }
 
+
+void FilesContainer::permanentlyDelete(QListWidgetItem* item) {
+    auto ok = QMessageBox::question(parentWidget(), tr("Permanently delete a file"),
+            tr("The file will permanently be deleted. Do you want to proceed?"));
+    if (ok == QMessageBox::No) return;
+    auto it = real(item);
+    bool rem = fs::remove(it->element()->path());
+    if (!rem) {
+        QMessageBox::critical(parentWidget(), tr("Deletion failed"),
+                tr("Error. Failed to delete the file"));
+        return;
+    }
+    delete takeItem(row(item));
+}
 
 
 void FilesContainer::dragEnterEvent(QDragEnterEvent *event)
@@ -181,7 +213,7 @@ void FilesContainer::dropEvent(QDropEvent *event)
 
         // context menu
         QMenu* menu = new QMenu;
-        menu->addAction(actionText, this, [=](){	appendTagToItem(tag, item);		});
+        menu->addAction(actionText, this, [=](){    appendTagToItem(tag, item);     });
         menu->exec(mapToGlobal( event->pos()) );
         delete menu;
 

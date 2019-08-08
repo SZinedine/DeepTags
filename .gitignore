@@ -1,6 +1,7 @@
-DeepTags.pro.user
+DeepTags.pro.*
 Makefile
 !tests/Makefile
+tests/test_bin
 .qmake.stash
 build/
 bin/

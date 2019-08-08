@@ -9,3 +9,9 @@ FILES	= element_test.cpp \
 all:
 	$(CXX) $(CXXFLAGS) $(FILES) -o $(TARGET) && ./$(TARGET) 
 	rm -f $(TARGET)
+element:
+	$(CXX) $(CXXFLAGS) $(FILES) -o $(TARGET) && ./$(TARGET) "[Element]"
+baseelement:
+	$(CXX) $(CXXFLAGS) $(FILES) -o $(TARGET) && ./$(TARGET) "[baseelement]"
+clean:
+	rm -f $(TARGET) "_new md file_.md"

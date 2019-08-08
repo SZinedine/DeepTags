@@ -42,7 +42,7 @@ void ElementDialog::setup_forEditFile() {
     m_tags = new QTextEdit;
 
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    connect(buttons, &QDialogButtonBox::accepted, this, [=](){	accept_();	 });
+    connect(buttons, &QDialogButtonBox::accepted, this, [=](){  accept_();  });
     connect(buttons, &QDialogButtonBox::rejected, this, &ElementDialog::reject);
 
     layout->addRow(tr("File Path: "), m_path);
@@ -70,7 +70,7 @@ void ElementDialog::setup_forNewFile() {
     m_tags = new QTextEdit;
 
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    connect(buttons, &QDialogButtonBox::accepted, this, [=](){		save();		 });
+    connect(buttons, &QDialogButtonBox::accepted, this, [=](){  save();   });
     connect(buttons, &QDialogButtonBox::rejected, this, &ElementDialog::reject);
 
     layout->addRow(tr("Title: "), m_title);
@@ -88,7 +88,7 @@ void ElementDialog::save() {
     }
 
     QString default_ = getLastDir() + QString("/") + m_title->text().simplified();
-    QString f = QFileDialog::getSaveFileName(this, tr("Save File"), default_, "Text file (*.md *.MD *.markdown)");
+    QString f = QFileDialog::getSaveFileName(this, tr("Save File"), default_, tr("Text file (*.md *.MD *.markdown)"));
 
     if (f.isEmpty()) return;
     m_path = new QLineEdit;

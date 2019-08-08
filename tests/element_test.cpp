@@ -61,7 +61,30 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         /**
          *      CONTINUE TESTING TAGS
          */
+    }
 
+    SECTION("deleted item testing wwith BaseElement class", "[BaseElement][deleted]") {
+        auto isDeleted = [&]() -> bool { return BaseElement::extract_deleted(
+                BaseElement::find_deleted_inheader( BaseElement::getHeader(path) )
+                ); };
+
+        INFO("isn't supposed to have a deleted item at this stage");
+        REQUIRE_FALSE( BaseElement::hasDeletedItem(path) );
+
+        BaseElement::addDeletedItem("deleted: true", path);
+        REQUIRE( BaseElement::hasDeletedItem(path) );
+        
+        INFO("changing the value of the already existing line");
+        BaseElement::changeDeletedInFile(false, path);
+        REQUIRE( BaseElement::hasDeletedItem(path) );
+        REQUIRE_FALSE( isDeleted() );
+
+        BaseElement::changeDeletedInFile(true, path);
+        REQUIRE( isDeleted() );
+        REQUIRE( BaseElement::hasDeletedItem(path) );
+        
+        BaseElement::removeDeletedItemFromHeader(path);
+        REQUIRE_FALSE( BaseElement::hasDeletedItem(path) );
     }
 
     fs::remove(path);
@@ -156,6 +179,37 @@ TEST_CASE("Element class", "[Element][element]") {
         REQUIRE_FALSE(element->getFavoritedValueFromHeader());
         REQUIRE(element->getFavoritedLineFromHeader() == "");
     }
+
+    SECTION("tests related to the 'deleted' item", "[delete][deleted]")
+    {
+        INFO("deleted isn't supposed to exist inside the file");
+        REQUIRE(element->getDeletedLineFromHeader() == "");
+        REQUIRE_FALSE(element->getDeletedValueFromHeader());
+        REQUIRE_FALSE(element->deleted());
+
+        INFO("set to true = create the item");
+        element->changeDeleted(true);
+        REQUIRE(element->hasDeletedLine());
+        REQUIRE(element->deleted());
+        REQUIRE(element->getDeletedValueFromHeader());
+
+        INFO("set to false");
+        element->changeDeleted(false);
+        CHECK_FALSE(element->hasDeletedLine());
+        REQUIRE_FALSE(element->deleted());
+        REQUIRE_FALSE(element->getDeletedValueFromHeader());
+
+        INFO("set to true, for the second time");
+        element->changeDeleted(true);
+        REQUIRE(element->hasDeletedLine());
+        REQUIRE(element->deleted());
+        REQUIRE(element->getDeletedValueFromHeader());
+        REQUIRE(element->getDeletedLineFromHeader() == "deleted: true");
+
+
+
+    }
+
 
     SECTION("testing title", "[title]") {
 

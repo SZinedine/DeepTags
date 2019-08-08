@@ -1,15 +1,14 @@
 #include "tagitem.h"
 
-TagItem::TagItem() : QTreeWidgetItem(QStringList(""), 1500)
-{
-    m_elements = new QVector<Element*>();
-}
 
 TagItem::TagItem(const QString& label, TagItem* parent)
-    : QTreeWidgetItem(parent, QStringList(label), 1500)
+    : QTreeWidgetItem(parent, QStringList(label), 1500),
+      m_elements(new QVector<Element*>())
 {
-    setLabel(label);
-    m_elements = new QVector<Element*>();
+}
+
+TagItem::~TagItem() {
+    delete m_elements;
 }
 
 

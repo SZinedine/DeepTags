@@ -3,7 +3,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 
-#define VERSION "0.3.2"
+#define VERSION "0.3.3"
 #define TITLEBAR "DeepTags v."
 #define NAME "DeepTags"
 #define WEBSITE "https://github.com/SZinedine"
