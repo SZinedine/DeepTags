@@ -12,5 +12,7 @@
         <file>images/favpin.png</file>
         <file>images/quit.png</file>
         <file>images/spinner.gif</file>
+        
+        <file>locale/deeptags_fr.qm</file>
     </qresource>
 </RCC>

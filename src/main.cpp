@@ -17,11 +17,11 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain(WEBSITE);
     app.setOrganizationName(NAME);
 
-//    QString locale = QLocale::system().name().section('_', 0, 0);
-//    QTranslator tran;
-////    tran.load("deeptags_fr");		// for test
-//    tran.load("deeptags_" + locale);
-//    app.installTranslator(&tran);
+    QString locale = ":locale/deeptags_" + QLocale::system().name().section('_', 0, 0) + ".qm";
+    QTranslator tran;
+//    tran.load(":locale/deeptags_fr.qm");		// for test
+    tran.load(locale);
+    app.installTranslator(&tran);
 
     MainWindow w;
     w.setWindowTitle(QString(TITLEBAR) + QString(VERSION));
