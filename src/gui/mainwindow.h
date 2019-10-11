@@ -21,7 +21,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     MainWindow(QWidget *parent=nullptr);
-    void closeEvent(QCloseEvent* event) override;
 
 private:
     void setupCentral();
@@ -33,26 +32,9 @@ private:
      */
     void load();
     /**
-     *  open a file from the filesystem and add it to the app
-     */
-    void importFile();
-    /**
-     *  save the size of the window and the state of the splitter
-     */
-    void saveUiSettings();
-    void loadUiSettings();
-    /**
      *  retrieve all the filepaths loaded
      */
     QStringList currentPaths() const;
-    /**
-     *  save the directory of the opened file
-     */
-    void saveLastVisitedDir(const QString& complete);
-    /**
-     *  get the directory of the last opened file
-     */
-    QString getLastVisitedDir() const;
     /**
      *  reload the displayed content
      */
@@ -64,10 +46,11 @@ private:
      */
     void openStringListPaths(const QStringList& strlist);
     /**
-     *  ask the user to input the markdown editor 
-     *  with which the files will be opened when clicked on
+     *  get the data directory, fetch all the files in it,
+     *  construct Element from each one of the files
+     *  open them (openElements())
      */
-    void askForMarkdownEditor();
+    void loadDataDirectoryContent();
     /**
      *  open ElementDialog to create a new file
      *  by asking the user for information about the file
@@ -78,22 +61,12 @@ private:
      *  it searches in titles of loaded files and displays them
      */
     void search();
-    /**
-     *  displays a dialog with the author information in it
-     */
-    void about();
+    void changeNumberOfFilesLabel();
     inline void openElements(const ElementsList& els) { tagsContainer->addElements(els);}
-    inline void changeNumberOfFilesLabel()        {   nbFiles->setText(QString( QString::number(filesContainer->count()) + QString(" files") ));    }
-    bool setDataDirectory();
-    /**
-     *  check if the data directory have been set
-     */
-    bool dataDirectoryIsSet() const;
-    /**
-     *  return the data directory
-     */
-    QString dataDirectory() const;
-    void loadDataDirectoryContent();
+    void about();
+    void closeEvent(QCloseEvent* event) override;
+
+    void disableSomeWidgets(const bool& disable);
 
 signals:
     /**
@@ -114,8 +87,8 @@ private:
     QLabel* spinnerLabel;
     QMenu* menuFile;
         QAction* newFileAction;
+        QMenu* recentlyOpenedFilesMenu;
         QAction* changeDataDirAction;
-        QAction* loadFileAction;
         QAction* quitAction;
     QMenu* menuEdit;
         QAction* setMdReaderAction;

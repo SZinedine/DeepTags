@@ -7,15 +7,14 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QDrag>
-#include <QSettings>
+#include "settings.h"
 
 
 TagsContainer::TagsContainer(QWidget* parent)
-    :QTreeWidget(parent)
+    : QTreeWidget(parent), prnt(nullptr)
 {
     construct();
     createBasicTags();
-    prnt = nullptr;
     setMaximumWidth(400);
     setMinimumWidth(50);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -31,6 +30,11 @@ TagsContainer::~TagsContainer() {
     if (lst->isEmpty()) return;
     for (Element* i : *lst)
         if (i) delete i;
+}
+
+void TagsContainer::createBasicTags() {
+    for (const QString& i : basicTags) 
+        addTopLevelItem( new TagItem(i) ); 
 }
 
 void TagsContainer::init() {
@@ -136,8 +140,8 @@ void TagsContainer::addElement(Element* element) {
     for (const StringList& chain : tags) {
         for (std::string::size_type level = 0 ; level < chain.size() ; level++) {
 
-            const QString particle( chain.at(level).c_str() ); // hold the current item name to be treated
-            int index = (level == 0) ? find(particle, this) : find(particle, prnt); // if we are in the index 0 of the vector, that means that we have to search for the item in the top level
+            const QString particle( chain.at(level).c_str() ); // item name to be treated
+            int index = (level == 0) ? find(particle, this) : find(particle, prnt); // index 0 == search fo a top level 
 
             switch (index) {
             case -1: {            // create the tag
@@ -297,56 +301,22 @@ void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
 
 
 
-
-
 void TagsContainer::collapseItems() {
     collapseAll();
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("expanded", false);
-    s.endGroup();
+    Settings::expand(false);
 }
 
 
 void TagsContainer::expandItems() {
     expandAll();
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("expanded", true);
-    s.endGroup();
+    Settings::expand(true);
 }
 
 
 void TagsContainer::loadCollapseOrExpand() {
-    QSettings s;
-    s.beginGroup("main");
-    bool res = s.value("expanded", true).toBool();
-    s.endGroup();
-    if (res) expandAll();
+    if (Settings::expandedItems()) expandAll();
     else collapseAll();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -3,7 +3,6 @@
 #include <QVBoxLayout>
 #include <QMenuBar>
 #include <QFileDialog>
-#include <QSettings>
 #include <QApplication>
 #include <QInputDialog>
 #include <QStatusBar>
@@ -12,16 +11,18 @@
 #include <QMovie>
 #include "../element/element.h"
 #include "elementdialog.h"
+#include "settings.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), recentlyOpenedFilesMenu(nullptr)
 {
     setupCentral();
     setupLayout();
     setupMenu();
     setupSignals();
 
-    loadUiSettings();
+    Settings::loadWindowSize(this);
+    Settings::loadSplitterState(splitter);
 
     emit started();
 }
@@ -96,7 +97,6 @@ void MainWindow::setupLayout() {
     srchLayout->setAlignment(Qt::AlignRight);
     above->addLayout(srchLayout);
 
-    //
     layout->addLayout(above, 0, 1, Qt::AlignLeft);
     layout->addLayout(colLayout, 1, 0);
     layout->addWidget(splitter, 1, 1, 7, 7);
@@ -106,59 +106,60 @@ void MainWindow::setupMenu() {
     menuFile            = new QMenu;
     menuFile = menuBar()->addMenu(tr("&File"));
     newFileAction       = new QAction(QIcon(":images/newFile.png"), tr("&New File"), this);
-    changeDataDirAction = new QAction(tr("Change Data Directory"));
-    loadFileAction      = new QAction(QIcon(":images/addFile.png"), tr("Import File"), this);
+    recentlyOpenedFilesMenu = new QMenu(tr("&Recently Opened Files"));
+    Settings::getActionsRecentlyOpenedFiles( recentlyOpenedFilesMenu );
+    changeDataDirAction = new QAction(tr("&Change Data Directory"));
     quitAction          = new QAction(QIcon(":images/quit.png"),    tr("&Quit"), this);
-    menuFile->addActions({newFileAction, loadFileAction, changeDataDirAction, quitAction});
+    menuFile->addAction(newFileAction);
+    menuFile->addMenu(recentlyOpenedFilesMenu);
+    menuFile->addActions({changeDataDirAction, quitAction});
 
     menuEdit            = new QMenu;
-    setMdReaderAction   = new QAction(tr("Set MarkDown Reader"));
-    menuEdit = menuBar()->addMenu(tr("Edit"));
+    setMdReaderAction   = new QAction(tr("&Set MarkDown Reader"));
+    menuEdit = menuBar()->addMenu(tr("&Edit"));
     menuEdit->addAction(setMdReaderAction);
 
     menuHelp            = new QMenu;
     aboutAction         = new QAction(tr("&About"));
-    menuHelp = menuBar()->addMenu(tr("Help"));
+    menuHelp = menuBar()->addMenu(tr("&Help"));
     menuHelp->addAction(aboutAction);
 }
 
 
 void MainWindow::setupSignals() {
-    connect(tagsContainer,       &TagsContainer::itemSelected,     filesContainer,   &FilesContainer::addFiles            );
-    connect(tagsContainer,       &TagsContainer::itemSelected,     this,             [=](){  changeNumberOfFilesLabel(); });
-    connect(filesContainer,      &FilesContainer::numberOfElementsChanged,this,      [=](){  changeNumberOfFilesLabel(); });
-    connect(filesContainer,      &FilesContainer::elementChanged,tagsContainer,      &TagsContainer::reloadElement        );
-    connect(splitter,            &QSplitter::splitterMoved,        this,             [=](){    saveUiSettings();         });
-    connect(clearTagsButton,     &QPushButton::clicked,            tagsContainer,    &TagsContainer::init                 );
-    connect(clearTagsButton,     &QPushButton::clicked,            filesContainer,   &FilesContainer::clearView           );
-    connect(reloadButton,        &QPushButton::clicked,            this,             [=](){  reloadContent();}            );
-    connect(searchLineEdit,      &QLineEdit::textEdited,           this,             [=](){  search();}                   );
-    connect(newFileAction,       &QAction::triggered,              this,             [=](){  newFiles();                 });
-    connect(loadFileAction,      &QAction::triggered,              this,             [=](){  importFile();               });
-    connect(quitAction,          &QAction::triggered,              this,             &QMainWindow::close                  );
-    connect(setMdReaderAction,   &QAction::triggered,              this,             [=](){askForMarkdownEditor();       });
-    connect(changeDataDirAction, &QAction::triggered,              this,             [=](){ setDataDirectory();          });
-    connect(aboutAction,         &QAction::triggered,              this,             &MainWindow::about                   );
-    connect(this,                &MainWindow::started,             this,             &MainWindow::load,
-            Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection) );
-    connect(expandButton,        &QPushButton::clicked,            tagsContainer,    &TagsContainer::expandItems          );
-    connect(collapseButton,      &QPushButton::clicked,            tagsContainer,    &TagsContainer::collapseItems        );
-    // show the spinner in the status bar when the files are loading
-    connect(tagsContainer,       &TagsContainer::loadingFiles,    this,              [=](){ spinnerLabel->setVisible(true);});
-    connect(tagsContainer,       &TagsContainer::filesLoaded,    spinnerLabel,       &QLabel::hide                        );
-    // enable and disable some buttons and actions when files are loading
-    connect(tagsContainer,       &TagsContainer::loadingFiles,    this,              [=](){
-        reloadButton->setDisabled(true);
-        loadFileAction->setDisabled(true);
-        changeDataDirAction->setDisabled(true);
-    });
-    connect(tagsContainer,         &TagsContainer::filesLoaded,    this,             [=](){
-        reloadButton->setDisabled(false);
-        loadFileAction->setDisabled(false);
-        changeDataDirAction->setDisabled(false);
-    });
+    connect(tagsContainer,       &TagsContainer::itemSelected,  filesContainer, &FilesContainer::addFiles            );
+    connect(tagsContainer,       &TagsContainer::itemSelected,  this,           &MainWindow::changeNumberOfFilesLabel);
+    connect(filesContainer,      &FilesContainer::numberOfElementsChanged,this, &MainWindow::changeNumberOfFilesLabel);
+    connect(filesContainer,      &FilesContainer::elementChanged,tagsContainer, &TagsContainer::reloadElement        );
+    connect(splitter,            &QSplitter::splitterMoved,   this,  [=](){ Settings::saveSplitterState(splitter);  });
+    connect(clearTagsButton,     &QPushButton::clicked,         tagsContainer,  &TagsContainer::init                 );
+    connect(clearTagsButton,     &QPushButton::clicked,         filesContainer, &FilesContainer::clearView           );
+    connect(reloadButton,        &QPushButton::clicked,         this,           &MainWindow::reloadContent           );
+    connect(searchLineEdit,      &QLineEdit::textEdited,        this,           &MainWindow::search                  );
+    connect(newFileAction,       &QAction::triggered,           this,           &MainWindow::newFiles                );
+    connect(recentlyOpenedFilesMenu, &QMenu::triggered,                         Settings::openFile                   );
+    connect(recentlyOpenedFilesMenu, &QMenu::triggered,         this,           [=](){ Settings::getActionsRecentlyOpenedFiles( recentlyOpenedFilesMenu ); }  );
+    connect(quitAction,          &QAction::triggered,           this,           &QMainWindow::close                  );
+    connect(setMdReaderAction,   &QAction::triggered,                           &Settings::askForMarkdownEditor    );
+    connect(changeDataDirAction, &QAction::triggered,                           &Settings::setDataDirectory        );
+    connect(aboutAction,         &QAction::triggered,           this,           &MainWindow::about                   );
+    connect(this,                &MainWindow::started,          this,           &MainWindow::load,
+            Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection) );     
+    connect(expandButton,        &QPushButton::clicked,         tagsContainer,  &TagsContainer::expandItems          );
+    connect(collapseButton,      &QPushButton::clicked,         tagsContainer,  &TagsContainer::collapseItems        );
+    connect(filesContainer,      &FilesContainer::openedFile,   this,           [=](){ Settings::getActionsRecentlyOpenedFiles( recentlyOpenedFilesMenu ); });
+    connect(tagsContainer,       &TagsContainer::loadingFiles,  this,           [=](){ spinnerLabel->setVisible(true);});
+    connect(tagsContainer,       &TagsContainer::filesLoaded,   spinnerLabel,   &QLabel::hide                        );
+    connect(tagsContainer,       &TagsContainer::loadingFiles,  this,           [=](){ disableSomeWidgets(true);  }  );
+    connect(tagsContainer,       &TagsContainer::filesLoaded,   this,           [=](){ disableSomeWidgets(false); }  );
+    connect(filesContainer,      &FilesContainer::deletedItem,  tagsContainer,  &TagsContainer::permatentlyDelete    );
 }
 
+
+void MainWindow::disableSomeWidgets(const bool& disable) {
+    reloadButton->setDisabled(disable);
+    changeDataDirAction->setDisabled(disable);
+}
 
 void MainWindow::load() {
     qApp->processEvents();
@@ -166,84 +167,18 @@ void MainWindow::load() {
         auto ask = QMessageBox::information(this, title, message,
                                             QMessageBox::Ok | QMessageBox::Cancel);
         if (ask == QMessageBox::Cancel) exit(0);
-        if (!setDataDirectory()) exit(0);
+        if (!Settings::setDataDirectory()) exit(0);
     };
 
-    if (!dataDirectoryIsSet())
+    if (!Settings::dataDirectoryIsSet())
         op(tr("Set a Data Directory"), tr("The Data directory isn't set, Please set it."));
-    if (dataDirectoryIsSet() && !QFile::exists(dataDirectory()))
+    if (Settings::dataDirectoryIsSet() && !QFile::exists(Settings::dataDirectory()))
         op(tr("Data Directory doesn't exist"), tr("The Data Directory doesn't exist. Plase set it"));
 
     loadDataDirectoryContent();
     tagsContainer->loadCollapseOrExpand();        // remember if the items are expanded/collapsed the last time
 }
 
-
-
-void MainWindow::importFile() {
-    const fs::path data_dir(dataDirectory().toStdString());
-    const QString file = QFileDialog::getOpenFileName(this, tr("Open Files"), getLastVisitedDir());
-    if (file.isEmpty()) return;
-    saveLastVisitedDir(QFileInfo(file).path());    // open this location the next time
-
-    const fs::path fsFile(file.toStdString());
-    if (fsFile.parent_path() == data_dir) {    // inside the data dir
-        QMessageBox::critical(this, tr("File inside "),
-                              tr("This file is already inside your Data Directory."));
-        return;
-    }
-
-    if (!Element::isMD(fsFile)) {            // isn't a markdown file
-        QMessageBox::critical(this, tr("Invalid file"),
-                              tr("Error. This is not a Markdown file."));
-        return;
-    }
-
-    int i = 0;        // if the file exists, add a number in the end of the file
-    fs::path dest("");
-    do {
-        std::string add = " (" + QString::number(i).toStdString() + ")";
-        std::string filename = fsFile.stem().string()
-                + ( ( add == " (0)" ) ? "" : add )         // if first time (0), add ampty str
-                + fsFile.extension().string();
-
-        dest = data_dir / fs::path(filename);
-        i++;
-    }
-    while (fs::exists(dest));
-
-
-    try {
-        fs::copy(fsFile, dest);
-    }
-    catch (fs::filesystem_error& err) {
-        QMessageBox::critical(this, tr("Filesystem Error"), QString(err.what()));
-        return;
-    }
-
-    if (!Element::hasHeader(dest))                            // add a tag if it doesn't have one
-        Element::createHeader(dest, dest.stem().string());    // filename as a title header item
-    ElementsList elements;
-    elements.push_back(new Element(dest));
-    openElements(elements);
-}
-
-
-void MainWindow::saveUiSettings() {
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("window_size", QVariant(size()));                // size of the window
-    s.setValue("splitter_size", splitter->saveState());
-    s.endGroup();
-}
-
-void MainWindow::loadUiSettings() {
-    QSettings s;
-    s.beginGroup("main");
-    splitter->restoreState(s.value("splitter_size").toByteArray());
-    resize(s.value("window_size").toSize());
-    s.endGroup();
-}
 
 
 QStringList MainWindow::currentPaths() const {
@@ -263,27 +198,6 @@ QStringList MainWindow::currentPaths() const {
 }
 
 
-
-void MainWindow::saveLastVisitedDir(const QString &complete) {
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("last_dir", QVariant(complete));
-    s.endGroup();
-}
-
-
-
-QString MainWindow::getLastVisitedDir() const {
-    QSettings s;
-    s.beginGroup("main");
-    QString d = s.value("last_dir").toString();
-    s.endGroup();
-
-    return (d.isEmpty()) ? QDir::homePath() : d;
-}
-
-
-
 void MainWindow::reloadContent() {
     tagsContainer->clear();
     filesContainer->clearView();
@@ -295,7 +209,7 @@ void MainWindow::openStringListPaths(const QStringList& strlist) {
     ElementsList res;
 
     for (const QString& i : strlist) {
-        if(!QFile::exists(i)) continue;            // added after the crash that happens after a non existant file is being loaded
+        if(!QFile::exists(i)) continue;  // would crash if the file doesn't exist anymore
         res.push_back(new Element( fs::path( i.toStdString() ) ));
     }
 
@@ -303,69 +217,15 @@ void MainWindow::openStringListPaths(const QStringList& strlist) {
 }
 
 
-void MainWindow::askForMarkdownEditor() {
-    // get the previously entered value
-    QSettings ss;
-    ss.beginGroup("main");
-    QString previous = ss.value("markdown_reader").toString();
-    ss.endGroup();
-
-    // launch the dialog
-    QString prog = QInputDialog::getText(this, tr("Markdown Reader"),
-                                         tr("Name/Path of the Markdown Reader to use") + "\t\t",
-                                         QLineEdit::Normal, previous);
-    // save the new command
-    if (prog.isEmpty()) return;
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("markdown_reader", prog);
-    s.endGroup();
-}
-
-
-
-
-bool MainWindow::setDataDirectory() {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), dataDirectory());
-    if (dir.isEmpty()) return false;
-
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("data_dir", dir);
-    if (!s.contains("last_dir"))
-        s.setValue("last_dir", dir);
-    s.endGroup();
-    return true;
-}
-
-
-bool MainWindow::dataDirectoryIsSet() const {
-    QSettings s;
-    s.beginGroup("main");
-    bool res = s.contains("data_dir");
-    s.endGroup();
-    return res;
-}
 
 
 void MainWindow::loadDataDirectoryContent() {
-    const PathsList paths = Element::fetch_files(dataDirectory().toStdString());
+    const PathsList paths = Element::fetch_files(Settings::dataDirectory().toStdString());
     const ElementsList elements = Element::construct_list_elements(paths);
     if (!elements.empty())
         openElements(elements);
 }
 
-
-QString MainWindow::dataDirectory() const {
-    if (!dataDirectoryIsSet())
-        return QDir::homePath();
-    QSettings s;
-    s.beginGroup("main");
-    QString dir = s.value("data_dir").toString();
-    s.endGroup();
-
-    return dir;
-}
 
 void MainWindow::newFiles() {
     ElementDialog* dialog = new ElementDialog(this);
@@ -373,9 +233,8 @@ void MainWindow::newFiles() {
     if (out == ElementDialog::Rejected) return;
 
     Element * e = new Element(dialog->path());
-    ElementsList lst;
     if (!e) return;
-    lst.push_back(e);
+    ElementsList lst{ e };
     openElements(lst);
     delete dialog;
 }
@@ -402,6 +261,11 @@ void MainWindow::search() {
     delete res;
 }
 
+void MainWindow::changeNumberOfFilesLabel(){   
+    nbFiles->setText(QString( 
+                QString::number(filesContainer->count()) 
+                + QString(" files") ));
+}
 
 
 void MainWindow::about() {
@@ -418,7 +282,7 @@ void MainWindow::about() {
 
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-    saveUiSettings();
+    Settings::saveUiSettings(size(), splitter->saveState());
     event->accept();
 }
 

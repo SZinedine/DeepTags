@@ -3,7 +3,7 @@
 #include <QRegExp>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QSettings>
+#include "settings.h"
 
 ElementDialog::ElementDialog(QWidget* parent)
     : QDialog(parent)
@@ -22,6 +22,15 @@ ElementDialog::ElementDialog(Element* element, QWidget* parent)
     setModal(true);
     m_element = element;
     setup_forEditFile();
+}
+
+ElementDialog::~ElementDialog() {
+    delete m_title;
+    delete m_path;
+    delete m_pinned;
+    delete m_favorited;
+    delete m_tags;
+    delete buttons;
 }
 
 
@@ -83,20 +92,26 @@ void ElementDialog::setup_forNewFile() {
 
 void ElementDialog::save() {
     if (title().empty()) {
-        QMessageBox::warning(this, tr("Title didn't set"), tr("You have to set at least the title to save the file"));
+        QMessageBox::warning(this, tr("Title isn't set"), 
+                tr("You have to set at least the title to save the file"));
         return;
     }
 
-    QString default_ = getLastDir() + QString("/") + m_title->text().simplified();
-    QString f = QFileDialog::getSaveFileName(this, tr("Save File"), default_, tr("Text file (*.md *.MD *.markdown)"));
+    fs::path path( Settings::dataDirectory().toStdString().c_str() );
+    path = path / fs::path(m_title->text().simplified().toStdString().c_str());
+    path += ".md";
 
-    if (f.isEmpty()) return;
+    if (fs::exists(path)) {
+        QMessageBox::warning(this, tr("File already exist"), 
+                QString(path.string().c_str()) + " already exists.");
+        return;
+    }
+    
     m_path = new QLineEdit;
-    m_path->setText(f);
+    m_path->setText(QString(path.c_str()));
 
-    const fs::path fsPath(f.toStdString());
-    Element::createNewFile(fsPath, title());
-    auto *e = new Element(fsPath);
+    Element::createNewFile(path, title());
+    auto *e = new Element(path);
     if (pinned()) e->addPinnedLine(true);
     if (favorited()) e->addFavoritedLine(true);
     const StringList t = tags();
@@ -124,14 +139,6 @@ StringList ElementDialog::tags() const {
 }
 
 
-QString ElementDialog::getLastDir() const {
-    QSettings s;
-    s.beginGroup("main");
-    QString d = s.value("last_dir").toString();
-    s.endGroup();
-    return (d.isEmpty()) ? QDir::homePath() : d;
-
-}
 
 
 void ElementDialog::accept_() {

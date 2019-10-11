@@ -25,17 +25,18 @@ public:
      * @brief constructor to edit existing Elements
      */
     ElementDialog(Element* element, QWidget* parent=nullptr);
+    ~ElementDialog();
 
     void setListOfTags();
     /**
      * Get info
      */
-    [[nodiscard]] inline std::string title() const {    return m_title->text().simplified().toStdString(); }
-    [[nodiscard]] inline bool pinned()       const {    return m_pinned->isChecked();          }
-    [[nodiscard]] inline bool favorited()    const {    return m_favorited->isChecked();       }
+    [[nodiscard]] inline std::string title() const { return m_title->text().simplified().toStdString(); }
+    [[nodiscard]] inline bool pinned()       const { return m_pinned->isChecked();          }
+    [[nodiscard]] inline bool favorited()    const { return m_favorited->isChecked();       }
     [[nodiscard]] StringList tags()          const;
-    [[nodiscard]] inline Element* element()        {    return m_element;                      }
-    [[nodiscard]] inline std::string path()        {    return m_path->text().toStdString();   }
+    [[nodiscard]] inline Element* element()        { return m_element;                      }
+    [[nodiscard]] inline std::string path()        { return m_path->text().toStdString();   }
 
 private:
     void setup_forEditFile();
@@ -50,7 +51,6 @@ private:
      * purpose: check if the file string isn't empty before saving
      */
     void accept_();
-    [[nodiscard]] QString getLastDir() const;
 
     Element* m_element;
     QDialogButtonBox* buttons;

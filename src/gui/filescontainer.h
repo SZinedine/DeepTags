@@ -13,7 +13,7 @@ class FilesContainer : public QListWidget
 public:
     explicit FilesContainer(QWidget *parent=nullptr);
     ~FilesContainer() override;
-    static inline FileItem* real(QListWidgetItem* item)    {    return static_cast<FileItem*>(item);    }
+    static inline FileItem* real(QListWidgetItem* item) { return static_cast<FileItem*>(item);}
 
 public slots:
     void addFiles(QVector<Element*>* items);
@@ -52,6 +52,7 @@ signals:
     void deletedItem(Element* item);
     void restoredElement(Element* e);
     void elementChanged(Element* element);
+    void openedFile(fs::path f);      // open in a markdown editor
 };
 
 

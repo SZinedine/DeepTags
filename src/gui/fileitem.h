@@ -6,6 +6,9 @@
 #include <QStyledItemDelegate>
 
 class FilesContainer;
+const QString pinnedIcon    = ":images/pin.png";
+const QString favoritedIcon = ":images/favorite.png";
+const QString favPinIcon    = ":images/favpin.png";
 
 class FileItem : public QListWidgetItem
 {
@@ -29,10 +32,6 @@ public:
 private:
     char prevent_padding_warning[4];
     Element* m_element;
-
-    QString pinnedIcon = ":images/pin.png";
-    QString favoritedIcon = ":images/favorite.png";
-    QString favPinIcon = ":images/favpin.png";
 };
 
 

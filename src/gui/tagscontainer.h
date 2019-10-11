@@ -19,8 +19,8 @@ public:
     TagsContainer(QWidget* parent=nullptr);
     ~TagsContainer() override;
 
-    static inline TagItem* real(QTreeWidgetItem* item) { return static_cast<TagItem*>(item);    }
-    inline void createBasicTags() { for (const QString& i : basicTags) addTopLevelItem( new TagItem(i) ); }
+    static inline TagItem* real(QTreeWidgetItem* item) { return static_cast<TagItem*>(item); }
+    void createBasicTags();
     void addElements(const ElementsList& elements);
     bool alreadyAdded(Element* element);
     /**
@@ -37,23 +37,31 @@ public slots:
     void restoreElement(Element* element);
     void reloadElement(Element* element);
     void removeEmptyItems();
-    void collapseItems();                            // remember if collapsed/expanded
+    void collapseItems();                // remember if collapsed/expanded
     void expandItems();
     void loadCollapseOrExpand();
     void permatentlyDelete(Element* element);
 
 signals:
     /**
-     *  when one or multiple tags are selected, send their content to be displayed
+     *  when one or multiple tags are selected,
+     *  send their content to be displayed
      */
     void itemSelected(QVector<Element*> *item);
-    void loadingFiles();                            // emited when a list of Elements are loading
-    void filesLoaded();                             // emited when a list of Elements finished loading
+    /**
+     *  emited when a list of Elements are loading
+     */
+    void loadingFiles();
+    /**
+     *  emited when a list of Elements finished loading
+     */
+    void filesLoaded();
 
 private:
     void construct();
     /**
-     *  create a tag(s) from Element, or append the Element to existing tags
+     *  create a tag(s) from Element, 
+     *  or append the Element to existing tags
      */
     void addElement(Element* element);
     void addToSpecificTopLevel(Element* e, const QString& name);
@@ -63,7 +71,7 @@ private:
     int find(const QString& label, QTreeWidgetItem* parent);
     int find(const QString& label, QTreeWidget* parent);
     void pinBasicItems();
-    void sort();                                    // sort and pin the basic items
+    void sort();                         // sort and pin the basic items
     void toTrash(Element* element);
     void pullElement(Element* element);
     void dragEnterEvent(QDragEnterEvent *event) override;
@@ -76,3 +84,4 @@ private:
 };
 
 #endif // TAGSCONTAINER_H
+

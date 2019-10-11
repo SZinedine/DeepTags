@@ -2,7 +2,6 @@
 #include "fileitem.h"
 #include <QDebug>
 #include <cstdlib>
-#include <QSettings>
 #include <QMessageBox>
 #include <QMenu>
 #include <thread>
@@ -10,6 +9,7 @@
 #include <QMimeData>
 #include <QInputDialog>
 #include "elementdialog.h"
+#include "settings.h"
 
 FilesContainer::FilesContainer(QWidget *parent)
     : QListWidget(parent)
@@ -45,26 +45,10 @@ void FilesContainer::clearView() {
 }
 
 void FilesContainer::openFile(QListWidgetItem* item) {
-    // retrieve the name of the Markdown reader
     if (!item) return;
-    QSettings s;
-    s.beginGroup("main");
-    QString prog = s.value("markdown_reader").toString().simplified();
-    s.endGroup();
-
-    if (prog.isEmpty()) {    // warning and abort if the reader isn't set
-        QMessageBox::warning(parentWidget(), tr("Error"),
-                             tr("You haven't set the Markdown Editor app."));
-        return;
-    }
-
-    prog.append(" ");    // space between the command name and the filepath
-    fs::path p = real(item)->path();
-    std::string f = '"' + p.string() + '"';
-
-    std::string command = prog.toStdString() + f;
-    std::thread( [=]{    std::system(command.c_str());    } )
-            .detach();
+    fs::path path = real(item)->path();
+    Settings::openFile_(path, parentWidget());
+    emit openedFile(path);
 }
 
 
@@ -118,7 +102,7 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
 
     // if the element is deleted, that means that we are in the Trash tag
     if (real_it->element()->deleted()) {
-        menu->addAction(tr("Restore"),         this,   [=](){
+        menu->addAction(tr("Restore"),  this,   [=](){
             (real_it->element())->changeDeleted(false);
            takeItem(row(item));
            emit elementChanged(real_it->element());
@@ -175,7 +159,8 @@ void FilesContainer::permanentlyDelete(QListWidgetItem* item) {
                 tr("Error. Failed to delete the file"));
         return;
     }
-    delete takeItem(row(item));
+    emit deletedItem(real(item)->element());
+    delete real(takeItem(row(item)));
 }
 
 
