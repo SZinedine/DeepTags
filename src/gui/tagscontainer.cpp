@@ -289,7 +289,7 @@ void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
     }
     std::vector<std::string> str;
     for (const auto &i : strl) str.push_back(i.toStdString());
-    QString s = QString::fromStdString( Element::combineTags(str) );
+    QString s = QString::fromStdString( be::combineTags(str) );
 
     auto *mimeData = new QMimeData;
     mimeData->setText(s);

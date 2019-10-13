@@ -3,28 +3,6 @@
 #include <algorithm>
 #include <cctype>
 
-BaseElement::BaseElement() {
-    m_path = "";
-    m_title = "";
-    m_tags = {};
-    m_pinned = false;
-    m_favorited = false;
-    m_deleted = false;
-}
-
-BaseElement::BaseElement(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned, const bool& favorited, const bool& deleted) {
-    setup(path, title, tags, pinned, favorited, deleted);
-}
-
-BaseElement::BaseElement(const BaseElement& other) {
-    m_path = other.m_path;
-    m_title = other.m_title;
-    m_tags = other.m_tags;
-    m_pinned = other.m_pinned;
-    m_favorited = other.m_favorited;
-    m_deleted = other.m_deleted;
-}
-
 
 
 
@@ -580,15 +558,6 @@ void BaseElement::writeContentToFile(const StringList& content, const fs::path f
 
 
 
-
-void BaseElement::setup(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned, const bool& favorited, const bool& deleted) {
-    setPath(path);
-    setTitle(title);
-    setTags(tags);
-    setPinned(pinned);
-    setFavorited(favorited);
-    setDeleted(deleted);
-}
 
 
 

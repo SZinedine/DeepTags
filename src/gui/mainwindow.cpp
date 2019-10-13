@@ -220,7 +220,7 @@ void MainWindow::openStringListPaths(const QStringList& strlist) {
 
 
 void MainWindow::loadDataDirectoryContent() {
-    const PathsList paths = Element::fetch_files(Settings::dataDirectory().toStdString());
+    const PathsList paths = be::fetch_files(Settings::dataDirectory().toStdString());
     const ElementsList elements = Element::construct_list_elements(paths);
     if (!elements.empty())
         openElements(elements);

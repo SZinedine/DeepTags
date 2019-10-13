@@ -110,7 +110,7 @@ void ElementDialog::save() {
     m_path = new QLineEdit;
     m_path->setText(QString(path.c_str()));
 
-    Element::createNewFile(path, title());
+    be::createNewFile(path, title());
     auto *e = new Element(path);
     if (pinned()) e->addPinnedLine(true);
     if (favorited()) e->addFavoritedLine(true);
@@ -122,8 +122,8 @@ void ElementDialog::save() {
 
 
 void ElementDialog::setListOfTags() {
-    auto header = Element::getHeader(m_element->path());
-    auto lst = Element::extract_tags( Element::find_tags_inheader(header) );
+    auto header = be::getHeader(m_element->path());
+    auto lst = be::extract_tags( be::find_tags_inheader(header) );
 
     for (const auto &i : lst)
         m_tags->append(QString::fromStdString(i));

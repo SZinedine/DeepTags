@@ -1,7 +1,11 @@
 #include "element.h"
 
-Element::Element(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned, const bool& favorited, const bool& deleted)
-    : BaseElement(path, title, tags, pinned, favorited, deleted)
+Element::Element(const fs::path& path, const std::string& title, 
+        const Tags& tags, const bool& pinned, 
+        const bool& favorited, const bool& deleted)
+    : m_path(path), m_title(title),
+      m_tags(tags), m_pinned(pinned),
+      m_favorited(favorited), m_deleted(deleted)
 {}
 
 Element::Element(const fs::path& path)
@@ -10,7 +14,6 @@ Element::Element(const fs::path& path)
 }
 
 Element::Element(const Element& other)
-    : BaseElement(other)
 {
     m_path = other.m_path;
     m_title = other.m_title;
@@ -20,11 +23,20 @@ Element::Element(const Element& other)
     m_deleted = other.m_deleted;
 }
 
+void Element::setup(const fs::path& path) {
+    m_path = path;
+    const StringList header = be::getHeader(path);  // the complete header of the file
+    setTitle( be::extract_title( be::find_title_inheader(header) ) );
+    initTags(header);
+    setPinned( be::extract_pinned( be::find_pinned_inheader(header) ) );
+    setFavorited( be::extract_favorited( be::find_favorite_inheader(header) ) );
+    setDeleted(be::extract_deleted(be::find_deleted_inheader(header)));
+}
 
 ElementsList Element::construct_list_elements(const PathsList& f) {
     ElementsList elems;
     for (const fs::path& p : f) {
-        if (!isMD(p)) continue;
+        if (!be::isMD(p)) continue;
         elems.push_back( new Element(p) );
     }
     return elems;
@@ -34,27 +46,28 @@ ElementsList Element::construct_list_elements(const PathsList& f) {
 
 
 void Element::addPinnedLine(const bool& val) {
-    std::string res = makePinnedLine(val);
-    addPinnedItem(res, m_path);
+    std::string res = be::makePinnedLine(val);
+    be::addPinnedItem(res, m_path);
     setPinned(val);
+    
 }
 
 void Element::addFavoritedLine(const bool& val) {
-    std::string res = makeFavoritedLine(val);
-    addFavoritedItem(res, m_path);
+    std::string res = be::makeFavoritedLine(val);
+    be::addFavoritedItem(res, m_path);
     setFavorited(val);
 }
 
 void Element::addDeletedLine(const bool& val) {
-    std::string res = makeDeletedLine(val);
-    addDeletedItem(res, m_path);
+    std::string res = be::makeDeletedLine(val);
+    be::addDeletedItem(res, m_path);
     setDeleted(val);
 }
 
 
 void Element::addTagsLine(const StringList& list) {
-    std::string line = makeTagsLine(list);
-    addTagsItem(line, m_path);
+    std::string line = be::makeTagsLine(list);
+    be::addTagsItem(line, m_path);
     initTags();
 }
 
@@ -63,7 +76,7 @@ void Element::addTagsLine(const StringList& list) {
 
 
 void Element::changeTitle(std::string title) {
-    changeTitleInFile(title, m_path);
+    be::changeTitleInFile(title, m_path);
     reloadTitle();
 }
 
@@ -77,7 +90,7 @@ void Element::changePinned(bool pinned) {
         removePinnedLine();
         return;
     }
-    changePinnedInFile(pinned, m_path);
+    be::changePinnedInFile(pinned, m_path);
     reloadPinned();
 }
 
@@ -91,7 +104,7 @@ void Element::changeFavorited(bool favorited) {
         removeFavoritedLine();
         return;
     }
-    changeFavoritedInFile(favorited, m_path);
+    be::changeFavoritedInFile(favorited, m_path);
     reloadFavorited();
 }
 
@@ -107,7 +120,7 @@ void Element::changeDeleted(bool deleted) {
         removeDeletedLine();
         return;
     }
-    changeDeletedInFile(deleted, m_path);
+    be::changeDeletedInFile(deleted, m_path);
     reloadDeleted();
 }
 
@@ -121,14 +134,14 @@ void Element::overrideTags(const StringList& list) {
         addTagsLine(list);
         return;
     }
-    const StringList header = getHeader(m_path);
-    std::string old = find_tags_inheader(header);
+    const StringList header = be::getHeader(m_path);
+    std::string old = be::find_tags_inheader(header);
     StringList valid;
     for (std::string i : list) {
-        trim(i);
-        if (validTagToAdd(i)) valid.push_back(i);
+        be::trim(i);
+        if (be::validTagToAdd(i)) valid.push_back(i);
     }
-    const std::string newTag = makeTagsLine(valid);
+    const std::string newTag = be::makeTagsLine(valid);
 
     findReplace(old, newTag);
     initTags();
@@ -136,23 +149,23 @@ void Element::overrideTags(const StringList& list) {
 
 
 bool Element::appendTag(std::string tag) {
-    trim(tag);
-    if (!validTagToAdd(tag)) return false;
+    be::trim(tag);
+    if (!be::validTagToAdd(tag)) return false;
     if (!hasTagsLine()) {
         addTagsLine(StringList{tag});
         return true;
     }
 
-    const StringList header = getHeader(m_path);
-    const std::string raw_tag_header = find_tags_inheader(header);
+    const StringList header = be::getHeader(m_path);
+    const std::string raw_tag_header = be::find_tags_inheader(header);
 
-    StringList tags = extract_tags(raw_tag_header);
+    StringList tags = be::extract_tags(raw_tag_header);
 
     for (const std::string& i : tags)	// verify if the file doesn't contain the tag
         if (tag == i) return false;
     tags.push_back(tag);
 
-    const std::string res = makeTagsLine(tags);
+    const std::string res = be::makeTagsLine(tags);
     bool ret = findReplace(raw_tag_header, res);	// write the changes into the file
 
     initTags();		// reload the tags into the local variable
@@ -165,39 +178,30 @@ bool Element::appendTag(std::string tag) {
 
 
 void Element::removePinnedLine() {
-    removePinnedItemFromHeader(m_path);
+    be::removePinnedItemFromHeader(m_path);
     setPinned(false);
 }
 
 void Element::removeFavoritedLine() {
-    removeFavoritedItemFromHeader(m_path);
+    be::removeFavoritedItemFromHeader(m_path);
     setFavorited(false);
 }
 
 void Element::removeDeletedLine() {
-    removeDeletedItemFromHeader(m_path);
+    be::removeDeletedItemFromHeader(m_path);
     setDeleted(false);
 }
 
 void Element::removeTagsLine() {
-    removeTagsItemFromHeader(m_path);
+    be::removeTagsItemFromHeader(m_path);
     setTags({{}});
 }
 
 
 
 void Element::initTags(const StringList& header) {
-    StringList tags = extract_tags( find_tags_inheader(header) );
-    setTags(parse_tags(tags));
+    StringList tags = be::extract_tags( be::find_tags_inheader(header) );
+    setTags(be::parse_tags(tags));
 }
 
 
-void Element::setup(const fs::path& path) {
-    m_path = path;
-    const StringList header = getHeader(path);  // the complete header of the file
-    setTitle( extract_title( find_title_inheader(header) ) );
-    initTags(header);
-    setPinned( extract_pinned( find_pinned_inheader(header) ) );
-    setFavorited( extract_favorited( find_favorite_inheader(header) ) );
-    setDeleted(extract_deleted(find_deleted_inheader(header)));
-}
