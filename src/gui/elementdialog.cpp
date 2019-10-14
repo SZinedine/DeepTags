@@ -122,10 +122,9 @@ void ElementDialog::save() {
 
 
 void ElementDialog::setListOfTags() {
-    auto header = be::getHeader(m_element->path());
-    auto lst = be::extract_tags( be::find_tags_inheader(header) );
+    auto lst = be::getUnparsedTags(m_element->path());
 
-    for (const auto &i : lst)
+    for (const std::string &i : lst)
         m_tags->append(QString::fromStdString(i));
 }
 

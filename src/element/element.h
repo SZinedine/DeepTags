@@ -7,59 +7,37 @@ namespace be = BaseElement;
 
 class Element 
 {
-/****************************************************/
-
-
-
 public:
     Element(const fs::path& path);
-    Element(const fs::path& path, const std::string& title, const Tags& tags, const bool& pinned=false, const bool& favorited=false, const bool& deleted=false);
+    Element(const fs::path& path, const std::string& title, 
+            const Tags& tags, const bool& pinned=false, 
+            const bool& favorited=false, const bool& deleted=false);
     Element(const Element& other);
-    inline bool operator==(const Element& other)         {   return equalTo(other);        }
+    inline bool operator==(const Element& other)   { return (m_path == other.m_path); }
 
 
 
     // from BaseClass
     // accessers
-    [[nodiscard]] inline fs::path path()     const      {    return m_path;     }
-    [[nodiscard]] inline std::string title() const      {    return m_title;    }
-    [[nodiscard]] inline Tags tags()         const      {    return m_tags;     }
-    [[nodiscard]] inline bool pinned()       const      {    return m_pinned;   }
-    [[nodiscard]] inline bool favorited()    const      {    return m_favorited;}
-    [[nodiscard]] inline bool deleted()      const      {    return m_deleted;  }
+    [[nodiscard]] inline fs::path path()     const  {  return m_path;     }
+    [[nodiscard]] inline std::string title() const  {  return m_title;    }
+    [[nodiscard]] inline Tags tags()         const  {  return m_tags;     }
+    [[nodiscard]] inline bool pinned()       const  {  return m_pinned;   }
+    [[nodiscard]] inline bool favorited()    const  {  return m_favorited;}
+    [[nodiscard]] inline bool deleted()      const  {  return m_deleted;  }
     // modifiers
-    inline void setPath(const fs::path& path)           {    m_path = path;      }
-    inline void setTitle(const std::string& title)      {    m_title = title;    }
-    inline void setTags(const Tags &tags)               {    m_tags = tags;      }
-    inline void setPinned(const bool &pinned)           {    m_pinned = pinned;  }
-    inline void setFavorited(const bool& favorited)     {    m_favorited = favorited;}
-    inline void setDeleted(const bool& deleted)         {    m_deleted = deleted;}
+    inline void setPath(const fs::path& path)       {  m_path = path;      }
+    inline void setTitle(const std::string& title)  {  m_title = title;    }
+    inline void setTags(const Tags &tags)           {  m_tags = tags;      }
+    inline void setPinned(const bool &pinned)       {  m_pinned = pinned;  }
+    inline void setFavorited(const bool& favorited) {  m_favorited = favorited;}
+    inline void setDeleted(const bool& deleted)     {  m_deleted = deleted;}
 
 
-
-    inline void reload()                                 {   setup( path() );              }
-    // inline bool equalTo(Element* e) const                {   return ( m_path == e->m_path);  }
-    inline bool equalTo(const Element& e)const           {   return ( m_path == e.m_path); }
+    inline void reload()                       { setup( path() );   }
+    inline bool equalTo(const Element& e)const { return ( m_path == e.m_path); }
 
     static ElementsList construct_list_elements(const PathsList& f);
-    /**
-     * Get a specific raw line from header
-     */
-    [[nodiscard]] inline StringList getHeaderFromFile()       { return be::getHeader(m_path); }
-    [[nodiscard]] inline std::string getTitleLineFromHeader() { return be::find_title_inheader(getHeaderFromFile());   }
-    [[nodiscard]] inline std::string getTagsLineFromHeader()  { return be::find_tags_inheader(getHeaderFromFile());    }
-    [[nodiscard]] inline std::string getPinnedLineFromHeader(){ return be::find_pinned_inheader(getHeaderFromFile());  }
-    [[nodiscard]] inline std::string getFavoritedLineFromHeader() { return be::find_favorite_inheader(getHeaderFromFile());}
-    [[nodiscard]] inline std::string getDeletedLineFromHeader()   { return be::find_deleted_inheader(getHeaderFromFile()); }
-    /**
-     * get the value of a specific header item
-     */
-    [[nodiscard]] inline std::string getTitleValueFromHeader(){ return be::extract_title( getTitleLineFromHeader() );      }
-    [[nodiscard]] inline bool getPinnedValueFromHeader()      { return be::extract_pinned( getPinnedLineFromHeader() );    }
-    [[nodiscard]] inline bool getFavoritedValueFromHeader()   { return be::extract_favorited( getFavoritedLineFromHeader() );}
-    [[nodiscard]] inline bool getDeletedValueFromHeader()     { return be::extract_deleted( getDeletedLineFromHeader() );  }
-    [[nodiscard]] inline StringList getUnparsedTagsValuesFromHeader() { return be::extract_tags( getTagsLineFromHeader() );        }
-    [[nodiscard]] inline Tags getParsedTagsValueFromHeader()  { return be::parse_tags( getUnparsedTagsValuesFromHeader() );}
     /**
      * Check if a line exists in the file's header
      */
@@ -105,11 +83,8 @@ private:
     /***
      * Reload individual items (read the file to set the local variables)
      */
-    inline void reloadTitle()            {   setTitle(getTitleValueFromHeader());         }
-    inline void reloadPinned()           {   setPinned(getPinnedValueFromHeader());       }
-    inline void reloadFavorited()        {   setFavorited(getFavoritedValueFromHeader()); }
-    inline void reloadDeleted()          {   setDeleted(getDeletedValueFromHeader());     }
-    inline void initTags()               {   initTags(be::getHeader(m_path));                 }
+    inline void reloadTitle()            {   setTitle(be::getTitle(m_path));    }
+    inline void initTags()               {   initTags(be::getHeader(m_path));   }
     void initTags(const StringList& header);
     /**
      * construct the object (this) by calling all the appropriate functions

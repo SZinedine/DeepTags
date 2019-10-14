@@ -12,14 +12,15 @@ class Element;
 typedef std::vector<std::string> StringList;
 typedef std::vector<fs::path> PathsList;
 typedef std::vector<Element*> ElementsList;
-typedef std::vector<std::vector<std::string>> Tags;
+typedef std::vector< std::vector<std::string> > Tags;
 
 namespace BaseElement {
 
     void createNewFile(const fs::path& p, std::string title);
     
     /**
-     * scans all the files of a directory and return the markdown files inside a list of paths
+     * scans all the files inside a directory 
+     * and returns the markdown files a vector of fs::path
      */
     PathsList fetch_files(const std::string& dir);
     /**
@@ -27,7 +28,7 @@ namespace BaseElement {
      * and everything in a vector of strings.
      * NOTE: a header is the lines inside two lines of "---"
      */
-    StringList getHeader(const fs::path& fi);
+    StringList getHeader(const fs::path& path);
     /**
      * verify if the file has a markdown extension
      */
@@ -38,32 +39,93 @@ namespace BaseElement {
      */
     int nbItemsInHeader(const fs::path& fi);
 
+    
 
-    /********************************************************/
-    /**********  Extract the value from a header line *******/
-    /********************************************************/
-    /**
-     * receives a line of the header of a file, which are
-     * written in a key-value fashion.
-     * returns the value
-     ********************************************************/
+    /*********** New functions ***********/
 
-    /** Extract the title from a string in this form: "title: this is the title"
-     */
-    std::string extract_title(const std::string& tit);
-    /**
-     * receives : "pinned: true"
-     * returns  : bool(true)
-     */
-    bool extract_pinned(const std::string& pi);
-    bool extract_favorited(const std::string& fav);
-    bool extract_deleted(const std::string& fav);
+
+    // get The actual values from the file or the header
+    std::string getTitle(const fs::path& p);
+    Tags getTags(const fs::path& p);
+    bool isPinned(const fs::path& p);
+    bool isFavorited(const fs::path& p);
+    bool isDeleted(const fs::path& p);
+
+    std::string getTitle(const StringList& header);
+    bool isPinned(const StringList& header);
+    bool isFavorited(const StringList& header);
+    bool isDeleted(const StringList& header);
+    Tags getParsedTags(const StringList& header);
+    inline auto getParsedTags(const fs::path& path) { return getParsedTags(getHeader(path)); }
     /**
      * receive this:
      * "tags: [Notebooks/sheets/random, status/infinite, type/all]"
      * return the items between braquets and put them in a vector of strings
      */
-    StringList extract_tags(const std::string& s);
+    StringList getUnparsedTags(const StringList& header);
+    inline auto getUnparsedTags(const fs::path& path) { return getUnparsedTags(getHeader(path)); }
+
+
+
+    void setTitle(const fs::path& path, const std::string& title);
+    void setPinned(const fs::path& path, const bool& pinned);
+    void setFavorited(const fs::path& path, const bool& favorite);
+    void setDeleted(const fs::path& path, const bool& deleted);
+
+    void setTitle(const fs::path& path, const std::string& title, const StringList& header);
+    void setPinned(const fs::path& path, const bool& pinned, const StringList& header);
+    void setFavorited(const fs::path& path, const bool& favorite, const StringList& header);
+    void setDeleted(const fs::path& path, const bool& deleted, const StringList& header);
+
+    /**
+     * look for a string from its key in the header
+     */
+    std::string findLine(const std::string& key, const StringList& header);
+    inline std::string findTitle(const StringList& header) { return findLine("title", header);}
+    inline std::string findPinned(const StringList& header) { return findLine("pinned", header);}
+    inline std::string findFavorited(const StringList& header){ return findLine("favorited", header);}
+    inline std::string findDeleted(const StringList& header) { return findLine("deleted", header);}
+    inline std::string findTags(const StringList& header) { return findLine("tags", header);}
+
+    
+    inline bool hasTitleKey(const StringList& header) { return !(findTitle(header).empty()); }
+    inline bool hasPinnedKey(const StringList& header) { return !(findPinned(header).empty()); }
+    inline bool hasFavoritedKey(const StringList& header) { return !(findFavorited(header).empty()); }
+    inline bool hasDeletedKey(const StringList& header) { return !(findDeleted(header).empty()); }
+    inline bool hasTagsKey(const StringList& header) { return !(findTags(header).empty()); }
+
+    /**
+     * receive a line of a header. return the value
+     * "myKey: my value" -> "my value"
+     */
+    std::string getValue(std::string line);
+    /**
+     * use getValue() and return the actual value with the appropriate data type
+     */
+    std::string parseString(const std::string& line);
+    bool parseBool(const std::string& line);
+    StringList parseArray(const std::string& line);
+
+    /**
+     * add a particle before and after the string
+     */
+    void enwrap(std::string& str, const std::string& before, const std::string& after);
+    void unwrap(std::string& str, const std::string& before, const std::string& after);
+
+
+
+
+    /*********************************************************************/
+    /*********************************************************************/
+    /*********************************************************************/
+    /*********************************************************************/
+    /*********************************************************************/
+    /*********************************************************************/
+    /*********************************************************************/
+
+
+
+
     /**
      * split a single string into particles and return them in a vector of strings
      * for example:
@@ -78,13 +140,7 @@ namespace BaseElement {
      * function found in:
           https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
     */
-    StringList split_single_tag(const std::string& s, const std::string& delimiter="/");
-    /**
-     * transform the raw tags retrieved from the file,
-     * parse them using split_single_tag()
-     * and put them inside a vector of vectors of strings (Tags typedef)
-     */
-    Tags parse_tags(const StringList& raw_tags);
+    StringList split(const std::string& s, const std::string& delimiter="/");
     
 
 
@@ -105,6 +161,7 @@ namespace BaseElement {
     std::string find_pinned_inheader(const StringList& header);
     std::string find_favorite_inheader(const StringList& header);
     std::string find_deleted_inheader(const StringList& header);
+
     
 
     /***********************************************************************/
@@ -169,18 +226,6 @@ namespace BaseElement {
     void addTagsItem(std::string tagsLine, const fs::path& path);
 
     /***********************************************************************/
-    /****************** Change a header item in a file **********************/
-    /***********************************************************************/
-    /***
-     * the header item already exists in the header.
-     * these functions are ment to change the value of the key
-     */
-    void changeTitleInFile(std::string title, const fs::path& path);
-    void changePinnedInFile(const bool& pinned, const fs::path& path);
-    void changeFavoritedInFile(const bool& favorited, const fs::path& path);
-    void changeDeletedInFile(const bool& deleted, const fs::path& path);
-
-    /***********************************************************************/
     /****************** Remove a specific item in the header ***************/
     /***********************************************************************/
     void removeLineFromHeader(const std::string& line, const fs::path path);
@@ -202,25 +247,40 @@ namespace BaseElement {
      */
     void trim(std::string &s);
     
-
-/********************  protected ***********************/
     /**
      * find a line in a text file and replace it
      */
     bool replace(const std::string& old_str, const std::string& new_str, const fs::path& path);
-    
+    /**
+     * open a file, return each line of it
+     * as an entry in a vector<string>
+     */
     StringList getFileContent(const fs::path file);
     void writeContentToFile(const StringList& content, const fs::path file);
-    inline bool toBool(const std::string& s)     {    return ((s=="true")?true:false);  }
-    inline std::string toStr(const bool& b)      {    return ((b)?"true":"false");      }
+    inline bool toBool(const std::string& s) { return ((s=="true")?true:false); }
+    inline std::string toStr(const bool& b)  { return ((b)?"true":"false");     }
 
-    void ltrim(std::string &s);
-    void rtrim(std::string &s);
     /**
      * Some lines are surrounded with quotations,
      * call this function on every title to remove them
      */
     void remove_quotations(std::string& str);
+
+
+
+
+
+
+
+
+    /***********************************************************************/
+    /********************* deprecated **************************/
+    /***********************************************************************/
+
+
+
+
+
 
 }
 

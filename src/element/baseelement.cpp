@@ -5,6 +5,200 @@
 
 
 
+std::string BaseElement::getTitle(const StringList& header) {
+    std::string found = findTitle(header);
+    if (found.empty()) return "";
+    found = parseString(found);
+    remove_quotations(found);
+    return found;
+}
+
+Tags BaseElement::getParsedTags(const StringList& header) {
+    StringList unparsed = getUnparsedTags(header);
+    if (unparsed.empty()) return Tags{{}};
+
+    Tags res;
+    for (const std::string& i : unparsed)
+        res.push_back( split(i) );
+    return res;
+}
+
+StringList BaseElement::getUnparsedTags(const StringList& header) {
+    std::string found = findTags(header);
+    if (found.empty()) return StringList();
+    return parseArray(found);
+}
+
+bool BaseElement::isPinned(const StringList& header) {
+    std::string found = findPinned(header);
+    if (found.empty()) return false;
+    return parseBool(found);
+
+}
+
+bool BaseElement::isFavorited(const StringList& header) {
+    std::string found = findFavorited(header);
+    if (found.empty()) return false;
+    return parseBool(found);
+}
+
+bool BaseElement::isDeleted(const StringList& header) {
+    std::string found = findDeleted(header);
+    if (found.empty()) return false;
+    return parseBool(found);
+}
+
+
+
+
+std::string BaseElement::getTitle(const fs::path& path) {
+    return getTitle(getHeader(path));
+}
+
+bool BaseElement::isPinned(const fs::path& path) {
+    return isPinned(getHeader(path));
+}
+
+bool BaseElement::isFavorited(const fs::path& path) {
+    return isFavorited(getHeader(path));
+}
+
+bool BaseElement::isDeleted(const fs::path& path) {
+    return isDeleted(getHeader(path));
+}
+
+
+
+
+// used by all other functions that search for a key in a header
+std::string BaseElement::findLine(const std::string& key, const StringList& header){
+    const std::string k = key + ":";
+    for (std::string s : header) {
+        trim(s);
+        if (s.find(k) == 0) return s;
+    }
+    return std::string("");
+}
+
+
+
+
+
+
+void BaseElement::setTitle(const fs::path& path, const std::string& title){
+    setTitle(path, title, getHeader(path));
+}
+
+void BaseElement::setPinned(const fs::path& path, const bool& pinned){
+    setPinned(path, pinned, getHeader(path));
+}
+
+void BaseElement::setFavorited(const fs::path& path, const bool& favorite){
+    setFavorited(path, favorite, getHeader(path));
+}
+
+void BaseElement::setDeleted(const fs::path& path, const bool& deleted){
+    setDeleted(path, deleted, getHeader(path));
+}
+
+
+
+
+
+
+
+void BaseElement::setTitle(const fs::path& path, const std::string& title, const StringList& header){
+    if (!hasTitleItem(path)) return;
+    if (title.empty()) return;
+    std::string t = title;
+    trim(t);
+    t = makeTitleLine(t);
+    std::string old_line = findTitle(header);
+    replace(old_line, t, path);
+}
+
+void BaseElement::setPinned(const fs::path& path, const bool& pin, const StringList& header){
+    if (!hasPinnedItem(path)) return;
+    std::string pinned = makePinnedLine(pin);
+    std::string old = findPinned(header);
+    if (old.empty()) return;
+    replace(old, pinned, path);
+}
+
+void BaseElement::setFavorited(const fs::path& path, const bool& favorited, const StringList& header){
+    if (!hasFavoritedItem(path)) return;
+    std::string fav = makeFavoritedLine(favorited);
+    std::string old = findFavorited(header);
+    if (old.empty()) return;
+    replace(old, fav, path);
+}
+
+void BaseElement::setDeleted(const fs::path& path, const bool& deleted, const StringList& header){
+    if (!hasDeletedItem(path)) return;
+    std::string del = makeDeletedLine(deleted);
+    std::string old = findDeleted(header);
+    if (old.empty()) return;
+    replace(old, del, path);
+}
+
+
+
+
+
+
+std::string BaseElement::getValue(std::string line) {
+    trim(line);
+    std::string::size_type pos = line.find_first_of(":") + 1;
+    line = line.substr(pos);
+    trim(line);
+    return line;
+}
+
+
+std::string BaseElement::parseString(const std::string& line) {
+    return getValue(line);
+}
+
+
+bool BaseElement::parseBool(const std::string& line) {
+    std::string val = getValue(line);
+    remove_quotations(val);
+    return (val == "true");
+}
+
+StringList BaseElement::parseArray(const std::string& line) {
+    std::string val = getValue(line);
+    unwrap(val, "[", "]");
+
+    StringList res = split(val, ",");
+    for (std::string& i : res){ 
+        trim(i);
+        remove_quotations(i);
+    }
+
+    return res;
+}
+
+
+
+void BaseElement::unwrap(std::string& str, const std::string& before, const std::string& after) {
+    if (str.empty()) return;
+    auto isWrapped = [&](){
+        return ( (str.find(before) == 0) && (str.rfind(after) == str.size()-1) );
+    };
+    if (!isWrapped()) return;
+    str =  str.substr(1, str.size()-2);
+}
+
+void BaseElement::enwrap(std::string& str, const std::string& before, const std::string& after) {
+    trim(str);
+    str = before + str + after;
+}
+
+void BaseElement::remove_quotations(std::string& str) {
+    unwrap(str, "\"", "\"");
+    unwrap(str, "\'", "\'");
+}
 
 void BaseElement::createNewFile(const fs::path& p, std::string title) {
     trim(title);
@@ -36,13 +230,13 @@ PathsList BaseElement::fetch_files(const std::string& dir) {
 }
 
 
-StringList BaseElement::getHeader(const fs::path& fi) {
+StringList BaseElement::getHeader(const fs::path& path) {
     StringList header;
-    std::ifstream myfile(fi);
+    std::ifstream myfile(path);
     if (!myfile.is_open())
         std::cerr
             <<  "the following file failed to open:\n"
-            << "    " << fi << "\n";
+            << "    " << path << "\n";
 
     int headerMark = 0;		// how many times "---" have been encountered before stopping (2)
     std::string line;
@@ -85,66 +279,7 @@ int BaseElement::nbItemsInHeader(const fs::path& fi) {
 
 
 
-std::string BaseElement::extract_title(const std::string& tit) {
-    if (tit.size() < 6) return std::string("");
-
-    std::string s = tit;
-    trim(s);
-    s = s.substr(7);
-
-    remove_quotations(s);
-    return s;
-}
-
-bool BaseElement::extract_pinned(const std::string& pi) {
-    if (pi.empty()) return false;
-    std::string res = pi;
-    trim(res);
-    if (res.size() < 11) return false;
-    res = res.substr(8, res.size()-1);
-    trim(res);
-
-    return (res == "true");
-}
-
-bool BaseElement::extract_favorited(const std::string& fav) {
-    if (fav.empty()) return false;
-    std::string res = fav;
-    trim(res);
-    if (res.size() < 14) return false;
-    res = res.substr(11);
-    trim(res);
-
-    return (res == "true");
-}
-
-bool BaseElement::extract_deleted(const std::string& del) {
-    if (del.empty()) return false;
-    std::string res = del;
-    trim(res);
-    if (res.size() < 12) return false;
-    res = res.substr(9);
-    trim(res);
-
-    return (res == "true");
-}
-
-StringList BaseElement::extract_tags(const std::string& s) {
-    if (s.size() < 7) return StringList();
-    std::string raw = s;
-    trim(raw);
-    raw = raw.substr(7);	// 7 is supposed to be '['
-    raw = raw.substr(0, raw.size()-1);
-
-    StringList res = split_single_tag(raw, ",");
-    for (std::string& i : res) remove_quotations(i);
-
-    return res;
-}
-
-
-
-StringList BaseElement::split_single_tag(const std::string& s, const std::string& delimiter) {
+StringList BaseElement::split(const std::string& s, const std::string& delimiter) {
     std::size_t pos_start = 0, pos_end, delim_len = delimiter.length();
     std::string token;
     StringList res;
@@ -160,65 +295,7 @@ StringList BaseElement::split_single_tag(const std::string& s, const std::string
 }
 
 
-Tags BaseElement::parse_tags(const StringList& raw_tags) {
-    Tags res;
-    for (const std::string& i : raw_tags)
-        res.push_back( split_single_tag(i) );
-    return res;
-}
 
-
-
-
-
-
-std::string BaseElement::find_title_inheader(const StringList& header) {
-    for (const std::string& s : header) {
-        if(s.length() > 5)
-            if(s.substr(0, 6) == "title:") return s;
-    }
-    return "";
-}
-
-
-std::string BaseElement::find_tags_inheader(const StringList& header) {
-    for (const std::string& s : header) {
-        if(s.length() > 5)
-            if (s.substr(0, 5) == "tags:")
-                return s;
-    }
-    return "";
-}
-
-
-std::string BaseElement::find_pinned_inheader(const StringList& header) {
-    for (const std::string& s : header) {
-        if (s.length() > 7)
-            if (s.substr(0, 7) == "pinned:")
-                return s;
-    }
-    return "";
-}
-
-
-std::string BaseElement::find_favorite_inheader(const StringList& header) {
-    for (const std::string& s : header) {
-        if (s.length() > 10)
-            if (s.substr(0, 10) == "favorited:")
-                return s;
-    }
-    return "";
-}
-
-
-std::string BaseElement::find_deleted_inheader(const StringList& header) {
-    for (const std::string& s : header) {
-        if (s.length() > 8)
-            if (s.substr(0, 8) == "deleted:")
-                return s;
-    }
-    return "";
-}
 
 
 
@@ -273,12 +350,11 @@ std::string BaseElement::makeTagsLine(const StringList& lst) {
 
 
 
-
 bool BaseElement::hasTagItem(const fs::path& f) {
     if (!fs::exists(f)) return false;
     if (!hasHeader(f)) return false;
 
-    return !(find_tags_inheader( getHeader(f) ).empty());
+    return !(findTags(getHeader(f) ).empty());
 }
 
 
@@ -286,28 +362,28 @@ bool BaseElement::hasTitleItem(const fs::path& f) {
     if (!fs::exists(f)) return false;
     if (!hasHeader(f)) return false;
 
-    return !(find_title_inheader( getHeader(f) ).empty());
+    return !(findTitle( getHeader(f) ).empty());
 }
 
 bool BaseElement::hasPinnedItem(const fs::path& f) {
     if (!fs::exists(f)) return false;
     if (!hasHeader(f)) return false;
 
-    return !(find_pinned_inheader( getHeader(f) ).empty());
+    return !(findPinned( getHeader(f) ).empty());
 }
 
 bool BaseElement::hasFavoritedItem(const fs::path& f) {
     if (!fs::exists(f)) return false;
     if (!hasHeader(f)) return false;
 
-    return !(find_favorite_inheader( getHeader(f) ).empty());
+    return !(findFavorited( getHeader(f) ).empty());
 }
 
 bool BaseElement::hasDeletedItem(const fs::path& f) {
     if (!fs::exists(f)) return false;
     if (!hasHeader(f)) return false;
 
-    return !(find_deleted_inheader( getHeader(f) ).empty());
+    return !(findDeleted( getHeader(f) ).empty());
 }
 
 
@@ -410,46 +486,6 @@ void BaseElement::addTagsItem(std::string tagsLine, const fs::path& path) {
 
 
 
-
-
-void BaseElement::changeTitleInFile(std::string title, const fs::path& path) {
-    if (!hasTitleItem(path)) return;
-    if (title.empty()) return;
-    trim(title);
-    title = makeTitleLine(title);
-    std::string old_line = find_title_inheader(getHeader(path));
-    replace(old_line, title, path);
-}
-
-
-void BaseElement::changePinnedInFile(const bool& pin, const fs::path& path) {
-    if (!hasPinnedItem(path)) return;
-    std::string pinned = makePinnedLine(pin);
-    std::string old = find_pinned_inheader(getHeader(path));
-    if (old.empty()) return;
-    replace(old, pinned, path);
-}
-
-
-void BaseElement::changeFavoritedInFile(const bool& favorited, const fs::path& path) {
-    if (!hasFavoritedItem(path)) return;
-    std::string fav = makeFavoritedLine(favorited);
-    std::string old = find_favorite_inheader(getHeader(path));
-    if (old.empty()) return;
-    replace(old, fav, path);
-}
-
-
-void BaseElement::changeDeletedInFile(const bool& deleted, const fs::path& path) {
-    if (!hasDeletedItem(path)) return;
-    std::string del = makeDeletedLine(deleted);
-    std::string old = find_deleted_inheader(getHeader(path));
-    if (old.empty()) return;
-    replace(old, del, path);
-}
-
-
-
 void BaseElement::removeLineFromHeader(const std::string &line, const fs::path path) {
     if (!hasHeader(path)) return;
     if (line.empty()) return;
@@ -465,33 +501,33 @@ void BaseElement::removeLineFromHeader(const std::string &line, const fs::path p
 
 void BaseElement::removePinnedItemFromHeader(const fs::path &path) {
     if (!hasPinnedItem(path)) return;
-    std::string str = find_pinned_inheader(getHeader(path));
+    std::string str = findPinned(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 
 void BaseElement::removeFavoritedItemFromHeader(const fs::path &path) {
     if (!hasFavoritedItem(path)) return;
-    std::string str = find_favorite_inheader(getHeader(path));
+    std::string str = findFavorited(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 void BaseElement::removeDeletedItemFromHeader(const fs::path& path) {
     if (!hasDeletedItem(path)) return;
-    std::string str = find_deleted_inheader(getHeader(path));
+    std::string str = findDeleted(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 void BaseElement::removeTagsItemFromHeader(const fs::path &path) {
     if (!hasTagItem(path)) return;
-    std::string str = find_tags_inheader(getHeader(path));
+    std::string str = findTags(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 
 void BaseElement::removeTitleItemFromHeader(const fs::path &path) {
     if (!hasTitleItem(path)) return;
-    std::string str = find_title_inheader(getHeader(path));
+    std::string str = findTitle(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
@@ -509,9 +545,21 @@ std::string BaseElement::combineTags(const StringList& chain) {
 
 
 void BaseElement::trim(std::string &s) {
-    ltrim(s);
-    rtrim(s);
+    // trim left
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+        [](int ch) {
+            return !std::isspace(ch);
+        }
+    ));
+
+    // trim right
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
 }
+
+
+
 
 
 bool BaseElement::replace(const std::string& old_str, const std::string& new_str, const fs::path& path) {
@@ -561,32 +609,10 @@ void BaseElement::writeContentToFile(const StringList& content, const fs::path f
 
 
 
-void BaseElement::ltrim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-        [](int ch) {
-            return !std::isspace(ch);
-        }
-    ));
-}
-
-
-void BaseElement::rtrim(std::string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
 
 
 
-void BaseElement::remove_quotations(std::string& str) {
-    trim(str);
-    char& back = str.back();
-    char& front = str.front();
-    char a = '\'';
-    char b = '\"';
-    if ( (back == a && front == a) || (back == b && front == b) ) {
-        back = ' ';
-        front = ' ';
-        trim(str);
-    }
-}
+
+
+
+
