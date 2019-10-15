@@ -1,7 +1,8 @@
 DeepTags.pro.*
 Makefile
 !tests/Makefile
-tests/test_bin
+tests/test
+tests/*.o
 .qmake.stash
 build/
 bin/

@@ -39,24 +39,21 @@ namespace BaseElement {
      */
     int nbItemsInHeader(const fs::path& fi);
 
-    
-
-    /*********** New functions ***********/
-
-
-    // get The actual values from the file or the header
-    std::string getTitle(const fs::path& p);
-    Tags getTags(const fs::path& p);
-    bool isPinned(const fs::path& p);
-    bool isFavorited(const fs::path& p);
-    bool isDeleted(const fs::path& p);
-
+    /**
+     * get The actual values from the file or the header
+     */
     std::string getTitle(const StringList& header);
     bool isPinned(const StringList& header);
     bool isFavorited(const StringList& header);
     bool isDeleted(const StringList& header);
     Tags getParsedTags(const StringList& header);
-    inline auto getParsedTags(const fs::path& path) { return getParsedTags(getHeader(path)); }
+
+    std::string getTitle(const fs::path& p);
+    Tags getTags(const fs::path& p);
+    bool isPinned(const fs::path& p);
+    bool isFavorited(const fs::path& p);
+    bool isDeleted(const fs::path& p);
+    inline Tags getParsedTags(const fs::path& path) { return getParsedTags(getHeader(path)); }
     /**
      * receive this:
      * "tags: [Notebooks/sheets/random, status/infinite, type/all]"
@@ -104,20 +101,6 @@ namespace BaseElement {
      */
     void enwrap(std::string& str, const std::string& before, const std::string& after);
     void unwrap(std::string& str, const std::string& before, const std::string& after);
-
-
-
-
-    /*********************************************************************/
-    /*********************************************************************/
-    /*********************************************************************/
-    /*********************************************************************/
-    /*********************************************************************/
-    /*********************************************************************/
-    /*********************************************************************/
-
-
-
 
     /**
      * split a single string into particles and return them in a vector of strings
@@ -258,23 +241,6 @@ namespace BaseElement {
      * call this function on every title to remove them
      */
     void remove_quotations(std::string& str);
-
-
-
-
-
-
-
-
-    /***********************************************************************/
-    /********************* deprecated **************************/
-    /***********************************************************************/
-
-
-
-
-
-
 }
 
 #endif // BaseElement_H
