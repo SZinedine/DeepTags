@@ -12,7 +12,7 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
     REQUIRE(be::hasHeader(path));  // should have a header
 
     SECTION("title", "[title]") {
-        REQUIRE( be::hasTitleItem(path) );
+        REQUIRE( be::hasTitleKey( be::getHeader(path)) );
         CHECK( be::makeTitleLine() == "title: untitled" );
         CHECK( be::makeTitleLine("good title") == "title: good title" );
         CHECK( be::makeTitleLine("good title  ") == "title: good title" );  // should be trimed
@@ -71,22 +71,22 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
 
     SECTION("deleted item testing wwith BaseElement class", "[BaseElement][deleted]") {
         INFO("isn't supposed to have a deleted item at this stage");
-        CHECK_FALSE( be::hasDeletedItem(path) );
+        CHECK_FALSE( be::hasDeletedKey(be::getHeader(path)) );
 
         be::addDeletedItem("deleted: true", path);
-        REQUIRE( be::hasDeletedItem(path) );
+        REQUIRE( be::hasDeletedKey(be::getHeader(path)) );
 
         INFO("changing the value of the already existing line");
         be::setDeleted(path, false);
-        REQUIRE( be::hasDeletedItem(path) );
+        REQUIRE( be::hasDeletedKey(be::getHeader(path)) );
         REQUIRE_FALSE( be::isDeleted(path) );
 
         be::setDeleted(path, true);
         REQUIRE( be::isDeleted(path) );
-        REQUIRE( be::hasDeletedItem(path) );
+        REQUIRE( be::hasDeletedKey(be::getHeader(path)) );
 
         be::removeDeletedItemFromHeader(path);
-        REQUIRE_FALSE( be::hasDeletedItem(path) );
+        REQUIRE_FALSE( be::hasDeletedKey(be::getHeader(path)) );
     }
 
     fs::remove(path);
