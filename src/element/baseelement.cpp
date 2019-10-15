@@ -369,7 +369,7 @@ bool BaseElement::hasDeletedItem(const fs::path& f) {
 
 bool BaseElement::validTagToAdd(const std::string& tag) {
     // test if reserved tags
-    for (const std::string& s : {"All Notes", "Notebooks", "Favorite", "Untagged"})
+    for (const std::string& s : {"All Notes", "Notebooks", "Favorite", "Untagged", "Trash"})
         if (s == tag) {
             std::cerr << "Error. Cannot add a basic tag to a file\n";
             return false;
