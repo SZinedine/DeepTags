@@ -16,8 +16,6 @@ public:
     inline bool operator==(const Element& other)   { return (m_path == other.m_path); }
 
 
-
-    // from BaseClass
     // accessers
     [[nodiscard]] inline fs::path path()     const  {  return m_path;     }
     [[nodiscard]] inline std::string title() const  {  return m_title;    }
@@ -25,6 +23,7 @@ public:
     [[nodiscard]] inline bool pinned()       const  {  return m_pinned;   }
     [[nodiscard]] inline bool favorited()    const  {  return m_favorited;}
     [[nodiscard]] inline bool deleted()      const  {  return m_deleted;  }
+    [[nodiscard]] inline StringList getHeader() const{ return m_header;   }
     // modifiers
     inline void setPath(const fs::path& path)       {  m_path = path;      }
     inline void setTitle(const std::string& title)  {  m_title = title;    }
@@ -32,11 +31,10 @@ public:
     inline void setPinned(const bool &pinned)       {  m_pinned = pinned;  }
     inline void setFavorited(const bool& favorited) {  m_favorited = favorited;}
     inline void setDeleted(const bool& deleted)     {  m_deleted = deleted;}
+    inline void setLocalHeader(const StringList& head){m_header = head;    }
 
-
-    inline void reload()                       { setup( path() );   }
-    inline bool equalTo(const Element& e)const { return ( m_path == e.m_path); }
-
+    inline void reload()               { setup( path() );   }
+    inline void reloadHeader()         { m_header = be::getHeader(m_path); }
     static ElementsList construct_list_elements(const PathsList& f);
     /**
      * Check if a line exists in the file's header
@@ -98,6 +96,7 @@ private:
     bool m_pinned;
     bool m_favorited;
     bool m_deleted;
+    StringList m_header;
 
 
 };

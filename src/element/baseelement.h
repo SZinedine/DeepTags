@@ -65,17 +65,10 @@ namespace BaseElement {
     StringList getUnparsedTags(const StringList& header);
     inline auto getUnparsedTags(const fs::path& path) { return getUnparsedTags(getHeader(path)); }
 
-
-
     void setTitle(const fs::path& path, const std::string& title);
     void setPinned(const fs::path& path, const bool& pinned);
     void setFavorited(const fs::path& path, const bool& favorite);
     void setDeleted(const fs::path& path, const bool& deleted);
-
-    void setTitle(const fs::path& path, const std::string& title, const StringList& header);
-    void setPinned(const fs::path& path, const bool& pinned, const StringList& header);
-    void setFavorited(const fs::path& path, const bool& favorite, const StringList& header);
-    void setDeleted(const fs::path& path, const bool& deleted, const StringList& header);
 
     /**
      * look for a string from its key in the header

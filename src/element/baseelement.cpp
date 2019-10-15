@@ -86,57 +86,35 @@ std::string BaseElement::findLine(const std::string& key, const StringList& head
 
 
 void BaseElement::setTitle(const fs::path& path, const std::string& title){
-    setTitle(path, title, getHeader(path));
-}
-
-void BaseElement::setPinned(const fs::path& path, const bool& pinned){
-    setPinned(path, pinned, getHeader(path));
-}
-
-void BaseElement::setFavorited(const fs::path& path, const bool& favorite){
-    setFavorited(path, favorite, getHeader(path));
-}
-
-void BaseElement::setDeleted(const fs::path& path, const bool& deleted){
-    setDeleted(path, deleted, getHeader(path));
-}
-
-
-
-
-
-
-
-void BaseElement::setTitle(const fs::path& path, const std::string& title, const StringList& header){
     if (!hasTitleItem(path)) return;
     if (title.empty()) return;
     std::string t = title;
     trim(t);
     t = makeTitleLine(t);
-    std::string old_line = findTitle(header);
+    std::string old_line = findTitle(getHeader(path));
     replace(old_line, t, path);
 }
 
-void BaseElement::setPinned(const fs::path& path, const bool& pin, const StringList& header){
+void BaseElement::setPinned(const fs::path& path, const bool& pin){
     if (!hasPinnedItem(path)) return;
     std::string pinned = makePinnedLine(pin);
-    std::string old = findPinned(header);
+    std::string old = findPinned(getHeader(path));
     if (old.empty()) return;
     replace(old, pinned, path);
 }
 
-void BaseElement::setFavorited(const fs::path& path, const bool& favorited, const StringList& header){
+void BaseElement::setFavorited(const fs::path& path, const bool& favorited){
     if (!hasFavoritedItem(path)) return;
     std::string fav = makeFavoritedLine(favorited);
-    std::string old = findFavorited(header);
+    std::string old = findFavorited(getHeader(path));
     if (old.empty()) return;
     replace(old, fav, path);
 }
 
-void BaseElement::setDeleted(const fs::path& path, const bool& deleted, const StringList& header){
+void BaseElement::setDeleted(const fs::path& path, const bool& deleted){
     if (!hasDeletedItem(path)) return;
     std::string del = makeDeletedLine(deleted);
-    std::string old = findDeleted(header);
+    std::string old = findDeleted(getHeader(path));
     if (old.empty()) return;
     replace(old, del, path);
 }
