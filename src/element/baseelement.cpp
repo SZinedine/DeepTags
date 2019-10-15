@@ -424,7 +424,7 @@ void BaseElement::addTagsItem(std::string tagsLine, const fs::path& path) {
 
 
 
-void BaseElement::removeLineFromHeader(const std::string &line, const fs::path path) {
+void BaseElement::removeLineFromHeader(const std::string &line, const fs::path& path) {
     if (!hasHeader(path)) return;
     if (line.empty()) return;
     StringList content = getFileContent(path);
@@ -521,7 +521,7 @@ bool BaseElement::replace(const std::string& old_str, const std::string& new_str
 }
 
 
-StringList BaseElement::getFileContent(const fs::path file) {
+StringList BaseElement::getFileContent(const fs::path& file) {
     std::ifstream f(file);
 
     StringList entire_file;
@@ -533,7 +533,7 @@ StringList BaseElement::getFileContent(const fs::path file) {
     return entire_file;
 }
 
-void BaseElement::writeContentToFile(const StringList& content, const fs::path file) {
+void BaseElement::writeContentToFile(const StringList& content, const fs::path& file) {
     std::ofstream f(file);
     if (!f.is_open()) return;
 

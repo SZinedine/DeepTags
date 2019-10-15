@@ -13,10 +13,9 @@ public:
             const Tags& tags, const bool& pinned=false, 
             const bool& favorited=false, const bool& deleted=false);
     Element(const Element& other);
-    inline bool operator==(const Element& other)   { return (m_path == other.m_path); }
+    inline bool operator==(const Element& other) { return (m_path == other.m_path);  }
+    inline bool operator!=(const Element& other) { return !(m_path == other.m_path); }
 
-
-    // accessers
     [[nodiscard]] inline fs::path path()     const  {  return m_path;     }
     [[nodiscard]] inline std::string title() const  {  return m_title;    }
     [[nodiscard]] inline Tags tags()         const  {  return m_tags;     }
@@ -24,7 +23,7 @@ public:
     [[nodiscard]] inline bool favorited()    const  {  return m_favorited;}
     [[nodiscard]] inline bool deleted()      const  {  return m_deleted;  }
     [[nodiscard]] inline StringList getHeader() const{ return m_header;   }
-    // modifiers
+
     inline void setPath(const fs::path& path)       {  m_path = path;      }
     inline void setTitle(const std::string& title)  {  m_title = title;    }
     inline void setTags(const Tags &tags)           {  m_tags = tags;      }
@@ -33,9 +32,13 @@ public:
     inline void setDeleted(const bool& deleted)     {  m_deleted = deleted;}
     inline void setLocalHeader(const StringList& head){m_header = head;    }
 
+    /**
+     * construct the object (this) by calling all the appropriate functions
+     */
+    void setup(const fs::path& path);
     inline void reload()               { setup( path() );   }
     inline void reloadHeader()         { m_header = be::getHeader(m_path); }
-    static ElementsList construct_list_elements(const PathsList& f);
+    static ElementsList constructElementList(const PathsList& f);
     /**
      * Check if a line exists in the file's header
      */
@@ -76,18 +79,11 @@ public:
     void removeTagsLine();
 
 private:
-    inline bool findReplace(const std::string& old_str, const std::string& new_str)
-        { return BaseElement::replace(old_str, new_str, m_path); }
     /***
      * Reload individual items (read the file to set the local variables)
      */
-    inline void reloadTitle()            {   setTitle(be::getTitle(m_path));    }
     inline void initTags()               {   initTags(be::getHeader(m_path));   }
     void initTags(const StringList& header);
-    /**
-     * construct the object (this) by calling all the appropriate functions
-     */
-    void setup(const fs::path& path);
 
 private:
     fs::path m_path;
@@ -97,8 +93,6 @@ private:
     bool m_favorited;
     bool m_deleted;
     StringList m_header;
-
-
 };
 
 

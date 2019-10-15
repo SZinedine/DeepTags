@@ -7,13 +7,11 @@
 #include <QPushButton>
 #include <QCloseEvent>
 #include <QLabel>
-#include <QString>
 #include <QSplitter>
 #include <QLineEdit>
 #include "tagscontainer.h"
 #include "filescontainer.h"
 #include <iostream>
-#include <chrono>
 
 
 class MainWindow : public QMainWindow

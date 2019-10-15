@@ -34,7 +34,7 @@ void Element::setup(const fs::path& path) {
     setDeleted(be::isDeleted(m_header));
 }
 
-ElementsList Element::construct_list_elements(const PathsList& f) {
+ElementsList Element::constructElementList(const PathsList& f) {
     ElementsList elems;
     for (const fs::path& p : f) {
         if (!be::isMD(p)) continue;
@@ -147,7 +147,7 @@ void Element::overrideTags(const StringList& list) {
     }
     const std::string newTag = be::makeTagsLine(valid);
 
-    findReplace(old, newTag);
+    be::replace(old, newTag, m_path);
     initTags();
     reloadHeader();
 }
@@ -169,9 +169,9 @@ bool Element::appendTag(std::string tag) {
     tags.push_back(tag);
 
     const std::string res = be::makeTagsLine(tags);
-    bool ret = findReplace(raw_tag_header, res);	// write the changes into the file
+    bool ret = be::replace(raw_tag_header, res, m_path); // write the changes into the file
 
-    initTags();		// reload the tags into the local variable
+    initTags();	    // reload the tags into the local variable
     reloadHeader();
 
     return ret;
