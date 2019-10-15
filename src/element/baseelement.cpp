@@ -86,7 +86,7 @@ std::string BaseElement::findLine(const std::string& key, const StringList& head
 
 
 void BaseElement::setTitle(const fs::path& path, const std::string& title){
-    if (!hasTitleItem(path)) return;
+    if (!hasTitleKey(getHeader(path))) return;
     if (title.empty()) return;
     std::string t = title;
     trim(t);
@@ -96,7 +96,7 @@ void BaseElement::setTitle(const fs::path& path, const std::string& title){
 }
 
 void BaseElement::setPinned(const fs::path& path, const bool& pin){
-    if (!hasPinnedItem(path)) return;
+    if (!hasPinnedKey(getHeader(path))) return;
     std::string pinned = makePinnedLine(pin);
     std::string old = findPinned(getHeader(path));
     if (old.empty()) return;
@@ -104,7 +104,7 @@ void BaseElement::setPinned(const fs::path& path, const bool& pin){
 }
 
 void BaseElement::setFavorited(const fs::path& path, const bool& favorited){
-    if (!hasFavoritedItem(path)) return;
+    if (!hasFavoritedKey(getHeader(path))) return;
     std::string fav = makeFavoritedLine(favorited);
     std::string old = findFavorited(getHeader(path));
     if (old.empty()) return;
@@ -112,7 +112,7 @@ void BaseElement::setFavorited(const fs::path& path, const bool& favorited){
 }
 
 void BaseElement::setDeleted(const fs::path& path, const bool& deleted){
-    if (!hasDeletedItem(path)) return;
+    if (!hasDeletedKey(getHeader(path))) return;
     std::string del = makeDeletedLine(deleted);
     std::string old = findDeleted(getHeader(path));
     if (old.empty()) return;
@@ -327,46 +327,6 @@ std::string BaseElement::makeTagsLine(const StringList& lst) {
 
 
 
-
-bool BaseElement::hasTagItem(const fs::path& f) {
-    if (!fs::exists(f)) return false;
-    if (!hasHeader(f)) return false;
-
-    return !(findTags(getHeader(f) ).empty());
-}
-
-
-bool BaseElement::hasTitleItem(const fs::path& f) {
-    if (!fs::exists(f)) return false;
-    if (!hasHeader(f)) return false;
-
-    return !(findTitle( getHeader(f) ).empty());
-}
-
-bool BaseElement::hasPinnedItem(const fs::path& f) {
-    if (!fs::exists(f)) return false;
-    if (!hasHeader(f)) return false;
-
-    return !(findPinned( getHeader(f) ).empty());
-}
-
-bool BaseElement::hasFavoritedItem(const fs::path& f) {
-    if (!fs::exists(f)) return false;
-    if (!hasHeader(f)) return false;
-
-    return !(findFavorited( getHeader(f) ).empty());
-}
-
-bool BaseElement::hasDeletedItem(const fs::path& f) {
-    if (!fs::exists(f)) return false;
-    if (!hasHeader(f)) return false;
-
-    return !(findDeleted( getHeader(f) ).empty());
-}
-
-
-
-
 bool BaseElement::validTagToAdd(const std::string& tag) {
     // test if reserved tags
     for (const std::string& s : {"All Notes", "Notebooks", "Favorite", "Untagged", "Trash"})
@@ -432,14 +392,14 @@ void BaseElement::addItemToHeader(const std::string& item, const fs::path& path)
 
 
 void BaseElement::addPinnedItem(std::string pinnedLine, const fs::path& path) {
-    if (hasPinnedItem(path)) return;
+    if (hasPinnedKey(getHeader(path))) return;
     trim(pinnedLine);
     if (pinnedLine == "pinned: true" || pinnedLine == "pinned: false")
         addItemToHeader(pinnedLine, path);
 }
 
 void BaseElement::addFavoritedItem(std::string favoritedLine, const fs::path &path) {
-    if (hasFavoritedItem(path)) return;
+    if (hasFavoritedKey(getHeader(path))) return;
     trim(favoritedLine);
     if (favoritedLine == "favorited: true" || favoritedLine == "favorited: false")
         addItemToHeader(favoritedLine, path);
@@ -447,7 +407,7 @@ void BaseElement::addFavoritedItem(std::string favoritedLine, const fs::path &pa
 
 
 void BaseElement::addDeletedItem(std::string deletedLine, const fs::path& path) {
-    if (hasDeletedItem(path)) return;
+    if (hasDeletedKey(getHeader(path))) return;
     trim(deletedLine);
     if (deletedLine == "deleted: true" || deletedLine == "deleted: false")
         addItemToHeader(deletedLine, path);
@@ -455,7 +415,7 @@ void BaseElement::addDeletedItem(std::string deletedLine, const fs::path& path) 
 
 
 void BaseElement::addTagsItem(std::string tagsLine, const fs::path& path) {
-    if (hasTagItem(path)) return;
+    if (hasTagsKey(getHeader(path))) return;
     trim(tagsLine);
     if (tagsLine.size() < 9) return;
     addItemToHeader(tagsLine, path);
@@ -478,33 +438,33 @@ void BaseElement::removeLineFromHeader(const std::string &line, const fs::path p
 
 
 void BaseElement::removePinnedItemFromHeader(const fs::path &path) {
-    if (!hasPinnedItem(path)) return;
+    if (!hasPinnedKey(getHeader(path))) return;
     std::string str = findPinned(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 
 void BaseElement::removeFavoritedItemFromHeader(const fs::path &path) {
-    if (!hasFavoritedItem(path)) return;
+    if (!hasFavoritedKey(getHeader(path))) return;
     std::string str = findFavorited(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 void BaseElement::removeDeletedItemFromHeader(const fs::path& path) {
-    if (!hasDeletedItem(path)) return;
+    if (!hasDeletedKey(getHeader(path))) return;
     std::string str = findDeleted(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 void BaseElement::removeTagsItemFromHeader(const fs::path &path) {
-    if (!hasTagItem(path)) return;
+    if (!hasTagsKey(getHeader(path))) return;
     std::string str = findTags(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 
 void BaseElement::removeTitleItemFromHeader(const fs::path &path) {
-    if (!hasTitleItem(path)) return;
+    if (!hasTitleKey(getHeader(path))) return;
     std::string str = findTitle(getHeader(path));
     removeLineFromHeader(str, path);
 }

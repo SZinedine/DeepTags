@@ -39,11 +39,11 @@ public:
     /**
      * Check if a line exists in the file's header
      */
-    [[nodiscard]] inline bool hasTagsLine()      const { return be::hasTagItem(path());       }
-    [[nodiscard]] inline bool hasTitleLine()     const { return be::hasTitleItem(m_path);     }
-    [[nodiscard]] inline bool hasPinnedLine()    const { return be::hasPinnedItem(m_path);    }
-    [[nodiscard]] inline bool hasFavoritedLine() const { return be::hasFavoritedItem(m_path); }
-    [[nodiscard]] inline bool hasDeletedLine()   const { return be::hasDeletedItem(m_path);   }
+    [[nodiscard]] inline bool hasTagsLine()     const { return be::hasTagsKey(m_header);  }
+    [[nodiscard]] inline bool hasTitleLine()    const { return be::hasTitleKey(m_header); }
+    [[nodiscard]] inline bool hasPinnedLine()   const { return be::hasPinnedKey(m_header);}
+    [[nodiscard]] inline bool hasFavoritedLine()const { return be::hasFavoritedKey(m_header);}
+    [[nodiscard]] inline bool hasDeletedLine()  const { return be::hasDeletedKey(m_header);}
     /**
      * append a non existing line to the file's header
      */

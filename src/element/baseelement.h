@@ -77,7 +77,9 @@ namespace BaseElement {
     inline std::string findDeleted(const StringList& header) { return findLine("deleted", header);}
     inline std::string findTags(const StringList& header) { return findLine("tags", header);}
 
-    
+    /**
+     * Check if a particular key exist in the header
+     */
     inline bool hasTitleKey(const StringList& header) { return !(findTitle(header).empty()); }
     inline bool hasPinnedKey(const StringList& header) { return !(findPinned(header).empty()); }
     inline bool hasFavoritedKey(const StringList& header) { return !(findFavorited(header).empty()); }
@@ -119,27 +121,6 @@ namespace BaseElement {
     StringList split(const std::string& s, const std::string& delimiter="/");
     
 
-
-    /********************************************************/
-    /************  find something in header   ***************/
-    /********************************************************/
-    /**
-     * functions that receive the list of header lines
-     * each of them is designed to find a particular line
-     * for example, for title. the function looks for a line
-     * that begins with "title: "
-     *
-     * these methods return the raw line. other methods (extract_x)
-     * have the ability to extract the value
-     ********************************************************/
-    std::string find_title_inheader(const StringList& header);
-    std::string find_tags_inheader(const StringList& header);
-    std::string find_pinned_inheader(const StringList& header);
-    std::string find_favorite_inheader(const StringList& header);
-    std::string find_deleted_inheader(const StringList& header);
-
-    
-
     /***********************************************************************/
     /********** MAke a header item line (key value) from a value ***********/
     /***********************************************************************/
@@ -164,26 +145,18 @@ namespace BaseElement {
      */
     std::string makeTagsLine(const StringList& lst);
     
-    
-    
-    /***********************************************************************/
-    /************************** Check Methods ******************************/
-    /***********************************************************************/
-    /**
-     * Check if a the file has a specific item. ex: ("tags: [...]")
-     */
-    bool hasTagItem(const fs::path& f);
-    bool hasTitleItem(const fs::path& f);
-    bool hasPinnedItem(const fs::path& f);
-    bool hasFavoritedItem(const fs::path& f);
-    bool hasDeletedItem(const fs::path& f);
     /**
      * check if the provided tags:
-     *     - aren't the basic onces
+     *  - aren't the basic onces
      *  - don't contain forbidden characters (,)
      * NOTE: it doesn't test tag particles., but complete nested tag ("one/two/three")
      */
     bool validTagToAdd(const std::string& tag);
+    /**
+     * receives: {"Notebooks", "summaries", "history"}
+     * returns:  "Notebooks/summaries/history"
+     */
+    std::string combineTags(const StringList& chain);
     /**
      * check if a file has a Notable like header
      */
@@ -212,16 +185,15 @@ namespace BaseElement {
     void removeTitleItemFromHeader(const fs::path& path);
 
     /**
-     * receives: {"Notebooks", "summaries", "history"}
-     * returns:  "Notebooks/summaries/history"
-     */
-    std::string combineTags(const StringList& chain);
-
-    /**
      * remove trailing spaces
      * found in: https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
      */
     void trim(std::string &s);
+    /**
+     * remove the quotations around strings
+     * call this function on every title to remove them
+     */
+    void remove_quotations(std::string& str);
     
     /**
      * find a line in a text file and replace it
@@ -233,14 +205,9 @@ namespace BaseElement {
      */
     StringList getFileContent(const fs::path file);
     void writeContentToFile(const StringList& content, const fs::path file);
-    inline bool toBool(const std::string& s) { return ((s=="true")?true:false); }
-    inline std::string toStr(const bool& b)  { return ((b)?"true":"false");     }
+    inline bool toBool(const std::string& s) { return (s=="true"); }
+    inline std::string toStr(const bool& b)  { return ((b)?"true":"false"); }
 
-    /**
-     * Some lines are surrounded with quotations,
-     * call this function on every title to remove them
-     */
-    void remove_quotations(std::string& str);
 }
 
 #endif // BaseElement_H
