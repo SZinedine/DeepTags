@@ -109,6 +109,7 @@ namespace BaseElement {
     std::string makePinnedLine(const bool& pinned=false);
     std::string makeFavoritedLine(const bool& fav=false);
     std::string makeDeletedLine(const bool& fav=false);
+
     /**
      * receives: ["shallow/deep", "something/nothing"]
      * returns : "tags: [shallow/deep, something/nothing]"
@@ -116,6 +117,11 @@ namespace BaseElement {
      * old function name: combineTagsIntoString
      */
     std::string makeTagsLine(const StringList& lst);
+
+
+    std::string composeStringItem(std::string key, std::string value);
+    std::string composeBoolItem(std::string key, const bool& value);
+    std::string composeArrayItem(std::string key, const StringList& value);
     
     /**
      * check if the provided tags:
@@ -166,6 +172,7 @@ namespace BaseElement {
      * found in: https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
      */
     void trim(std::string &s);
+    [[nodiscard]] std::string trim(const std::string& s);
     /**
      * remove the quotations around strings
      * call this function on every title to remove them
@@ -197,6 +204,21 @@ namespace BaseElement {
     */
     StringList split(const std::string& s, const std::string& delimiter="/");
  
+
+
+    /**
+     * Delete some variations of functions to prevent errors
+     */
+    std::string makePinnedLine(const std::string& pinned) = delete;
+    std::string makePinnedLine(const char* pinned) = delete;
+    std::string makeDeletedLine(const std::string& fav) = delete;
+    std::string makeDeletedLine(const char* fav) = delete;
+    std::string makeFavoritedLine(const std::string& fav) = delete;
+    std::string makeFavoritedLine(const char* fav) = delete;
+    std::string composeBoolItem(std::string key, const std::string& value) = delete;
+    std::string composeBoolItem(std::string key, const char* value) = delete;
+
+
 }
 
 #endif // BaseElement_H

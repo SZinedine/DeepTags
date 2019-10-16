@@ -292,40 +292,58 @@ void BaseElement::createHeader(const fs::path& file, const std::string& title) {
 
 
 std::string BaseElement::makeTitleLine(std::string title) {
-    trim(title);
-    if (title.empty()) return "title: untitled";
-    return "title: " + title;
+    title = (title.empty()) ? "untitled" : title;
+    return composeStringItem("title", title);
 }
 
 
 std::string BaseElement::makePinnedLine(const bool& pinned) {
-    if (pinned) return "pinned: true";
-    return "pinned: false";
+    return composeBoolItem("pinned", pinned);
 }
 
-
 std::string BaseElement::makeFavoritedLine(const bool& favorited) {
-    if (favorited) return "favorited: true";
-    return "favorited: false";
+    return composeBoolItem("favorited", favorited);
 }
 
 std::string BaseElement::makeDeletedLine(const bool& del) {
-    if (del) return "deleted: true";
-    return "deleted: false";
+    return composeBoolItem("deleted", del);
 }
 
 std::string BaseElement::makeTagsLine(const StringList& lst) {
-    std::string str = "tags: [";
-    for (StringList::size_type i = 0 ; i < lst.size() ; i++) {
-        str.append(lst[i]);
-        if (i != lst.size()-1) str.append(", ");
-    }
-    str.append("]");
-    return str;
+    return composeArrayItem("tags", lst);
 }
 
 
+std::string BaseElement::composeStringItem(std::string key, std::string value) {
+    trim(key);
+    key.append(": ");
+    enwrap(value, "'", "'");
+    key.append(value);
+    return key;
+}
 
+std::string BaseElement::composeBoolItem(std::string key, const bool& value) {
+    trim(key);
+    std::string v = ((value) ? "true" : "false");
+    key.append(": " + v);
+    return key;
+}
+
+std::string BaseElement::composeArrayItem(std::string key, const StringList& value) {
+    trim(key);
+    key.append(": ");
+    std::string val;
+
+    for (StringList::size_type i = 0 ; i < value.size() ; i++) {
+        val.append(trim( value[i] ));
+        if (i != value.size()-1) val.append(", ");
+    } 
+
+    enwrap(val, "[", "]");
+    key.append(val);
+    return key;
+
+}
 
 bool BaseElement::validTagToAdd(const std::string& tag) {
     // test if reserved tags
@@ -496,7 +514,11 @@ void BaseElement::trim(std::string &s) {
     }).base(), s.end());
 }
 
-
+[[nodiscard]] std::string BaseElement::trim(const std::string& s) {
+    std::string res = s;
+    trim(res);
+    return res;
+}
 
 
 
