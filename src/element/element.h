@@ -5,12 +5,12 @@
 
 namespace be = BaseElement;
 
-class Element 
+class Element
 {
 public:
     Element(const fs::path& path);
-    Element(const fs::path& path, const std::string& title, 
-            const Tags& tags, const bool& pinned=false, 
+    Element(const fs::path& path, const std::string& title,
+            const Tags& tags, const bool& pinned=false,
             const bool& favorited=false, const bool& deleted=false);
     Element(const Element& other);
     inline bool operator==(const Element& other) { return (m_path == other.m_path);  }
@@ -58,7 +58,7 @@ public:
      * Change the value of key inside the file
      * and reload it to the local variable
      */
-    void changeTitle(std::string title);
+    void changeTitle(const std::string& title);
     void changePinned(bool pinned);
     void changeFavorited(bool favorited);
     void changeDeleted(bool deleted);

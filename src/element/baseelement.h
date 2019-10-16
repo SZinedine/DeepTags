@@ -108,7 +108,7 @@ namespace BaseElement {
     std::string makeTitleLine(std::string title="untitled");
     std::string makePinnedLine(const bool& pinned=false);
     std::string makeFavoritedLine(const bool& fav=false);
-    std::string makeDeletedLine(const bool& fav=false);
+    std::string makeDeletedLine(const bool& del=false);
 
     /**
      * receives: ["shallow/deep", "something/nothing"]

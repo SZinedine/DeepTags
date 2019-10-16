@@ -126,7 +126,7 @@ void BaseElement::setDeleted(const fs::path& path, const bool& deleted){
 
 std::string BaseElement::getValue(std::string line) {
     trim(line);
-    std::string::size_type pos = line.find_first_of(":") + 1;
+    std::string::size_type pos = line.find_first_of(':') + 1;
     line = line.substr(pos);
     trim(line);
     return line;
@@ -354,7 +354,7 @@ bool BaseElement::validTagToAdd(const std::string& tag) {
         }
 
     // forbidden characters (,/)
-    auto hasChar = [tag](const std::string c){		// has one of the characters in the string
+    auto hasChar = [tag](const std::string& c){		// has one of the characters in the string
         for (const auto& i : c)
             if (tag.find(i) != std::string::npos) return true;
         return false;

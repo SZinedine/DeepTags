@@ -1,7 +1,7 @@
 #include "element.h"
 
-Element::Element(const fs::path& path, const std::string& title, 
-        const Tags& tags, const bool& pinned, 
+Element::Element(const fs::path& path, const std::string& title,
+        const Tags& tags, const bool& pinned,
         const bool& favorited, const bool& deleted)
     : m_path(path), m_title(title),
       m_tags(tags), m_pinned(pinned),
@@ -79,7 +79,7 @@ void Element::addTagsLine(const StringList& list) {
 
 
 
-void Element::changeTitle(std::string title) {
+void Element::changeTitle(const std::string& title) {
     be::setTitle(m_path, title);
     setTitle(title);
     reloadHeader();
