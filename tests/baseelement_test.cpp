@@ -11,13 +11,68 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
     REQUIRE(fs::exists(path));
     REQUIRE(be::hasHeader(path));  // should have a header
 
+    SECTION("low level functions") {
+        INFO("composing a header line from key and value");
+        CHECK( be::composeStringItem(" some_key ", "  some value  ") == "some_key: 'some value'");
+        CHECK( be::composeStringItem(" some_key ", "  some value'  ") == "some_key: 'some value''");
+        CHECK( be::composeBoolItem("_good ", true) == "_good: true" );
+        CHECK( be::composeBoolItem("_good __ ", false) == "_good __: false" );
+        CHECK( be::composeArrayItem("array ", {" first one/subFirst", "second elem", "another for fun"})
+                == "array: [first one/subFirst, second elem, another for fun]");
+
+        CHECK( be::makeTitleLine(" random title ") == "title: 'random title'");
+        CHECK( be::makeTitleLine(" random title  '") == "title: 'random title  ''");
+        CHECK( be::makePinnedLine(true) == "pinned: true");
+        CHECK( be::makePinnedLine(false) == "pinned: false");
+        CHECK( be::makeFavoritedLine(true) == "favorited: true");
+        CHECK( be::makeFavoritedLine(false) == "favorited: false");
+        CHECK( be::makeDeletedLine(true) == "deleted: true");
+        CHECK( be::makeDeletedLine(false) == "deleted: false");
+        CHECK( be::makeTagsLine({"first/sub-first", "second/second2", "third/sub-third"}) 
+                == "tags: [first/sub-first, second/second2, third/sub-third]");
+
+        INFO("Test operations on header (vector)");
+        const StringList header = {
+            "pinned: true",
+            "favorited: false",
+            "tags: [first, second/third, fourth/fifth, sixth]",
+            "title: 'random title'"
+        };
+        REQUIRE( be::hasPinnedKey(header));
+        REQUIRE( be::hasFavoritedKey(header));
+        REQUIRE( be::hasTagsKey(header));
+        REQUIRE( be::hasTitleKey(header));
+        REQUIRE_FALSE( be::hasDeletedKey(header));
+
+        CHECK( be::findPinned(header) == header.at(0));
+        CHECK( be::findFavorited(header) == header.at(1));
+        CHECK( be::findTags(header) == header.at(2) );
+        CHECK( be::findTitle(header) == header.at(3));
+        CHECK( be::findDeleted(header) == "");
+
+        CHECK( be::parseString(header.at(3)) == "'random title'");
+        CHECK( be::parseBool(header.at(0)));
+        CHECK_FALSE( be::parseBool(header.at(1)));
+
+        CHECK( be::getValue(header.at(0)) == "true");
+        CHECK( be::getValue(header.at(1)) == "false");
+        CHECK( be::getValue(header.at(2)) == "[first, second/third, fourth/fifth, sixth]");
+        CHECK( be::getValue(header.at(3)) == "'random title'");
+
+        CHECK( (be::parseArray(header.at(2))).size() == 4);
+        CHECK( be::parseArray(header.at(2))[0] == "first");
+        CHECK( be::parseArray(header.at(2))[1] == "second/third");
+        CHECK( be::parseArray(header.at(2))[2] == "fourth/fifth");
+        CHECK( be::parseArray(header.at(2))[3] == "sixth");
+    }
+
     SECTION("title", "[title]") {
         REQUIRE( be::hasTitleKey( be::getHeader(path)) );
-        CHECK( be::makeTitleLine() == "title: untitled" );
-        CHECK( be::makeTitleLine("good title") == "title: good title" );
-        CHECK( be::makeTitleLine("good title  ") == "title: good title" );  // should be trimed
-        CHECK( be::makeTitleLine("    good title") == "title: good title" );
-        CHECK( be::makeTitleLine("    good title   ") == "title: good title" );
+        CHECK( be::makeTitleLine() == "title: 'untitled'" );
+        CHECK( be::makeTitleLine("good title") == "title: 'good title'" );
+        CHECK( be::makeTitleLine("good title  ") == "title: 'good title'" );  // should be trimed
+        CHECK( be::makeTitleLine("    good title") == "title: 'good title'" );
+        CHECK( be::makeTitleLine("    good title   ") == "title: 'good title'" );
 
         std::string n_title = "new title";
         be::setTitle(path, n_title);
@@ -26,9 +81,9 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         StringList header = be::getHeader(path);       // get the header of the file
         CHECK( header.size() == 1);
         std::string title_line = be::findTitle(header);
-        CHECK( title_line == "title: new title" );
+        CHECK( title_line == "title: 'new title'" );
         std::string title_value = be::getValue(title_line);
-        CHECK( title_value == "new title" );
+        CHECK( title_value == "'new title'" );
     }
 
     SECTION("tests on Tags", "[tag][tags]") {
