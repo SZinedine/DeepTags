@@ -142,8 +142,9 @@ void Element::overrideTags(const StringList& list) {
     std::string old = be::findTags( m_header );
     StringList valid;
     for (std::string i : list) {
-        be::trim(i);
+        be::processTag(i);
         if (be::validTagToAdd(i)) valid.push_back(i);
+        else std::cerr << "'"<< i << "' isn not a valid tag\n";
     }
     const std::string newTag = be::makeTagsLine(valid);
 
@@ -154,7 +155,7 @@ void Element::overrideTags(const StringList& list) {
 
 
 bool Element::appendTag(std::string tag) {
-    be::trim(tag);
+    be::processTag(tag);
     if (!be::validTagToAdd(tag)) return false;
     if (!hasTagsLine()) {
         addTagsLine(StringList{tag});

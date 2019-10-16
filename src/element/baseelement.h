@@ -109,7 +109,6 @@ namespace BaseElement {
     std::string makePinnedLine(const bool& pinned=false);
     std::string makeFavoritedLine(const bool& fav=false);
     std::string makeDeletedLine(const bool& del=false);
-
     /**
      * receives: ["shallow/deep", "something/nothing"]
      * returns : "tags: [shallow/deep, something/nothing]"
@@ -136,7 +135,12 @@ namespace BaseElement {
      */
     std::string combineTags(const StringList& chain);
     /**
+     * remove characters that gets in the way
+     */
+    std::string& processTag(std::string& tag);
+    /**
      * check if a file has a Notable like header
+     * "/tag/ " -> "tag"
      */
     bool hasHeader(const fs::path& fi);
     

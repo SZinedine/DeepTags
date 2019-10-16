@@ -26,7 +26,9 @@ Tags BaseElement::getParsedTags(const StringList& header) {
 StringList BaseElement::getUnparsedTags(const StringList& header) {
     std::string found = findTags(header);
     if (found.empty()) return StringList();
-    return parseArray(found);
+    StringList res = parseArray(found);
+    for (std::string& s : res) processTag(s);
+    return res;
 }
 
 bool BaseElement::isPinned(const StringList& header) {
@@ -347,6 +349,7 @@ std::string BaseElement::composeArrayItem(std::string key, const StringList& val
 
 bool BaseElement::validTagToAdd(const std::string& tag) {
     // test if reserved tags
+    if (tag.empty()) return false;
     for (const std::string& s : {"All Notes", "Notebooks", "Favorite", "Untagged", "Trash"})
         if (s == tag) {
             std::cerr << "Error. Cannot add a basic tag to a file\n";
@@ -354,13 +357,14 @@ bool BaseElement::validTagToAdd(const std::string& tag) {
         }
 
     // forbidden characters (,/)
-    auto hasChar = [tag](const std::string& c){		// has one of the characters in the string
+    auto hasChar = [tag](const std::string& c){	// has one of the characters in the string
         for (const auto& i : c)
             if (tag.find(i) != std::string::npos) return true;
         return false;
     };
-
     if (hasChar(",")) return false;
+    if (tag.find('/') == 0 || tag.rfind('/') == tag.size()-1)
+        return false;
 
     return true;
 }
@@ -487,7 +491,15 @@ void BaseElement::removeTitleItemFromHeader(const fs::path &path) {
     removeLineFromHeader(str, path);
 }
 
-
+std::string& BaseElement::processTag(std::string& tag) {
+    trim(tag);
+    while (tag.find('/') == 0)
+        tag = tag.substr(1);
+    while (tag.rfind('/') == tag.size()-1)
+        tag = tag.substr(0, tag.size()-1);
+    trim(tag);
+    return tag;
+}
 
 
 std::string BaseElement::combineTags(const StringList& chain) {
