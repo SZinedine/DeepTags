@@ -8,11 +8,9 @@ namespace be = BaseElement;
 class Element
 {
 public:
-    Element(const fs::path& path);
-    Element(const fs::path& path, const std::string& title,
-            const Tags& tags, const bool& pinned=false,
-            const bool& favorited=false, const bool& deleted=false);
+    explicit Element(const fs::path& path);
     Element(const Element& other);
+    Element(Element&& other) = default;
     inline bool operator==(const Element& other) { return (m_path == other.m_path);  }
     inline bool operator!=(const Element& other) { return !(m_path == other.m_path); }
 
@@ -23,6 +21,7 @@ public:
     [[nodiscard]] inline bool favorited()    const  {  return m_favorited;}
     [[nodiscard]] inline bool deleted()      const  {  return m_deleted;  }
     [[nodiscard]] inline StringList getHeader() const{ return m_header;   }
+    [[nodiscard]] inline bool untagged()     const  {return tags().empty();}
 
     inline void setPath(const fs::path& path)       {  m_path = path;      }
     inline void setTitle(const std::string& title)  {  m_title = title;    }
@@ -36,8 +35,8 @@ public:
      * construct the object (this) by calling all the appropriate functions
      */
     void setup(const fs::path& path);
-    inline void reload()               { setup( path() );   }
-    inline void reloadHeader()         { m_header = be::getHeader(m_path); }
+    inline void reload()          { setup( m_path );   }
+    inline void reloadHeader()    { m_header = be::getHeader(m_path); }
     static ElementsList constructElementList(const PathsList& f);
     /**
      * Check if a line exists in the file's header
@@ -82,8 +81,8 @@ private:
     /***
      * Reload individual items (read the file to set the local variables)
      */
-    inline void initTags()               {   initTags(be::getHeader(m_path));   }
-    void initTags(const StringList& header);
+    inline void loadTags()  {  loadTags(be::getHeader(m_path));  }
+    void loadTags(const StringList& header);
 
 private:
     fs::path m_path;

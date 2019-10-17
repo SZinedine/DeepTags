@@ -1,13 +1,5 @@
 #include "element.h"
 
-Element::Element(const fs::path& path, const std::string& title,
-        const Tags& tags, const bool& pinned,
-        const bool& favorited, const bool& deleted)
-    : m_path(path), m_title(title),
-      m_tags(tags), m_pinned(pinned),
-      m_favorited(favorited), m_deleted(deleted)
-{}
-
 Element::Element(const fs::path& path)
 {
     setup(path);
@@ -28,7 +20,7 @@ void Element::setup(const fs::path& path) {
     m_path = path;
     m_header = be::getHeader(path);
     setTitle( be::getTitle(m_header));
-    initTags(m_header);
+    loadTags(m_header);
     setPinned( be::isPinned(m_header));
     setFavorited( be::isFavorited(m_header));
     setDeleted(be::isDeleted(m_header));
@@ -42,8 +34,6 @@ ElementsList Element::constructElementList(const PathsList& f) {
     }
     return elems;
 }
-
-
 
 
 void Element::addPinnedLine(const bool& val) {
@@ -71,7 +61,7 @@ void Element::addDeletedLine(const bool& val) {
 void Element::addTagsLine(const StringList& list) {
     std::string line = be::makeTagsLine(list);
     be::addTagsItem(line, m_path);
-    initTags();
+    loadTags();
     reloadHeader();
 }
 
@@ -149,8 +139,7 @@ void Element::overrideTags(const StringList& list) {
     const std::string newTag = be::makeTagsLine(valid);
 
     be::replace(old, newTag, m_path);
-    initTags();
-    reloadHeader();
+    loadTags();
 }
 
 
@@ -172,8 +161,7 @@ bool Element::appendTag(std::string tag) {
     const std::string res = be::makeTagsLine(tags);
     bool ret = be::replace(raw_tag_header, res, m_path); // write the changes into the file
 
-    initTags();	    // reload the tags into the local variable
-    reloadHeader();
+    loadTags();
 
     return ret;
 }
@@ -202,13 +190,13 @@ void Element::removeDeletedLine() {
 
 void Element::removeTagsLine() {
     be::removeTagsItemFromHeader(m_path);
-    setTags({{}});
+    setTags(Tags());
     reloadHeader();
 }
 
 
 
-void Element::initTags(const StringList& header) {
+void Element::loadTags(const StringList& header) {
     setTags(be::getParsedTags(header));
     reloadHeader();
 }

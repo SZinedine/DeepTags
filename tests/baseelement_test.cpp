@@ -64,6 +64,9 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         CHECK( be::parseArray(header.at(2))[1] == "second/third");
         CHECK( be::parseArray(header.at(2))[2] == "fourth/fifth");
         CHECK( be::parseArray(header.at(2))[3] == "sixth");
+
+        std::string tag = " / tag / ";
+        REQUIRE( be::processTag(tag) == "tag");
     }
 
     SECTION("title", "[title]") {
@@ -96,7 +99,7 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         CHECK_FALSE( be::validTagToAdd("Untagged"));
         CHECK_FALSE( be::validTagToAdd("Favorite"));
         CHECK_FALSE( be::validTagToAdd("Trash"));
-        // CHECK_FALSE( be::validTagToAdd("/something"));
+        CHECK_FALSE( be::validTagToAdd("/something"));
 
         INFO("test the tags composition");
         const StringList tgs{ "Notebooks", "summaries", "history" };

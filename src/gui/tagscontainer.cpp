@@ -129,13 +129,10 @@ void TagsContainer::addElement(Element* element) {
     if (alreadyAdded(element)) return;
     addToSpecificTopLevel(element, cnv_allNotes);    // add to All Notes if it isn't there
 
-    const Tags& tags = element->tags();
-
     if (element->favorited()) addToSpecificTopLevel(element, cnv_favorite);
-    if (tags.empty()) {
-        addToSpecificTopLevel(element, cnv_untagged);
-        return;
-    }
+    if (element->untagged())  addToSpecificTopLevel(element, cnv_untagged);
+
+    const Tags& tags = element->tags();
 
     for (const StringList& chain : tags) {
         for (std::string::size_type level = 0 ; level < chain.size() ; level++) {
