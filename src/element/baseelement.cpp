@@ -15,7 +15,7 @@ std::string BaseElement::getTitle(const StringList& header) {
 
 Tags BaseElement::getParsedTags(const StringList& header) {
     StringList unparsed = getUnparsedTags(header);
-    if (unparsed.empty()) return Tags{{}};
+    if (unparsed.empty()) return Tags{};
 
     Tags res;
     for (const std::string& i : unparsed)
