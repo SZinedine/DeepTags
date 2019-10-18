@@ -1,8 +1,8 @@
 #include "baseelement.h"
-#include <fstream>
+
 #include <algorithm>
 #include <cctype>
-
+#include <fstream>
 
 
 std::string BaseElement::getTitle(const StringList& header) {
@@ -18,8 +18,7 @@ Tags BaseElement::getParsedTags(const StringList& header) {
     if (unparsed.empty()) return Tags{};
 
     Tags res;
-    for (const std::string& i : unparsed)
-        res.push_back( split(i) );
+    for (const std::string& i : unparsed) res.push_back(split(i));
     return res;
 }
 
@@ -35,7 +34,6 @@ bool BaseElement::isPinned(const StringList& header) {
     std::string found = findPinned(header);
     if (found.empty()) return false;
     return parseBool(found);
-
 }
 
 bool BaseElement::isFavorited(const StringList& header) {
@@ -51,29 +49,17 @@ bool BaseElement::isDeleted(const StringList& header) {
 }
 
 
+std::string BaseElement::getTitle(const fs::path& path) { return getTitle(getHeader(path)); }
 
+bool BaseElement::isPinned(const fs::path& path) { return isPinned(getHeader(path)); }
 
-std::string BaseElement::getTitle(const fs::path& path) {
-    return getTitle(getHeader(path));
-}
+bool BaseElement::isFavorited(const fs::path& path) { return isFavorited(getHeader(path)); }
 
-bool BaseElement::isPinned(const fs::path& path) {
-    return isPinned(getHeader(path));
-}
-
-bool BaseElement::isFavorited(const fs::path& path) {
-    return isFavorited(getHeader(path));
-}
-
-bool BaseElement::isDeleted(const fs::path& path) {
-    return isDeleted(getHeader(path));
-}
-
-
+bool BaseElement::isDeleted(const fs::path& path) { return isDeleted(getHeader(path)); }
 
 
 // used by all other functions that search for a key in a header
-std::string BaseElement::findLine(const std::string& key, const StringList& header){
+std::string BaseElement::findLine(const std::string& key, const StringList& header) {
     const std::string k = key + ":";
     for (std::string s : header) {
         trim(s);
@@ -83,29 +69,25 @@ std::string BaseElement::findLine(const std::string& key, const StringList& head
 }
 
 
-
-
-
-
-void BaseElement::setTitle(const fs::path& path, const std::string& title){
+void BaseElement::setTitle(const fs::path& path, const std::string& title) {
     if (!hasTitleKey(getHeader(path))) return;
     if (title.empty()) return;
     std::string t = title;
     trim(t);
-    t = makeTitleLine(t);
+    t                    = makeTitleLine(t);
     std::string old_line = findTitle(getHeader(path));
     replace(old_line, t, path);
 }
 
-void BaseElement::setPinned(const fs::path& path, const bool& pin){
+void BaseElement::setPinned(const fs::path& path, const bool& pin) {
     if (!hasPinnedKey(getHeader(path))) return;
     std::string pinned = makePinnedLine(pin);
-    std::string old = findPinned(getHeader(path));
+    std::string old    = findPinned(getHeader(path));
     if (old.empty()) return;
     replace(old, pinned, path);
 }
 
-void BaseElement::setFavorited(const fs::path& path, const bool& favorited){
+void BaseElement::setFavorited(const fs::path& path, const bool& favorited) {
     if (!hasFavoritedKey(getHeader(path))) return;
     std::string fav = makeFavoritedLine(favorited);
     std::string old = findFavorited(getHeader(path));
@@ -113,7 +95,7 @@ void BaseElement::setFavorited(const fs::path& path, const bool& favorited){
     replace(old, fav, path);
 }
 
-void BaseElement::setDeleted(const fs::path& path, const bool& deleted){
+void BaseElement::setDeleted(const fs::path& path, const bool& deleted) {
     if (!hasDeletedKey(getHeader(path))) return;
     std::string del = makeDeletedLine(deleted);
     std::string old = findDeleted(getHeader(path));
@@ -122,22 +104,16 @@ void BaseElement::setDeleted(const fs::path& path, const bool& deleted){
 }
 
 
-
-
-
-
 std::string BaseElement::getValue(std::string line) {
     trim(line);
     std::string::size_type pos = line.find_first_of(':') + 1;
-    line = line.substr(pos);
+    line                       = line.substr(pos);
     trim(line);
     return line;
 }
 
 
-std::string BaseElement::parseString(const std::string& line) {
-    return getValue(line);
-}
+std::string BaseElement::parseString(const std::string& line) { return getValue(line); }
 
 
 bool BaseElement::parseBool(const std::string& line) {
@@ -151,7 +127,7 @@ StringList BaseElement::parseArray(const std::string& line) {
     unwrap(val, "[", "]");
 
     StringList res = split(val, ",");
-    for (std::string& i : res){ 
+    for (std::string& i : res) {
         trim(i);
         remove_quotations(i);
     }
@@ -160,14 +136,13 @@ StringList BaseElement::parseArray(const std::string& line) {
 }
 
 
-
 void BaseElement::unwrap(std::string& str, const std::string& before, const std::string& after) {
     if (str.empty()) return;
-    auto isWrapped = [&](){
-        return ( (str.find(before) == 0) && (str.rfind(after) == str.size()-1) );
+    auto isWrapped = [&]() {
+        return ((str.find(before) == 0) && (str.rfind(after) == str.size() - 1));
     };
     if (!isWrapped()) return;
-    str =  str.substr(1, str.size()-2);
+    str = str.substr(1, str.size() - 2);
 }
 
 void BaseElement::enwrap(std::string& str, const std::string& before, const std::string& after) {
@@ -200,10 +175,9 @@ void BaseElement::createNewFile(const fs::path& p, std::string title) {
 PathsList BaseElement::fetch_files(const std::string& dir) {
     PathsList list;
 
-    for (auto& f : fs::recursive_directory_iterator( dir )) {
+    for (auto& f : fs::recursive_directory_iterator(dir)) {
         fs::path p = fs::path(f);
-        if ( isMD(p) )
-            list.push_back( p );
+        if (isMD(p)) list.push_back(p);
     }
 
     return list;
@@ -211,19 +185,20 @@ PathsList BaseElement::fetch_files(const std::string& dir) {
 
 
 StringList BaseElement::getHeader(const fs::path& path) {
-    StringList header;
+    StringList    header;
     std::ifstream myfile(path);
     if (!myfile.is_open())
-        std::cerr
-            <<  "the following file failed to open:\n"
-            << "    " << path << "\n";
+        std::cerr << "the following file failed to open:\n"
+                  << "    " << path << "\n";
 
-    int headerMark = 0;		// how many times "---" have been encountered before stopping (2)
+    int         headerMark = 0;    // how many times "---" have been encountered before stopping (2)
     std::string line;
-    while ( std::getline(myfile, line) ) {
-        if (headerMark == 2) break;         // break if we finished the header
-        if (line == "---") headerMark++;
-        else header.push_back(line);        // add to the vector if the current line is metadata
+    while (std::getline(myfile, line)) {
+        if (headerMark == 2) break;    // break if we finished the header
+        if (line == "---")
+            headerMark++;
+        else
+            header.push_back(line);    // add to the vector if the current line is metadata
     }
     myfile.close();
 
@@ -231,52 +206,44 @@ StringList BaseElement::getHeader(const fs::path& path) {
 }
 
 
-bool BaseElement::isMD(const fs::path &f) {
+bool BaseElement::isMD(const fs::path& f) {
     std::string ext = std::string(f.extension().string());
-    return ( ext == ".md" || ext == ".markdown" || ext == ".MD" );
+    return (ext == ".md" || ext == ".markdown" || ext == ".MD");
 }
 
 
 int BaseElement::nbItemsInHeader(const fs::path& fi) {
     std::ifstream myfile(fi);
     if (!myfile.is_open())
-        std::cerr
-            << "the following file failed to open:\n"
-            << "    " << fi << "\n";
+        std::cerr << "the following file failed to open:\n"
+                  << "    " << fi << "\n";
     std::string line;
-    int headerItems = 0;	// lines between the header markers
-    int headerMarker = 0;
+    int         headerItems  = 0;    // lines between the header markers
+    int         headerMarker = 0;
     while (std::getline(myfile, line)) {
-        if (headerMarker == 2) 	break;
-        if (headerMarker == 1) 	headerItems++;
-        if (line == "---")	    headerMarker++;
+        if (headerMarker == 2) break;
+        if (headerMarker == 1) headerItems++;
+        if (line == "---") headerMarker++;
     }
     myfile.close();
     return headerItems;
 }
 
 
-
-
-
 StringList BaseElement::split(const std::string& s, const std::string& delimiter) {
     std::size_t pos_start = 0, pos_end, delim_len = delimiter.length();
     std::string token;
-    StringList res;
+    StringList  res;
 
-    while ((pos_end = s.find (delimiter, pos_start)) != std::string::npos) {
-        token = s.substr (pos_start, pos_end - pos_start);
+    while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+        token     = s.substr(pos_start, pos_end - pos_start);
         pos_start = pos_end + delim_len;
-        res.push_back (token);
+        res.push_back(token);
     }
 
-    res.push_back (s.substr (pos_start));
+    res.push_back(s.substr(pos_start));
     return res;
 }
-
-
-
-
 
 
 void BaseElement::createHeader(const fs::path& file, const std::string& title) {
@@ -287,8 +254,7 @@ void BaseElement::createHeader(const fs::path& file, const std::string& title) {
     header.push_back("---");
 
     StringList entire_file = getFileContent(file);
-    for (const std::string& i : entire_file)
-        header.push_back(i);
+    for (const std::string& i : entire_file) header.push_back(i);
     writeContentToFile(header, file);
 }
 
@@ -336,15 +302,14 @@ std::string BaseElement::composeArrayItem(std::string key, const StringList& val
     key.append(": ");
     std::string val;
 
-    for (StringList::size_type i = 0 ; i < value.size() ; i++) {
-        val.append(trim( value[i] ));
-        if (i != value.size()-1) val.append(", ");
-    } 
+    for (StringList::size_type i = 0; i < value.size(); i++) {
+        val.append(trim(value[i]));
+        if (i != value.size() - 1) val.append(", ");
+    }
 
     enwrap(val, "[", "]");
     key.append(val);
     return key;
-
 }
 
 bool BaseElement::validTagToAdd(const std::string& tag) {
@@ -357,41 +322,35 @@ bool BaseElement::validTagToAdd(const std::string& tag) {
         }
 
     // forbidden characters (,/)
-    auto hasChar = [tag](const std::string& c){	// has one of the characters in the string
+    auto hasChar = [tag](const std::string& c) {    // has one of the characters in the string
         for (const auto& i : c)
             if (tag.find(i) != std::string::npos) return true;
         return false;
     };
     if (hasChar(",")) return false;
-    if (tag.find('/') == 0 || tag.rfind('/') == tag.size()-1)
-        return false;
+    if (tag.find('/') == 0 || tag.rfind('/') == tag.size() - 1) return false;
 
     return true;
 }
 
 
-
 bool BaseElement::hasHeader(const fs::path& fi) {
     std::ifstream myfile(fi);
     if (!myfile.is_open())
-        std::cerr
-            << "the following file failed to open:\n"
-            << "    " << fi << "\n";
+        std::cerr << "the following file failed to open:\n"
+                  << "    " << fi << "\n";
 
     std::string line;
-    int headerItems = 0;	// lines between the header markers
-    int headerMarker = 0;
+    int         headerItems  = 0;    // lines between the header markers
+    int         headerMarker = 0;
     while (std::getline(myfile, line)) {
-        if (headerMarker == 1 && line != "---") 	headerItems++;
-        if (line == "---")	    headerMarker++;
-        if (headerMarker == 2) 	break;
+        if (headerMarker == 1 && line != "---") headerItems++;
+        if (line == "---") headerMarker++;
+        if (headerMarker == 2) break;
     }
     myfile.close();
     return (headerMarker == 2 && (headerItems <= 8 && headerItems >= 1));
 }
-
-
-
 
 
 void BaseElement::addItemToHeader(const std::string& item, const fs::path& path) {
@@ -420,7 +379,7 @@ void BaseElement::addPinnedItem(std::string pinnedLine, const fs::path& path) {
         addItemToHeader(pinnedLine, path);
 }
 
-void BaseElement::addFavoritedItem(std::string favoritedLine, const fs::path &path) {
+void BaseElement::addFavoritedItem(std::string favoritedLine, const fs::path& path) {
     if (hasFavoritedKey(getHeader(path))) return;
     trim(favoritedLine);
     if (favoritedLine == "favorited: true" || favoritedLine == "favorited: false")
@@ -444,9 +403,7 @@ void BaseElement::addTagsItem(std::string tagsLine, const fs::path& path) {
 }
 
 
-
-
-void BaseElement::removeLineFromHeader(const std::string &line, const fs::path& path) {
+void BaseElement::removeLineFromHeader(const std::string& line, const fs::path& path) {
     if (!hasHeader(path)) return;
     if (line.empty()) return;
     StringList content = getFileContent(path);
@@ -459,14 +416,14 @@ void BaseElement::removeLineFromHeader(const std::string &line, const fs::path& 
 }
 
 
-void BaseElement::removePinnedItemFromHeader(const fs::path &path) {
+void BaseElement::removePinnedItemFromHeader(const fs::path& path) {
     if (!hasPinnedKey(getHeader(path))) return;
     std::string str = findPinned(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 
-void BaseElement::removeFavoritedItemFromHeader(const fs::path &path) {
+void BaseElement::removeFavoritedItemFromHeader(const fs::path& path) {
     if (!hasFavoritedKey(getHeader(path))) return;
     std::string str = findFavorited(getHeader(path));
     removeLineFromHeader(str, path);
@@ -478,14 +435,14 @@ void BaseElement::removeDeletedItemFromHeader(const fs::path& path) {
     removeLineFromHeader(str, path);
 }
 
-void BaseElement::removeTagsItemFromHeader(const fs::path &path) {
+void BaseElement::removeTagsItemFromHeader(const fs::path& path) {
     if (!hasTagsKey(getHeader(path))) return;
     std::string str = findTags(getHeader(path));
     removeLineFromHeader(str, path);
 }
 
 
-void BaseElement::removeTitleItemFromHeader(const fs::path &path) {
+void BaseElement::removeTitleItemFromHeader(const fs::path& path) {
     if (!hasTitleKey(getHeader(path))) return;
     std::string str = findTitle(getHeader(path));
     removeLineFromHeader(str, path);
@@ -493,10 +450,8 @@ void BaseElement::removeTitleItemFromHeader(const fs::path &path) {
 
 std::string& BaseElement::processTag(std::string& tag) {
     trim(tag);
-    while (tag.find('/') == 0)
-        tag = tag.substr(1);
-    while (tag.rfind('/') == tag.size()-1)
-        tag = tag.substr(0, tag.size()-1);
+    while (tag.find('/') == 0) tag = tag.substr(1);
+    while (tag.rfind('/') == tag.size() - 1) tag = tag.substr(0, tag.size() - 1);
     trim(tag);
     return tag;
 }
@@ -504,26 +459,21 @@ std::string& BaseElement::processTag(std::string& tag) {
 
 std::string BaseElement::combineTags(const StringList& chain) {
     std::string res;
-    for (StringList::size_type i = 0 ; i < chain.size() ; i++) {
+    for (StringList::size_type i = 0; i < chain.size(); i++) {
         res.append(chain[i]);
-        if (i != chain.size()-1) res.append("/");
+        if (i != chain.size() - 1) res.append("/");
     }
     return res;
 }
 
 
-void BaseElement::trim(std::string &s) {
+void BaseElement::trim(std::string& s) {
     // trim left
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-        [](int ch) {
-            return !std::isspace(ch);
-        }
-    ));
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) { return !std::isspace(ch); }));
 
     // trim right
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { return !std::isspace(ch); }).base(),
+            s.end());
 }
 
 [[nodiscard]] std::string BaseElement::trim(const std::string& s) {
@@ -533,8 +483,8 @@ void BaseElement::trim(std::string &s) {
 }
 
 
-
-bool BaseElement::replace(const std::string& old_str, const std::string& new_str, const fs::path& path) {
+bool BaseElement::replace(const std::string& old_str, const std::string& new_str,
+                          const fs::path& path) {
     if (old_str == new_str) return true;
     StringList entire_file = getFileContent(path);
     if (entire_file.empty()) return false;
@@ -543,7 +493,7 @@ bool BaseElement::replace(const std::string& old_str, const std::string& new_str
     bool found = false;
     for (std::string& s : entire_file) {
         if (s == old_str) {
-            s = new_str;
+            s     = new_str;
             found = true;
             break;
         }
@@ -558,10 +508,9 @@ bool BaseElement::replace(const std::string& old_str, const std::string& new_str
 StringList BaseElement::getFileContent(const fs::path& file) {
     std::ifstream f(file);
 
-    StringList entire_file;
+    StringList  entire_file;
     std::string line;
-    while (std::getline(f, line))
-        entire_file.push_back(line);
+    while (std::getline(f, line)) entire_file.push_back(line);
     f.close();
 
     return entire_file;
@@ -571,20 +520,6 @@ void BaseElement::writeContentToFile(const StringList& content, const fs::path& 
     std::ofstream f(file);
     if (!f.is_open()) return;
 
-    for (const std::string& i : content)
-        f << i << "\n";
+    for (const std::string& i : content) f << i << "\n";
     f.close();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

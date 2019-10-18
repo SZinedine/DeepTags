@@ -1,28 +1,24 @@
 #include "element.h"
 
-Element::Element(const fs::path& path)
-{
-    setup(path);
-}
+Element::Element(const fs::path& path) { setup(path); }
 
-Element::Element(const Element& other)
-{
-    m_path = other.m_path;
-    m_title = other.m_title;
-    m_tags = other.m_tags;
-    m_pinned = other.m_pinned;
+Element::Element(const Element& other) {
+    m_path      = other.m_path;
+    m_title     = other.m_title;
+    m_tags      = other.m_tags;
+    m_pinned    = other.m_pinned;
     m_favorited = other.m_favorited;
-    m_deleted = other.m_deleted;
-    m_header = other.m_header;
+    m_deleted   = other.m_deleted;
+    m_header    = other.m_header;
 }
 
 void Element::setup(const fs::path& path) {
-    m_path = path;
+    m_path   = path;
     m_header = be::getHeader(path);
-    setTitle( be::getTitle(m_header));
+    setTitle(be::getTitle(m_header));
     loadTags(m_header);
-    setPinned( be::isPinned(m_header));
-    setFavorited( be::isFavorited(m_header));
+    setPinned(be::isPinned(m_header));
+    setFavorited(be::isFavorited(m_header));
     setDeleted(be::isDeleted(m_header));
 }
 
@@ -30,7 +26,7 @@ ElementsList Element::constructElementList(const PathsList& f) {
     ElementsList elems;
     for (const fs::path& p : f) {
         if (!be::isMD(p)) continue;
-        elems.push_back( new Element(p) );
+        elems.push_back(new Element(p));
     }
     return elems;
 }
@@ -64,9 +60,6 @@ void Element::addTagsLine(const StringList& list) {
     loadTags();
     reloadHeader();
 }
-
-
-
 
 
 void Element::changeTitle(const std::string& title) {
@@ -104,7 +97,6 @@ void Element::changeFavorited(bool favorited) {
 }
 
 
-
 void Element::changeDeleted(bool deleted) {
     if (!hasDeletedLine() && deleted) {
         addDeletedLine(deleted);
@@ -121,20 +113,22 @@ void Element::changeDeleted(bool deleted) {
 
 
 void Element::overrideTags(const StringList& list) {
-    if (list.empty()) {		// if the list is empty, remove the tag item from the file
+    if (list.empty()) {    // if the list is empty, remove the tag item from the file
         removeTagsLine();
         return;
     }
-    if (!hasTagsLine()) {		// if the file doesn't have a tag item, create it
+    if (!hasTagsLine()) {    // if the file doesn't have a tag item, create it
         addTagsLine(list);
         return;
     }
-    std::string old = be::findTags( m_header );
-    StringList valid;
+    std::string old = be::findTags(m_header);
+    StringList  valid;
     for (std::string i : list) {
         be::processTag(i);
-        if (be::validTagToAdd(i)) valid.push_back(i);
-        else std::cerr << "'"<< i << "' isn not a valid tag\n";
+        if (be::validTagToAdd(i))
+            valid.push_back(i);
+        else
+            std::cerr << "'" << i << "' isn not a valid tag\n";
     }
     const std::string newTag = be::makeTagsLine(valid);
 
@@ -152,22 +146,19 @@ bool Element::appendTag(std::string tag) {
     }
 
     const std::string raw_tag_header = be::findTags(m_header);
-    StringList tags = be::getUnparsedTags(m_header);
+    StringList        tags           = be::getUnparsedTags(m_header);
 
-    for (const std::string& i : tags)	// verify if the file doesn't contain the tag
+    for (const std::string& i : tags)    // verify if the file doesn't contain the tag
         if (tag == i) return false;
     tags.push_back(tag);
 
     const std::string res = be::makeTagsLine(tags);
-    bool ret = be::replace(raw_tag_header, res, m_path); // write the changes into the file
+    bool ret = be::replace(raw_tag_header, res, m_path);    // write the changes into the file
 
     loadTags();
 
     return ret;
 }
-
-
-
 
 
 void Element::removePinnedLine() {
@@ -195,10 +186,7 @@ void Element::removeTagsLine() {
 }
 
 
-
 void Element::loadTags(const StringList& header) {
     setTags(be::getParsedTags(header));
     reloadHeader();
 }
-
-
