@@ -2,138 +2,163 @@
 #include "../src/element/element.h"
 
 
-TEST_CASE("Element class", "[Element][element]") {
+SCENARIO("Element", "[element]") {
+
     const fs::path filename("./_new md file_.md");
     const std::string title = "new markdown file title";
-
-    INFO("Creating a new file");
-    Element::createNewFile(filename, title);
-    REQUIRE(fs::exists(filename));
-    REQUIRE( Element::hasHeader(filename) );
-    REQUIRE( Element::hasTitleItem(filename) );
-
-    INFO("Allocating Element object");
-    Element* element = new Element(filename);
-    REQUIRE(element->title() == title);
-
-    SECTION("writing tags on the file", "[element][tags][tag]")
-    {
-        REQUIRE_FALSE( element->hasTagsLine() );
-        const StringList tgs{"Notebooks/test", "status/in_test"};
-        element->changeTags(tgs);
-        const StringList new_tags = element->getUnparsedTagsValuesFromHeader();
-        INFO("the written tags should be 2");
-        REQUIRE(new_tags.size() == 2);
-        REQUIRE(new_tags[0] == tgs[0]);
-        REQUIRE(new_tags[1] == tgs[1]);
-
-        const std::string toAppend = "new/tag/append";
-        INFO("append unixisting tag");
-        element->appendTag(toAppend);
-        const StringList new_tags2 = element->getUnparsedTagsValuesFromHeader();
-        REQUIRE( new_tags2.size() == 3 );
-        INFO("append existing tag. nothing should be changed inside the file");
-        REQUIRE( new_tags2.size() == 3 );
-        REQUIRE( element->hasTagsLine() );
-
-        INFO("removing the existing tags. the file should have 0 tags after this");
-        element->removeTagsLine();
-        const StringList new_tags3 = element->getUnparsedTagsValuesFromHeader();
-        REQUIRE( new_tags3.size() == 0 );
-        REQUIRE_FALSE( element->hasTagsLine() );
+    be::createNewFile(filename, title);
+    Element element(filename);
+    
+    GIVEN("a new created element to read from") {
+        REQUIRE(be::hasHeader(element.path()));
+        CHECK(element.hasTitleLine());
+        CHECK(element.title() == title);
+        CHECK_FALSE(element.hasPinnedLine());
+        CHECK_FALSE(element.hasDeletedLine());
+        CHECK_FALSE(element.hasFavoritedLine());
+        CHECK_FALSE( element.hasTagsLine() );
+        CHECK_FALSE(element.pinned());
+        CHECK_FALSE(element.favorited());
+        CHECK_FALSE(element.deleted());
+        CHECK( element.untagged() );
     }
 
-    SECTION("tests related to the pinned item", "[pin][pinned]")
-    {
-        INFO("the line pinned isn't supposed to exist at this point");
-        REQUIRE_FALSE(element->pinned());
-        REQUIRE_FALSE(element->hasPinnedLine());
-        REQUIRE(element->getPinnedLineFromHeader() == "");
+    GIVEN("an element without tags") {
+        REQUIRE( element.tags().empty());
+        CHECK( element.untagged());
 
-        INFO("set pinned to true. it is supposed to create it and update itself");
-        element->changePinned(true);
-        REQUIRE(element->hasPinnedLine());
-        REQUIRE(element->pinned());
-        REQUIRE(element->getPinnedValueFromHeader());
+        WHEN("Writing tags") {
 
-        INFO("remove the pinned element from the file");
-        element->removePinnedLine();
-        REQUIRE_FALSE(element->pinned());
-        REQUIRE_FALSE(element->getPinnedValueFromHeader());
-        REQUIRE_FALSE(element->hasPinnedLine());
+            INFO("first time writing");
+            const StringList tgs{"Notebooks/test", "status/in_test"};
+            element.changeTags(tgs);
+            const StringList new_tags = be::getUnparsedTags(element.getHeader());
 
-        INFO("set to false. this should remove the item from the file");
-        element->changePinned(false);
-        REQUIRE(element->getPinnedLineFromHeader() == "");
-        REQUIRE_FALSE(element->getPinnedValueFromHeader());
-        REQUIRE_FALSE(element->pinned());
-        REQUIRE_FALSE(element->hasPinnedLine());
+            THEN("the file should contain 2 tags entries") {
+                REQUIRE(new_tags.size() == 2);
+                CHECK(new_tags[0] == tgs[0]);
+                CHECK(new_tags[1] == tgs[1]);
+            }
+
+            INFO("append non existing tag");
+            const std::string toAppend = "new/tag/append";
+            element.appendTag(toAppend);
+            
+            THEN("should have 3 tags") {
+                const StringList new_tags2 = be::getUnparsedTags(element.getHeader());
+                REQUIRE( new_tags2.size() == 3 );
+                CHECK(new_tags2[2] == toAppend);
+            }
+
+
+            INFO("append existing tag");
+            element.appendTag(toAppend);
+
+            THEN("should remain with 3 tags == shouldn't have changed") {
+                const StringList new_tags2 = be::getUnparsedTags(element.getHeader());
+                REQUIRE( new_tags2.size() == 3 );
+                CHECK(new_tags2[0] == tgs[0]);
+                CHECK(new_tags2[1] == tgs[1]);
+                CHECK(new_tags2[2] == toAppend);
+            }
+            
+            INFO("removing the existing tags");
+            element.removeTagsLine();
+
+            THEN("should have 0 tags after this") {
+                const StringList new_tags3 = be::getUnparsedTags(element.getHeader());
+                REQUIRE( new_tags3.size() == 0 );
+                CHECK_FALSE( element.hasTagsLine() );
+            }
+        }
     }
 
-    SECTION("tests related to the favorite item", "[favorite][favorited]")
-    {
-        INFO("favorited isn't supposed to exist at this point");
-        REQUIRE(element->getFavoritedLineFromHeader() == "");
-        REQUIRE_FALSE(element->hasFavoritedLine());
-        REQUIRE_FALSE(element->favorited());
+    GIVEN("a new empty element without pinned line") {
+        THEN("shouldn't have a pinned line") {
+            REQUIRE_FALSE(element.hasPinnedLine());
+            CHECK_FALSE(element.pinned());
+        }
 
-        INFO("set to true = create the item");
-        element->changeFavorited(true);
-        REQUIRE(element->hasFavoritedLine());
-        REQUIRE(element->favorited());
-        REQUIRE(element->getFavoritedLineFromHeader() == "favorited: true");
-        REQUIRE(element->getFavoritedValueFromHeader());
+        WHEN("We change the value of pinned to true") {
+            element.changePinned(true);
 
-        INFO("Change the favorited item into false. this should remove it from the file");
-        element->changeFavorited(false);
-        REQUIRE_FALSE(element->hasFavoritedLine());
-        REQUIRE_FALSE(element->favorited());
-        REQUIRE_FALSE(element->getFavoritedValueFromHeader());
-        REQUIRE(element->getFavoritedLineFromHeader() == "");
+            THEN(" create a header line with the key pinned") {
+                CHECK(element.hasPinnedLine());
+                CHECK(element.pinned());
+            }
+        }
+
+        WHEN("remove the pinned element from the file"){
+        element.removePinnedLine();
+
+        THEN("no 'pinned' key should be found in header")
+            CHECK_FALSE(element.pinned());
+            CHECK_FALSE(element.hasPinnedLine());
+        }
+
+        WHEN("the pinned item is set to false") {
+                element.changePinned(false);
+
+            THEN("the pinned key should be removed") {
+                CHECK_FALSE(element.pinned());
+                CHECK_FALSE(element.hasPinnedLine());
+            }
+        }
     }
 
-    SECTION("tests related to the 'deleted' item", "[delete][deleted]")
-    {
-        INFO("deleted isn't supposed to exist inside the file");
-        REQUIRE(element->getDeletedLineFromHeader() == "");
-        REQUIRE_FALSE(element->getDeletedValueFromHeader());
-        REQUIRE_FALSE(element->deleted());
+    GIVEN("a new empty element without favorited line") {
+        WHEN("a file is created") {
+            THEN("it shouldn't contain favorited key") {
+                REQUIRE_FALSE(element.hasFavoritedLine());
+                CHECK_FALSE(element.favorited());
 
-        INFO("set to true = create the item");
-        element->changeDeleted(true);
-        REQUIRE(element->hasDeletedLine());
-        REQUIRE(element->deleted());
-        REQUIRE(element->getDeletedValueFromHeader());
+            }
+        }
 
-        INFO("set to false");
-        element->changeDeleted(false);
-        CHECK_FALSE(element->hasDeletedLine());
-        REQUIRE_FALSE(element->deleted());
-        REQUIRE_FALSE(element->getDeletedValueFromHeader());
+        WHEN("favorited is set to true"){
+            element.changeFavorited(true);
+            THEN("it should create the key and initialize the local variable") {
+                CHECK(element.hasFavoritedLine());
+                CHECK(element.favorited());
+            }
+        }
 
-        INFO("set to true, for the second time");
-        element->changeDeleted(true);
-        REQUIRE(element->hasDeletedLine());
-        REQUIRE(element->deleted());
-        REQUIRE(element->getDeletedValueFromHeader());
-        REQUIRE(element->getDeletedLineFromHeader() == "deleted: true");
-
-
-
+        WHEN("favorited is set to false") {
+            element.changeFavorited(false);
+            THEN("it should remove the favorited key"){
+                CHECK_FALSE(element.hasFavoritedLine());
+                CHECK_FALSE(element.favorited());
+            }
+        }
     }
 
 
-    SECTION("testing title", "[title]") {
+    GIVEN("a newly created file that hasn't deleted key in its header") {
+        WHEN("a file is created") {
+            THEN("it shouldn't have 'deleted' key in its header") {
+                REQUIRE_FALSE(element.hasDeletedLine());
+                CHECK_FALSE(element.deleted());
 
+            }
+        }
+
+        WHEN("deleted is set to true") {
+            element.changeDeleted(true);
+            THEN("the key is created with the value true") {
+                CHECK(element.hasDeletedLine());
+                CHECK(element.deleted());
+            }
+        }
+
+        WHEN("deleted is set to false") {
+            element.changeDeleted(false);
+            THEN("the key should be removeed from the header") {
+                CHECK_FALSE(element.hasDeletedLine());
+                CHECK_FALSE(element.deleted());
+            }
+        }
     }
 
-    delete element;
     fs::remove(filename);
+
 }
-
-
-
-
-
-
-

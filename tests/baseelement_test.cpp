@@ -9,7 +9,14 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
     
     be::createNewFile(path, title);
     REQUIRE(fs::exists(path));
-    REQUIRE(be::hasHeader(path));  // should have a header
+
+    SECTION("reading a newly created file") {
+        REQUIRE(be::hasHeader(path));
+        const StringList header = be::getHeader(path);
+        const std::string tagline = be::findTags(header);
+        CHECK_FALSE( be::hasTagsKey(header) );
+
+    }
 
     SECTION("low level functions") {
         INFO("composing a header line from key and value");
@@ -73,7 +80,7 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         REQUIRE( be::hasTitleKey( be::getHeader(path)) );
         CHECK( be::makeTitleLine() == "title: 'untitled'" );
         CHECK( be::makeTitleLine("good title") == "title: 'good title'" );
-        CHECK( be::makeTitleLine("good title  ") == "title: 'good title'" );  // should be trimed
+        CHECK( be::makeTitleLine("good title  ") == "title: 'good title'" );
         CHECK( be::makeTitleLine("    good title") == "title: 'good title'" );
         CHECK( be::makeTitleLine("    good title   ") == "title: 'good title'" );
 
@@ -81,7 +88,7 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         be::setTitle(path, n_title);
 
         INFO("verify if the title item has changed inside the file");
-        StringList header = be::getHeader(path);       // get the header of the file
+        StringList header = be::getHeader(path);
         CHECK( header.size() == 1);
         std::string title_line = be::findTitle(header);
         CHECK( title_line == "title: 'new title'" );
