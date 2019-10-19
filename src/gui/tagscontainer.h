@@ -41,6 +41,7 @@ public slots:
     void expandItems();
     void loadCollapseOrExpand();
     void permatentlyDelete(Element* element);
+    void deleteAllItems();
 
 signals:
     /**

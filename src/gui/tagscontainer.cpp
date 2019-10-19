@@ -25,11 +25,21 @@ TagsContainer::TagsContainer(QWidget* parent) : QTreeWidget(parent), prnt(nullpt
     setDropIndicatorShown(true);
 }
 
-TagsContainer::~TagsContainer() {
+TagsContainer::~TagsContainer() { deleteAllItems(); }
+
+void TagsContainer::deleteAllItems() {
     auto lst = real(topLevelItem(find(cnv_allNotes, this)))->elements();
     if (lst->isEmpty()) return;
     for (Element* i : *lst)
         if (i) delete i;
+
+    QTreeWidgetItemIterator it(this);
+    while (*it) {
+        delete real(*it);
+        it++;
+    }
+
+    clear();
 }
 
 void TagsContainer::createBasicTags() {
@@ -37,6 +47,7 @@ void TagsContainer::createBasicTags() {
 }
 
 void TagsContainer::init() {
+    deleteAllItems();
     clear();
     createBasicTags();
 }

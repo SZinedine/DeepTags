@@ -24,10 +24,10 @@ FilesContainer::FilesContainer(QWidget* parent) : QListWidget(parent) {
     setIconSize(QSize(35, 20));
 }
 
-FilesContainer::~FilesContainer() { clear(); }
+FilesContainer::~FilesContainer() { clearView(); }
 
 void FilesContainer::addFile(Element* item) {
-    auto* f = new FileItem(item);
+    auto* f = new FileItem(item, this);
     addItem(f);
 }
 
@@ -39,6 +39,11 @@ void FilesContainer::addFiles(QVector<Element*>* items) {
 }
 
 void FilesContainer::clearView() {
+    auto remaining = count();
+    while (0 <= remaining) {
+        delete real(takeItem(remaining));
+        remaining--;
+    }
     clear();
     emit numberOfElementsChanged();
 }

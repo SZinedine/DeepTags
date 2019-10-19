@@ -33,7 +33,7 @@ public slots:
 
 private:
     /**
-     *  pin the necessary files
+     *  pin the necessary files at the top
      */
     void sortAndPin();
     /**

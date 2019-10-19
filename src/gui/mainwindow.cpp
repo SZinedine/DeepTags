@@ -28,13 +28,13 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), recentlyOpenedFil
 }
 
 void MainWindow::setupCentral() {
-    auto* widget = new QWidget;
+    auto* widget = new QWidget(this);
     setCentralWidget(widget);
 
-    tagsContainer = new TagsContainer;
+    tagsContainer = new TagsContainer(this);
     tagsContainer->setHeaderHidden(true);
-    filesContainer = new FilesContainer;
-    splitter       = new QSplitter;
+    filesContainer = new FilesContainer(this);
+    splitter       = new QSplitter(this);
     splitter->setChildrenCollapsible(false);
 
     clearTagsButton = new QPushButton(tr("clear"), this);
@@ -44,7 +44,7 @@ void MainWindow::setupCentral() {
     reloadButton->setToolTip(tr("Reload current files"));
     reloadButton->setMaximumWidth(60);
 
-    searchLineEdit = new QLineEdit;
+    searchLineEdit = new QLineEdit(this);
     searchLineEdit->setMaximumWidth(200);
     searchLineEdit->setPlaceholderText(tr("Search"));
 
@@ -56,11 +56,12 @@ void MainWindow::setupCentral() {
     collapseButton->setMaximumWidth(30);
 
     QStatusBar* statusB = statusBar();
-    nbFiles             = new QLabel(tr("0 files"));
+    nbFiles             = new QLabel(tr("0 files"), this);
     statusB->addPermanentWidget(nbFiles);
 
-    spinnerLabel = new QLabel;
-    auto* movie  = new QMovie(":images/spinner.gif");
+    spinnerLabel = new QLabel(this);
+    auto* movie  = new QMovie(this);
+    movie->setFileName(":images/spinner.gif");
     spinnerLabel->setMovie(movie);
     movie->setScaledSize(QSize(20, 20));
     movie->start();
@@ -103,24 +104,24 @@ void MainWindow::setupLayout() {
 }
 
 void MainWindow::setupMenu() {
-    menuFile                = new QMenu;
+    menuFile                = new QMenu(this);
     menuFile                = menuBar()->addMenu(tr("&File"));
     newFileAction           = new QAction(QIcon(":images/newFile.png"), tr("&New File"), this);
-    recentlyOpenedFilesMenu = new QMenu(tr("&Recently Opened Files"));
+    recentlyOpenedFilesMenu = new QMenu(tr("&Recently Opened Files"), this);
     Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu);
-    changeDataDirAction = new QAction(tr("&Change Data Directory"));
+    changeDataDirAction = new QAction(tr("&Change Data Directory"), this);
     quitAction          = new QAction(QIcon(":images/quit.png"), tr("&Quit"), this);
     menuFile->addAction(newFileAction);
     menuFile->addMenu(recentlyOpenedFilesMenu);
     menuFile->addActions({changeDataDirAction, quitAction});
 
-    menuEdit          = new QMenu;
-    setMdReaderAction = new QAction(tr("&Set MarkDown Reader"));
+    menuEdit          = new QMenu(this);
+    setMdReaderAction = new QAction(tr("&Set MarkDown Reader"), this);
     menuEdit          = menuBar()->addMenu(tr("&Edit"));
     menuEdit->addAction(setMdReaderAction);
 
-    menuHelp    = new QMenu;
-    aboutAction = new QAction(tr("&About"));
+    menuHelp    = new QMenu(this);
+    aboutAction = new QAction(tr("&About"), this);
     menuHelp    = menuBar()->addMenu(tr("&Help"));
     menuHelp->addAction(aboutAction);
 }
@@ -213,9 +214,8 @@ QStringList MainWindow::currentPaths() const {
 
 
 void MainWindow::reloadContent() {
-    tagsContainer->clear();
+    tagsContainer->init();
     filesContainer->clearView();
-    tagsContainer->createBasicTags();
     loadDataDirectoryContent();
 }
 

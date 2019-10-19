@@ -24,7 +24,7 @@ ElementDialog::ElementDialog(Element* element, QWidget* parent) : QDialog(parent
 
 ElementDialog::~ElementDialog() {
     delete m_title;
-    delete m_path;
+    //    delete m_path;            // crash after quiting the app
     delete m_pinned;
     delete m_favorited;
     delete m_tags;
@@ -33,7 +33,7 @@ ElementDialog::~ElementDialog() {
 
 
 void ElementDialog::setup_forEditFile() {
-    auto* layout = new QFormLayout;
+    auto* layout = new QFormLayout(this);
     setLayout(layout);
     layout->setRowWrapPolicy(QFormLayout::DontWrapRows);
     layout->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -48,7 +48,7 @@ void ElementDialog::setup_forEditFile() {
     m_favorited->setChecked(m_element->favorited());
     m_tags = new QTextEdit;
 
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttons, &QDialogButtonBox::accepted, this, [=]() { accept_(); });
     connect(buttons, &QDialogButtonBox::rejected, this, &ElementDialog::reject);
 
@@ -64,7 +64,7 @@ void ElementDialog::setup_forEditFile() {
 
 
 void ElementDialog::setup_forNewFile() {
-    auto* layout = new QFormLayout;
+    auto* layout = new QFormLayout(this);
     setLayout(layout);
     layout->setRowWrapPolicy(QFormLayout::DontWrapRows);
     layout->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -76,7 +76,7 @@ void ElementDialog::setup_forNewFile() {
     m_favorited = new QCheckBox;
     m_tags      = new QTextEdit;
 
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttons, &QDialogButtonBox::accepted, this, [=]() { save(); });
     connect(buttons, &QDialogButtonBox::rejected, this, &ElementDialog::reject);
 
