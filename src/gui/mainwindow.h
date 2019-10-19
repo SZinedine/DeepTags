@@ -44,6 +44,11 @@ private:
      */
     void openStringListPaths(const QStringList& strlist);
     /**
+     * when the data directory is changed
+     * save the new data directory, clear all, and reload
+     */
+    void changeDataDirectory();
+    /**
      *  get the data directory, fetch all the files in it,
      *  construct Element from each one of the files
      *  open them (openElements())

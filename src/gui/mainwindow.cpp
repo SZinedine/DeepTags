@@ -146,7 +146,7 @@ void MainWindow::setupSignals() {
             [=]() { Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu); });
     connect(quitAction, &QAction::triggered, this, &QMainWindow::close);
     connect(setMdReaderAction, &QAction::triggered, &Settings::askForMarkdownEditor);
-    connect(changeDataDirAction, &QAction::triggered, &Settings::setDataDirectory);
+    connect(changeDataDirAction, &QAction::triggered, this, &MainWindow::changeDataDirectory);
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(this, &MainWindow::started, this, &MainWindow::load,
             Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
@@ -163,6 +163,11 @@ void MainWindow::setupSignals() {
             &TagsContainer::permatentlyDelete);
 }
 
+
+void MainWindow::changeDataDirectory() {
+    bool reload = Settings::setDataDirectory();
+    if (reload) reloadContent();
+}
 
 void MainWindow::disableSomeWidgets(const bool& disable) {
     reloadButton->setDisabled(disable);
