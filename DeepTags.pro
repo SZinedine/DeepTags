@@ -31,14 +31,21 @@ GUI_SOURCES  =  $${GUI_DIR}/fileitem.cpp $${GUI_DIR}/filescontainer.cpp \
                 $${GUI_DIR}/mainwindow.cpp $${GUI_DIR}/settings.cpp \
                 $${GUI_DIR}/tagitem.cpp $${GUI_DIR}/tagscontainer.cpp \
                 $${GUI_DIR}/elementdialog.cpp
-
 SOURCES += $${SRC_DIR}/main.cpp $${ELEM_SOURCES} $${GUI_SOURCES}
 HEADERS += $${ELEM_HEADERS} $${GUI_HEADERS}
 
-DESTDIR = $${PARENT_DIR}/bin
-OBJECTS_DIR = $${BUILD_DIR}/obj
-MOC_DIR = $${BUILD_DIR}/moc
-RCC_DIR = $${BUILD_DIR}/rc
+# put output files in different directories depending on release || debug build
+CONFIG(debug, debug|release) {
+    DESTDIR = $${BUILD_DIR}/debug
+}
+CONFIG(release, debug|release) {
+    DESTDIR = $${BUILD_DIR}/release
+}
+
+OBJECTS_DIR = $${DESTDIR}/obj
+MOC_DIR = $${DESTDIR}/moc
+RCC_DIR = $${DESTDIR}/rc
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
