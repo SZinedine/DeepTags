@@ -146,14 +146,14 @@ QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
         if (!fs::exists(fs::path(path.toStdString().c_str()))) continue;
         Element e(fs::path(path.toStdString()));    // make it more efficient by using low level api
         QString title   = QString(e.title().c_str());
-        QAction* action = new QAction(title);
+        QAction* action = new QAction(title, menu);
         action->setToolTip(path);
         action->setData(QVariant(path));
         menu->addAction(action);
     }
     menu->addSeparator();
 
-    auto* clearAction = new QAction("Clear");
+    auto* clearAction = new QAction("Clear", menu);
     menu->addAction(clearAction);
     connect(clearAction, &QAction::triggered, [=]() {
         menu->clear();

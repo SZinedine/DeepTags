@@ -79,8 +79,9 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
         sortAndPin();
     };
 
-    QAction* pin = new QAction(tr("Pin to Top"));
-    QAction* fav = new QAction(tr("Favorite"));
+    QMenu* menu = new QMenu;
+    QAction* pin = new QAction(tr("Pin to Top"), menu);
+    QAction* fav = new QAction(tr("Favorite"), menu);
     pin->setCheckable(true);
     fav->setCheckable(true);
     pin->setChecked(real_it->pinned());
@@ -95,7 +96,6 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
         abstraction();
     });
 
-    QMenu* menu = new QMenu;
     menu->addAction(tr("Open"), this, [=]() { openFile(item); });
     menu->addAction(tr("Edit"), this, [=]() { editElement(item); });
     menu->addSeparator();
@@ -117,9 +117,9 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
 
     menu->exec(globalPos);
 
-    delete menu;
     delete pin;
     delete fav;
+    delete menu;
 }
 
 
