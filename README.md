@@ -15,14 +15,14 @@ Mainly because I wanted to be able to access quickly one of my notes without lau
 
 ## Dependencies
 
-- The Qt framework (>=)5.9
+- The Qt framework (>=)5.6
 - A C++17 compatible compiler
 
 
 ## Download and compile
 
 ```bash
-git clone https://github.com/SZinedine/DeepTags.git
+git clone --recursive https://github.com/SZinedine/DeepTags.git
 cd DeepTags
 qmake && make
 ```

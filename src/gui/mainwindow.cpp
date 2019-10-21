@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), recentlyOpenedFil
 
     Settings::loadWindowSize(this);
     Settings::loadSplitterState(splitter);
+    Settings::loadTheme(themesActionGroup);
 
     emit started();
 }
@@ -120,6 +121,23 @@ void MainWindow::setupMenu() {
     menuEdit          = menuBar()->addMenu(tr("&Edit"));
     menuEdit->addAction(setMdReaderAction);
 
+    setStyleMenu      = new QMenu(tr("Themes"), menuEdit);
+    themesActionGroup = new QActionGroup(this);
+    themesActionGroup->setExclusive(true);
+    QAction* nativeStyleAction      = new QAction(tr("Native Style"), setStyleMenu);
+    QAction* breezeLightStyleAction = new QAction(tr("Breeze Light"), setStyleMenu);
+    QAction* breezeDarkStyleAction  = new QAction(tr("Breeze Dark"), setStyleMenu);
+    setStyleMenu->addActions({nativeStyleAction, breezeLightStyleAction, breezeDarkStyleAction});
+    themesActionGroup->addAction(nativeStyleAction);
+    themesActionGroup->addAction(breezeLightStyleAction);
+    themesActionGroup->addAction(breezeDarkStyleAction);
+    nativeStyleAction->setData(QString("native"));
+    breezeLightStyleAction->setData(QString(":light.qss"));
+    breezeDarkStyleAction->setData(QString(":dark.qss"));
+    for (auto* ac : themesActionGroup->actions()) ac->setCheckable(true);
+
+    menuEdit->addMenu(setStyleMenu);
+
     menuHelp    = new QMenu(this);
     aboutAction = new QAction(tr("&About"), this);
     menuHelp    = menuBar()->addMenu(tr("&Help"));
@@ -162,8 +180,8 @@ void MainWindow::setupSignals() {
     connect(tagsContainer, &TagsContainer::filesLoaded, this, [=]() { disableSomeWidgets(false); });
     connect(filesContainer, &FilesContainer::deletedItem, tagsContainer,
             &TagsContainer::permatentlyDelete);
+    connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
 }
-
 
 void MainWindow::changeDataDirectory() {
     bool reload = Settings::setDataDirectory();

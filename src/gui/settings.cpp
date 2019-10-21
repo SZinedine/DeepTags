@@ -1,5 +1,6 @@
 #include "settings.h"
 
+#include <QApplication>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -202,4 +203,36 @@ void Settings::openFile_(const fs::path& path, QWidget* parent) {
 
     std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     saveRecentlyOpenedFile(path);
+}
+
+
+void Settings::saveTheme(QAction* ac) {
+    QSettings s;
+    s.beginGroup("main");
+    s.setValue("theme", ac->data());
+    s.endGroup();
+    ac->setChecked(true);
+    applyTheme(ac->data().toString());
+}
+
+void Settings::loadTheme(QActionGroup* ag) {
+    QSettings s;
+    s.beginGroup("main");
+    QString theme = s.value("theme").toString();
+    s.endGroup();
+    applyTheme(theme);
+    for (QAction* ac : ag->actions())
+        if (ac->data().toString() == theme) ac->setChecked(true);
+}
+
+
+void Settings::applyTheme(const QString& theme) {
+    if (theme == "native") {
+        qApp->setStyleSheet("");
+        return;
+    }
+    QFile f(theme);
+    f.open(QFile::ReadOnly | QFile::Text);
+    QTextStream ts(&f);
+    qApp->setStyleSheet(ts.readAll());
 }

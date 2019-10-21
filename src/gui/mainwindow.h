@@ -68,8 +68,9 @@ private:
     inline void openElements(const ElementsList& els) { tagsContainer->addElements(els);}
     void about();
     void closeEvent(QCloseEvent* event) override;
-
     void disableSomeWidgets(const bool& disable);
+    void setTheme(QAction* action);
+    void loadTheme();
 
 signals:
     /**
@@ -95,6 +96,8 @@ private:
         QAction* quitAction;
     QMenu* menuEdit;
         QAction* setMdReaderAction;
+        QMenu* setStyleMenu;
+            QActionGroup* themesActionGroup;
     QMenu* menuHelp;
         QAction* aboutAction;
 };

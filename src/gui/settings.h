@@ -60,6 +60,12 @@ struct Settings : public QObject {
      */
     static QMenu*  getActionsRecentlyOpenedFiles(QMenu * menu);
     static void eraseRecentlyOpenedFiles();
+    /**
+     * Save the theme chosen by the user
+     */
+    static void saveTheme(QAction* ac);
+    static void loadTheme(QActionGroup* ag);
+    static void applyTheme(const QString& theme);
 };
 
 #endif

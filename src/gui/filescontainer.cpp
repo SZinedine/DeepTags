@@ -79,9 +79,9 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
         sortAndPin();
     };
 
-    QMenu* menu = new QMenu;
-    QAction* pin = new QAction(tr("Pin to Top"), menu);
-    QAction* fav = new QAction(tr("Favorite"), menu);
+    QMenu*   menu = new QMenu;
+    QAction* pin  = new QAction(tr("Pin to Top"), menu);
+    QAction* fav  = new QAction(tr("Favorite"), menu);
     pin->setCheckable(true);
     fav->setCheckable(true);
     pin->setChecked(real_it->pinned());
