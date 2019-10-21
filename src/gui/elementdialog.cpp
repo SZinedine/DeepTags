@@ -106,7 +106,7 @@ void ElementDialog::save() {
     }
 
     m_path = new QLineEdit;
-    m_path->setText(QString(path.c_str()));
+    m_path->setText(QString(path.string().c_str()));
 
     be::createNewFile(path, title());
     auto* e = new Element(path);
