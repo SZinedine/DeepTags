@@ -1,4 +1,4 @@
-BIN=bin/DeepTags
+BIN=build/release/DeepTags
 PROG=DeepTags
 ICO=DeepTags.png
 DSKTP=DeepTags.desktop
