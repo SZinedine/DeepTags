@@ -125,16 +125,15 @@ void MainWindow::setupMenu() {
     themesActionGroup = new QActionGroup(this);
     themesActionGroup->setExclusive(true);
     QAction* nativeStyleAction      = new QAction(tr("Native Style"), setStyleMenu);
-    QAction* breezeLightStyleAction = new QAction(tr("Breeze Light"), setStyleMenu);
     QAction* breezeDarkStyleAction  = new QAction(tr("Breeze Dark"), setStyleMenu);
-    setStyleMenu->addActions({nativeStyleAction, breezeLightStyleAction, breezeDarkStyleAction});
+    setStyleMenu->addActions({nativeStyleAction, breezeDarkStyleAction});
     themesActionGroup->addAction(nativeStyleAction);
-    themesActionGroup->addAction(breezeLightStyleAction);
     themesActionGroup->addAction(breezeDarkStyleAction);
     nativeStyleAction->setData(QString("native"));
-    breezeLightStyleAction->setData(QString(":light.qss"));
-    breezeDarkStyleAction->setData(QString(":dark.qss"));
+    breezeDarkStyleAction->setData(QString(":qdarkstyle/style.qss"));
+
     for (auto* ac : themesActionGroup->actions()) ac->setCheckable(true);
+    nativeStyleAction->setChecked("true");
 
     menuEdit->addMenu(setStyleMenu);
 

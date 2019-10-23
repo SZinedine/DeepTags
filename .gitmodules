@@ -1,3 +1,3 @@
-[submodule "3rdParty/BreezeStyleSheets"]
-	path = 3rdParty/BreezeStyleSheets
-	url = https://github.com/Alexhuszagh/BreezeStyleSheets
+[submodule "3rdParty/QDarkStyleSheet"]
+	path = 3rdParty/QDarkStyleSheet
+	url = https://github.com/ColinDuquesnoy/QDarkStyleSheet
