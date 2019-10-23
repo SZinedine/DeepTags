@@ -11,7 +11,7 @@ DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x060000
 CONFIG += c++17 -lstdc++fs -pthread
 QMAKE_CXXFLAGS += -std=c++17 -lstdc++fs
 TRANSLATIONS = locale/deeptags_fr.ts
-RC_ICONS = ./DeepTags.png
+RC_ICONS = ./images/DeepTags.ico
 SUBDIRS = src
 PARENT_DIR = $$PWD/
 SRC_DIR = $$PARENT_DIR/src

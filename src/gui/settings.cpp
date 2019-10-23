@@ -199,7 +199,7 @@ void Settings::openFile_(const fs::path& path, QWidget* parent) {
         return;
     }
 
-    QString command = prog + QString(" \"") + QString(path.c_str()) + QString("\"");
+    QString command = prog + QString(" \"") + QString(path.string().c_str()) + QString("\"");
 
     std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     saveRecentlyOpenedFile(path);
