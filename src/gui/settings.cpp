@@ -154,12 +154,12 @@ QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
     }
     menu->addSeparator();
 
-    auto* clearAction = new QAction("Clear", menu);
-    menu->addAction(clearAction);
-    connect(clearAction, &QAction::triggered, [=]() {
-        menu->clear();
-        eraseRecentlyOpenedFiles();
-    });
+    auto clearAct = new QAction(tr("Clear"), menu);
+    connect(clearAct, &QAction::triggered, [=]{
+            menu->clear();
+            eraseRecentlyOpenedFiles();
+        });
+    menu->addAction(clearAct);
 
     menu->setToolTipsVisible(true);
     return menu;
