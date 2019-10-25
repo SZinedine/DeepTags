@@ -124,8 +124,8 @@ void MainWindow::setupMenu() {
     setStyleMenu      = new QMenu(tr("Themes"), menuEdit);
     themesActionGroup = new QActionGroup(this);
     themesActionGroup->setExclusive(true);
-    QAction* nativeStyleAction      = new QAction(tr("Native Style"), setStyleMenu);
-    QAction* breezeDarkStyleAction  = new QAction(tr("Breeze Dark"), setStyleMenu);
+    QAction* nativeStyleAction     = new QAction(tr("Native Style"), setStyleMenu);
+    QAction* breezeDarkStyleAction = new QAction(tr("Breeze Dark"), setStyleMenu);
     setStyleMenu->addActions({nativeStyleAction, breezeDarkStyleAction});
     themesActionGroup->addAction(nativeStyleAction);
     themesActionGroup->addAction(breezeDarkStyleAction);
@@ -269,22 +269,28 @@ void MainWindow::newFiles() {
 
 
 void MainWindow::search() {
-    auto lower = [](const std::string& s) {    // to lower case
-        return QString::fromStdString(s).toLower().toStdString();
-    };
+    QString line = searchLineEdit->text().simplified().toLower();
     filesContainer->clear();
-    if (searchLineEdit->text().isEmpty()) return;
     tagsContainer->clearSelection();
+    changeNumberOfFilesLabel();
+    if (line.isEmpty()) return;
 
-    std::string keyword = searchLineEdit->text().toLower().toStdString();
-    auto*       lst     = TagsContainer::real(tagsContainer->topLevelItem(0))->elements();
-    auto*       res     = new QVector<Element*>();
+    QStringList keywords{line.split(' ')};
+    for (auto& s : keywords) s = s.simplified().toLower();
 
-    for (Element* e :
-         *lst)    // search the "All Notes" elements' titles to find matches for the keyword
-        if (lower(e->title()).find(keyword) != std::string::npos) res->push_back(e);
+    auto* lst = TagsContainer::real(tagsContainer->topLevelItem(0))->elements();
+    auto* res = new QVector<Element*>();
 
-    filesContainer->addFiles(res);    // display the results
+    auto contains = [&](const QString& title) {
+        for (const QString& s : keywords)
+            if (!(title.contains(s))) return false;
+        return true;
+    };
+
+    for (Element* e : *lst)
+        if (contains(QString(e->title().c_str()).simplified().toLower())) res->push_back(e);
+
+    filesContainer->addFiles(res);
     delete res;
 }
 
