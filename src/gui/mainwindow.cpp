@@ -48,6 +48,12 @@ void MainWindow::setupCentral() {
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setMaximumWidth(200);
     searchLineEdit->setPlaceholderText(tr("Search"));
+    QAction* eraseSearch =
+        searchLineEdit->addAction(QIcon(":images/quit.png"), QLineEdit::TrailingPosition);
+    connect(eraseSearch, &QAction::triggered, [&] {
+        searchLineEdit->clear();
+        filesContainer->clearView();
+    });
 
     expandButton = new QPushButton(QIcon(":images/expand.png"), "", this);
     expandButton->setToolTip(tr("Expand All"));
@@ -270,7 +276,7 @@ void MainWindow::newFiles() {
 
 void MainWindow::search() {
     QString line = searchLineEdit->text().simplified().toLower();
-    filesContainer->clear();
+    filesContainer->clearView();
     tagsContainer->clearSelection();
     changeNumberOfFilesLabel();
     if (line.isEmpty()) return;
