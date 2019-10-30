@@ -51,8 +51,10 @@ void MainWindow::setupCentral() {
     QAction* eraseSearch =
         searchLineEdit->addAction(QIcon(":images/quit.png"), QLineEdit::TrailingPosition);
     connect(eraseSearch, &QAction::triggered, [&] {
+        if ((tagsContainer->selectedItems().isEmpty()) && !(searchLineEdit->text().isEmpty()))
+            filesContainer->clearView();
+
         searchLineEdit->clear();
-        filesContainer->clearView();
     });
 
     expandButton = new QPushButton(QIcon(":images/expand.png"), "", this);
