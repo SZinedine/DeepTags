@@ -12,8 +12,8 @@
 
 struct Settings : public QObject {
 
-    static void openFile(QAction* action);
-    static void openFile_(const fs::path& path, QWidget* parent=nullptr);
+    static void openFileAction(QAction* action);
+    static void openFile(QString editor, const fs::path& path, QWidget* parent=nullptr);
     /**
      * save the main window related settings
      */
@@ -24,24 +24,21 @@ struct Settings : public QObject {
     static void loadSplitterState(QSplitter* splitter);
     static void saveSplitterState(QSplitter* splitter);
     static void loadWindowSize(MainWindow* w);
-    /**
-     * Dialog box to ask the user for a markdown editor
-     */
-    static void askForMarkdownEditor();
     static bool setDataDirectory();
     static QString dataDirectory();
     static bool dataDirectoryIsSet();
-
     /**
      * Expand TagItems or not
      */
     static void expand(const bool& expanded);
     static bool expandedItems();
-
     /**
      * the stored markdown editor
      */
-    static QString mdEditor();
+    static QStringList mdEditors();
+    static void saveEditors(const QStringList& lst);
+    static void saveMainEditor(const QString& editor);
+    static QString mainMdEditor();
     /**
      * save the path everytime a document is opened
      */

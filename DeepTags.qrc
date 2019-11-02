@@ -12,6 +12,10 @@
         <file>images/favpin.png</file>
         <file>images/quit.png</file>
         <file>images/spinner.gif</file>
+        <file>images/add.png</file>
+        <file>images/delete.png</file>
+        <file>images/arrowup.png</file>
+        <file>images/arrowdown.png</file>
         
         <file>locale/deeptags_fr.qm</file>
     </qresource>

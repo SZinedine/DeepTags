@@ -13,6 +13,7 @@
 
 #include "../element/element.h"
 #include "elementdialog.h"
+#include "readersdialog.h"
 #include "settings.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), recentlyOpenedFilesMenu(nullptr) {
@@ -133,7 +134,7 @@ void MainWindow::setupMenu() {
     themesActionGroup = new QActionGroup(this);
     themesActionGroup->setExclusive(true);
     QAction* nativeStyleAction     = new QAction(tr("Native Style"), setStyleMenu);
-    QAction* breezeDarkStyleAction = new QAction(tr("Breeze Dark"), setStyleMenu);
+    QAction* breezeDarkStyleAction = new QAction(tr("Dark Style"), setStyleMenu);
     setStyleMenu->addActions({nativeStyleAction, breezeDarkStyleAction});
     themesActionGroup->addAction(nativeStyleAction);
     themesActionGroup->addAction(breezeDarkStyleAction);
@@ -167,11 +168,11 @@ void MainWindow::setupSignals() {
     connect(reloadButton, &QPushButton::clicked, this, &MainWindow::reloadContent);
     connect(searchLineEdit, &QLineEdit::textEdited, this, &MainWindow::search);
     connect(newFileAction, &QAction::triggered, this, &MainWindow::newFiles);
-    connect(recentlyOpenedFilesMenu, &QMenu::triggered, Settings::openFile);
+    connect(recentlyOpenedFilesMenu, &QMenu::triggered, Settings::openFileAction);
     connect(recentlyOpenedFilesMenu, &QMenu::triggered, this,
             [=]() { Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu); });
     connect(quitAction, &QAction::triggered, this, &QMainWindow::close);
-    connect(setMdReaderAction, &QAction::triggered, &Settings::askForMarkdownEditor);
+    connect(setMdReaderAction, &QAction::triggered, this, &MainWindow::markdownEditorDialog);
     connect(changeDataDirAction, &QAction::triggered, this, &MainWindow::changeDataDirectory);
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(this, &MainWindow::started, this, &MainWindow::load,
@@ -188,6 +189,12 @@ void MainWindow::setupSignals() {
     connect(filesContainer, &FilesContainer::deletedItem, tagsContainer,
             &TagsContainer::permatentlyDelete);
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
+}
+
+void MainWindow::markdownEditorDialog() {
+    auto dialog = new ReadersDialog(this);
+    dialog->exec();
+    delete dialog;
 }
 
 void MainWindow::changeDataDirectory() {

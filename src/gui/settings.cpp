@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "../element/element.h"
+#include "readersdialog.h"
 
 
 void Settings::saveUiSettings(const QSize& windowSize, QByteArray splitterState) {
@@ -39,23 +40,40 @@ void Settings::loadWindowSize(MainWindow* w) {
 }
 
 
-void Settings::askForMarkdownEditor() {
-    // get the previously entered value
-    QSettings ss;
-    ss.beginGroup("main");
-    QString previous = ss.value("markdown_reader").toString();
-    ss.endGroup();
-
-    // launch the dialog
-    QString prog = QInputDialog::getText(nullptr, tr("Markdown Reader"),
-                                         tr("Name/Path of the Markdown Reader to use") + "\t\t",
-                                         QLineEdit::Normal, previous);
-    // save the new command
-    if (prog.isEmpty()) return;
+void Settings::saveEditors(const QStringList& lst) {
     QSettings s;
-    s.beginGroup("main");
-    s.setValue("markdown_reader", prog);
+    s.beginGroup("markdown_editors");
+    s.setValue("list", lst);
     s.endGroup();
+    if (lst.size() > 0)
+        saveMainEditor(lst.at(0));
+    else
+        saveMainEditor("");
+}
+
+QStringList Settings::mdEditors() {
+    QSettings s;
+    s.beginGroup("markdown_editors");
+    QStringList lst(s.value("list").toStringList());
+    s.endGroup();
+
+    return lst;
+}
+
+void Settings::saveMainEditor(const QString& editor) {
+    QSettings s;
+    s.beginGroup("markdown_editors");
+    s.setValue("main", editor);
+    s.endGroup();
+}
+
+QString Settings::mainMdEditor() {
+    QSettings s;
+    s.beginGroup("markdown_editors");
+    QString e = s.value("main").toString();
+    s.endGroup();
+
+    return e;
 }
 
 
@@ -106,14 +124,6 @@ bool Settings::expandedItems() {
     return res;
 }
 
-QString Settings::mdEditor() {
-    QSettings s;
-    s.beginGroup("main");
-    QString prog = s.value("markdown_reader").toString().simplified();
-    s.endGroup();
-    return prog;
-}
-
 
 void Settings::saveRecentlyOpenedFile(const fs::path& p) {
     QStringList paths = getRawRecentlyOpenedFiles();
@@ -139,7 +149,6 @@ void Settings::saveRecentlyOpenedFiles(QStringList& paths) {
 QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
     if (!menu) return nullptr;
     menu->clear();
-    // QMenu* menu = new QMenu(tr("Recently Opened Files"));
     QStringList raw = getRawRecentlyOpenedFiles();
     if (raw.isEmpty()) return nullptr;
 
@@ -179,32 +188,28 @@ QStringList Settings::getRawRecentlyOpenedFiles() {
 }
 
 
-void Settings::openFile(QAction* action) {
+void Settings::openFileAction(QAction* action) {
     QVariant data = action->data();
     if (data.isNull()) return;    // in case clear is triggered
     fs::path p(action->data().toString().toStdString().c_str());
-    openFile_(p, action->parentWidget());
+    openFile("", p, action->parentWidget());
 }
 
 
-void Settings::openFile_(const fs::path& path, QWidget* parent) {
+void Settings::openFile(QString editor, const fs::path& path, QWidget* parent) {
     if (!fs::exists(path)) {
         QMessageBox::critical(parent, tr("Error"), tr("This file doesn't exist"));
         return;
     }
-
-    QString prog = mdEditor();
-    if (prog.isEmpty()) {    // warning and abort if the reader isn't set
-        QMessageBox::warning(parent, tr("Error"), tr("You haven't set the Markdown Editor app."));
+    if (editor.isEmpty()) editor = mainMdEditor();
+    if (editor.isEmpty()) {
+        QMessageBox::critical(parent, "Set a Markdown editor", "No Markdown editor set");
         return;
     }
-
-    QString command = prog + QString(" \"") + QString(path.string().c_str()) + QString("\"");
-
+    QString command = editor + QString(" \"") + QString(path.string().c_str()) + QString("\"");
     std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     saveRecentlyOpenedFile(path);
 }
-
 
 void Settings::saveTheme(QAction* ac) {
     QSettings s;

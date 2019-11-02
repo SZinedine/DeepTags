@@ -51,10 +51,16 @@ void FilesContainer::clearView() {
 void FilesContainer::openFile(QListWidgetItem* item) {
     if (!item) return;
     fs::path path = real(item)->path();
-    Settings::openFile_(path, parentWidget());
+    Settings::openFile("", path, parentWidget());
     emit openedFile(path);
 }
 
+void FilesContainer::openFile_(QListWidgetItem* item, const QString& editor) {
+    if (!item) return;
+    fs::path path = real(item)->path();
+    Settings::openFile(editor, path, parentWidget());
+    emit openedFile(path);
+}
 
 void FilesContainer::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::RightButton) {
@@ -96,7 +102,17 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
         abstraction();
     });
 
+    // list of editors in a sub menu "open with..."
+    auto editor_list = Settings::mdEditors();
+    auto openWith    = new QMenu(tr("Open with"), this);
+    for (auto& i : editor_list) {
+        auto edac = new QAction(i);
+        openWith->addAction(edac);
+        connect(edac, &QAction::triggered, this, [=] { openFile_(item, i); });
+    }
+
     menu->addAction(tr("Open"), this, [=]() { openFile(item); });
+    if (editor_list.size() > 1) menu->addMenu(openWith);
     menu->addAction(tr("Edit"), this, [=]() { editElement(item); });
     menu->addSeparator();
     menu->addAction(tr("Add a new tag"), this, [=]() { appendNewTagToItem(item); });

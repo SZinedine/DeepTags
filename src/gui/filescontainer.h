@@ -21,6 +21,7 @@ public slots:
      *  open the file in a Markdown Editor (to be set beforehand)
      */
     void openFile(QListWidgetItem* item);
+    void openFile_(QListWidgetItem* item, const QString& editor);
     void showContextMenu(const QPoint& p);
     void clearView();
     void moveToTrash(QListWidgetItem* item);
