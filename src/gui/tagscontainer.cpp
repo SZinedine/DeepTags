@@ -44,6 +44,10 @@ void TagsContainer::deleteAllItems() {
 
 void TagsContainer::createBasicTags() {
     for (const QString& i : basicTags) addTopLevelItem(new TagItem(i));
+    topLevelItem(0)->setIcon(0, QIcon(":images/all_notes.png"));
+    topLevelItem(1)->setIcon(0, QIcon(":images/notebook.png"));
+    topLevelItem(2)->setIcon(0, QIcon(":images/star.png"));
+    topLevelItem(3)->setIcon(0, QIcon(":images/trash.png"));
 }
 
 void TagsContainer::init() {

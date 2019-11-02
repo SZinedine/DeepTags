@@ -16,6 +16,10 @@
         <file>images/delete.png</file>
         <file>images/arrowup.png</file>
         <file>images/arrowdown.png</file>
+        <file>images/all_notes.png</file>
+        <file>images/notebook.png</file>
+        <file>images/star.png</file>
+        <file>images/trash.png</file>
         
         <file>locale/deeptags_fr.qm</file>
     </qresource>
