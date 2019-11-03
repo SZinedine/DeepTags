@@ -20,6 +20,7 @@
         <file>images/notebook.png</file>
         <file>images/star.png</file>
         <file>images/trash.png</file>
+        <file>images/untagged.png</file>
         
         <file>locale/deeptags_fr.qm</file>
     </qresource>

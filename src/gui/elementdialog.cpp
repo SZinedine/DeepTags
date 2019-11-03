@@ -95,19 +95,23 @@ void ElementDialog::save() {
         return;
     }
 
-    fs::path path(Settings::dataDirectory().toStdString().c_str());
-    path = path / fs::path(m_title->text().simplified().toStdString().c_str());
-    path += ".md";
+    const QString dataDir = Settings::dataDirectory();
+    QString       filename;
+    int           n = 0;
 
-    if (fs::exists(path)) {
-        QMessageBox::warning(this, tr("File already exist"),
-                             QString(path.string().c_str()) + " already exists.");
-        return;
-    }
+start:
+    filename = m_title->text();
+    if (n != 0) filename += " (" + QString::number(n) + ")";
+    formatFilename(filename);
+    filename = dataDir + "/" + filename;
+    n++;
+
+    if (QFile::exists(filename)) goto start;
 
     m_path = new QLineEdit;
-    m_path->setText(QString(path.string().c_str()));
+    m_path->setText(filename);
 
+    fs::path path(filename.toStdString().c_str());
     be::createNewFile(path, title());
     auto* e = new Element(path);
     if (pinned()) e->addPinnedLine(true);
@@ -135,11 +139,49 @@ StringList ElementDialog::tags() const {
 }
 
 
+void ElementDialog::formatFilename(QString& str) {
+    str                 = str.simplified();
+    auto hasMdExtension = [](const QString& s) -> bool {
+        QStringList ex{".md", ".markdown", ".mdown", ".mrkdn"};
+        for (auto& e : ex)
+            if (s.endsWith(e, Qt::CaseInsensitive)) return true;
+        return false;
+    };
+    if (str.isEmpty()) return;
+    str.replace(":", ";");
+    str.replace("/", "-");
+    str.replace("|", "-");
+    str.replace("<", "(");
+    str.replace(">", ")");
+    str.replace("*", "");
+    str.replace("\\", "-");
+    str.replace("?", "");
+    if (!hasMdExtension(str)) str.append(".md");
+}
+
+
 void ElementDialog::accept_() {
     if (m_title->text().isEmpty()) {
         QMessageBox::warning(this, tr("Title Empty"),
                              tr("The title isn't set. It cannot be empty.") + QString("\t"));
         return;
     }
+    QString currentCompletePath = m_path->text();
+    QString newFilePath;
+    int     n = 0;
+
+start:
+    newFilePath = m_title->text();
+    if (n != 0) newFilePath += " (" + QString::number(n) + ")";
+    formatFilename(newFilePath);
+    newFilePath = QFileInfo(currentCompletePath).absolutePath() + "/" + newFilePath;
+    n++;
+
+    if (QFile::exists(newFilePath)) goto start;
+
+    if (currentCompletePath == newFilePath) accept();
+    QFile::rename(currentCompletePath, newFilePath);
+    m_path->setText(newFilePath);
+    m_element->setPath(fs::path(newFilePath.toStdString().c_str()));
     accept();
 }

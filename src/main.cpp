@@ -4,7 +4,7 @@
 
 #include "gui/mainwindow.h"
 
-#define VERSION  "0.3.8"
+#define VERSION  "0.3.9"
 #define TITLEBAR "DeepTags v."
 #define NAME     "DeepTags"
 #define WEBSITE  "https://github.com/SZinedine"
@@ -12,7 +12,6 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setApplicationName(NAME);
-    app.setApplicationDisplayName(NAME);
     app.setApplicationVersion(VERSION);
     app.setOrganizationDomain(WEBSITE);
     app.setOrganizationName(NAME);

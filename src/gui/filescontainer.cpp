@@ -257,7 +257,7 @@ void FilesContainer::editElement(QListWidgetItem* item) {
     if (!item) return;
     FileItem*  it   = real(item);
     Element*   e    = it->element();
-    auto*      edit = new ElementDialog(e, this);
+    auto       edit = std::make_unique<ElementDialog>(e, this);
     const auto out  = edit->exec();
     if (out == ElementDialog::Rejected) return;
 

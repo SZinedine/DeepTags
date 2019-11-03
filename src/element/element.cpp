@@ -26,6 +26,7 @@ ElementsList Element::constructElementList(const PathsList& f) {
     ElementsList elems;
     for (const fs::path& p : f) {
         if (!be::isMD(p)) continue;
+        if (!be::hasHeader(p)) continue;
         elems.push_back(new Element(p));
     }
     return elems;

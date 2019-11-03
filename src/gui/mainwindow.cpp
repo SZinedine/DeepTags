@@ -39,13 +39,6 @@ void MainWindow::setupCentral() {
     splitter       = new QSplitter(this);
     splitter->setChildrenCollapsible(false);
 
-    clearTagsButton = new QPushButton(tr("clear"), this);
-    clearTagsButton->setToolTip(tr("Clear All files"));
-    clearTagsButton->setMaximumWidth(60);
-    reloadButton = new QPushButton(tr("Reload"), this);
-    reloadButton->setToolTip(tr("Reload current files"));
-    reloadButton->setMaximumWidth(60);
-
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setMaximumWidth(200);
     searchLineEdit->setPlaceholderText(tr("Search"));
@@ -90,32 +83,21 @@ void MainWindow::setupLayout() {
     splitter->addWidget(filesContainer);
 
     auto* colLayout = new QVBoxLayout;
-    colLayout->addWidget(expandButton);
     colLayout->addWidget(collapseButton);
+    colLayout->addWidget(expandButton);
     colLayout->setAlignment(Qt::AlignTop);
     colLayout->setContentsMargins(0, 0, 0, 0);
     expandButton->setContentsMargins(0, 0, 0, 0);
     collapseButton->setContentsMargins(0, 0, 0, 0);
 
-    // widgets above the containers
-    auto* above = new QHBoxLayout;
-    above->addWidget(clearTagsButton);
-    above->addWidget(reloadButton);
-    above->setAlignment(Qt::AlignLeft);
+    menuBar()->setCornerWidget(searchLineEdit);
 
-    auto* srchLayout = new QHBoxLayout;
-    srchLayout->addWidget(searchLineEdit);
-    srchLayout->setAlignment(Qt::AlignRight);
-    above->addLayout(srchLayout);
-
-    layout->addLayout(above, 0, 1, Qt::AlignLeft);
     layout->addLayout(colLayout, 1, 0);
     layout->addWidget(splitter, 1, 1, 7, 7);
 }
 
 void MainWindow::setupMenu() {
-    menuFile                = new QMenu(this);
-    menuFile                = menuBar()->addMenu(tr("&File"));
+    auto menuFile           = menuBar()->addMenu(tr("&File"));
     newFileAction           = new QAction(QIcon(":images/newFile.png"), tr("&New File"), this);
     recentlyOpenedFilesMenu = new QMenu(tr("&Recently Opened Files"), this);
     Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu);
@@ -125,10 +107,8 @@ void MainWindow::setupMenu() {
     menuFile->addMenu(recentlyOpenedFilesMenu);
     menuFile->addActions({changeDataDirAction, quitAction});
 
-    menuEdit          = new QMenu(this);
+    auto menuEdit     = menuBar()->addMenu(tr("&Edit"));
     setMdReaderAction = new QAction(tr("&Set MarkDown Reader"), this);
-    menuEdit          = menuBar()->addMenu(tr("&Edit"));
-    menuEdit->addAction(setMdReaderAction);
 
     setStyleMenu      = new QMenu(tr("Themes"), menuEdit);
     themesActionGroup = new QActionGroup(this);
@@ -140,15 +120,18 @@ void MainWindow::setupMenu() {
     themesActionGroup->addAction(breezeDarkStyleAction);
     nativeStyleAction->setData(QString("native"));
     breezeDarkStyleAction->setData(QString(":qdarkstyle/style.qss"));
-
     for (auto* ac : themesActionGroup->actions()) ac->setCheckable(true);
     nativeStyleAction->setChecked("true");
 
-    menuEdit->addMenu(setStyleMenu);
+    clearElementsAction  = new QAction(tr("Clear Elements"));
+    reloadElementsAction = new QAction(tr("Reload Elements"));
 
-    menuHelp    = new QMenu(this);
-    aboutAction = new QAction(tr("&About"), this);
-    menuHelp    = menuBar()->addMenu(tr("&Help"));
+    menuEdit->addMenu(setStyleMenu);
+    menuEdit->addActions({setMdReaderAction, clearElementsAction, reloadElementsAction});
+
+    auto menuHelp = new QMenu(this);
+    aboutAction   = new QAction(tr("&About"), this);
+    menuHelp      = menuBar()->addMenu(tr("&Help"));
     menuHelp->addAction(aboutAction);
 }
 
@@ -163,9 +146,9 @@ void MainWindow::setupSignals() {
             &TagsContainer::reloadElement);
     connect(splitter, &QSplitter::splitterMoved, this,
             [=]() { Settings::saveSplitterState(splitter); });
-    connect(clearTagsButton, &QPushButton::clicked, tagsContainer, &TagsContainer::init);
-    connect(clearTagsButton, &QPushButton::clicked, filesContainer, &FilesContainer::clearView);
-    connect(reloadButton, &QPushButton::clicked, this, &MainWindow::reloadContent);
+    connect(clearElementsAction, &QAction::triggered, tagsContainer, &TagsContainer::init);
+    connect(clearElementsAction, &QAction::triggered, filesContainer, &FilesContainer::clearView);
+    connect(reloadElementsAction, &QAction::triggered, this, &MainWindow::reloadContent);
     connect(searchLineEdit, &QLineEdit::textEdited, this, &MainWindow::search);
     connect(newFileAction, &QAction::triggered, this, &MainWindow::newFiles);
     connect(recentlyOpenedFilesMenu, &QMenu::triggered, Settings::openFileAction);
@@ -199,8 +182,10 @@ void MainWindow::changeDataDirectory() {
 }
 
 void MainWindow::disableSomeWidgets(const bool& disable) {
-    reloadButton->setDisabled(disable);
     changeDataDirAction->setDisabled(disable);
+    reloadElementsAction->setDisabled(disable);
+    clearElementsAction->setDisabled(disable);
+    searchLineEdit->setDisabled(disable);
 }
 
 void MainWindow::load() {

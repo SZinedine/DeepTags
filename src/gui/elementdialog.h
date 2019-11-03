@@ -37,6 +37,7 @@ public:
     [[nodiscard]] StringList tags()          const;
     [[nodiscard]] inline Element* element()        { return m_element;                      }
     [[nodiscard]] inline std::string path()        { return m_path->text().toStdString();   }
+    static void formatFilename(QString& str);
 
 private:
     void setup_forEditFile();
@@ -49,6 +50,7 @@ private:
     /**
      * replaces accept() for the editing of files
      * purpose: check if the file string isn't empty before saving
+     * and compose a filename from the title to rename the original file
      */
     void accept_();
 

@@ -82,24 +82,21 @@ private:
     TagsContainer *tagsContainer;
     FilesContainer* filesContainer;
     QSplitter* splitter;
-    QPushButton* clearTagsButton;
-    QPushButton* reloadButton;
     QLineEdit* searchLineEdit;
     QPushButton* expandButton;
     QPushButton* collapseButton;
     QLabel* nbFiles;
     QLabel* spinnerLabel;
-    QMenu* menuFile;
-        QAction* newFileAction;
-        QMenu* recentlyOpenedFilesMenu;
-        QAction* changeDataDirAction;
-        QAction* quitAction;
-    QMenu* menuEdit;
-        QAction* setMdReaderAction;
-        QMenu* setStyleMenu;
-            QActionGroup* themesActionGroup;
-    QMenu* menuHelp;
-        QAction* aboutAction;
+    QAction* newFileAction;
+    QMenu* recentlyOpenedFilesMenu;
+    QAction* changeDataDirAction;
+    QAction* quitAction;
+    QAction* clearElementsAction;
+    QAction* reloadElementsAction;
+    QAction* setMdReaderAction;
+    QMenu* setStyleMenu;
+        QActionGroup* themesActionGroup;
+    QAction* aboutAction;
 };
 
 

@@ -47,7 +47,7 @@ void TagsContainer::createBasicTags() {
     topLevelItem(0)->setIcon(0, QIcon(":images/all_notes.png"));
     topLevelItem(1)->setIcon(0, QIcon(":images/notebook.png"));
     topLevelItem(2)->setIcon(0, QIcon(":images/star.png"));
-    topLevelItem(3)->setIcon(0, QIcon(":images/trash.png"));
+    topLevelItem(3)->setIcon(0, QIcon(":images/untagged.png"));
 }
 
 void TagsContainer::init() {
@@ -234,6 +234,7 @@ void TagsContainer::toTrash(Element* element) {
 
     if (index == -1) {
         trash = new TagItem(tr("Trash"));
+        trash->setIcon(0, QIcon(":images/trash.png"));
         addTopLevelItem(trash);
     } else
         trash = real(topLevelItem(index));
