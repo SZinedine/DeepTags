@@ -177,7 +177,7 @@ start:
     newFilePath = QFileInfo(currentCompletePath).absolutePath() + "/" + newFilePath;
     n++;
 
-    if (QFile::exists(newFilePath)) goto start;
+    if (QFile::exists(newFilePath) && currentCompletePath != newFilePath) goto start;
 
     if (currentCompletePath == newFilePath) accept();
     QFile::rename(currentCompletePath, newFilePath);
