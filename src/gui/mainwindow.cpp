@@ -172,7 +172,8 @@ void MainWindow::setupSignals() {
     connect(recentlyOpenedFilesMenu, &QMenu::triggered, this,
             [=]() { Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu); });
     connect(quitAction, &QAction::triggered, this, &QMainWindow::close);
-    connect(setMdReaderAction, &QAction::triggered, this, &MainWindow::markdownEditorDialog);
+    connect(setMdReaderAction, &QAction::triggered, this,
+            [=] { std::make_unique<ReadersDialog>(this); });
     connect(changeDataDirAction, &QAction::triggered, this, &MainWindow::changeDataDirectory);
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(this, &MainWindow::started, this, &MainWindow::load,
@@ -191,11 +192,6 @@ void MainWindow::setupSignals() {
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
 }
 
-void MainWindow::markdownEditorDialog() {
-    auto dialog = new ReadersDialog(this);
-    dialog->exec();
-    delete dialog;
-}
 
 void MainWindow::changeDataDirectory() {
     bool reload = Settings::setDataDirectory();
@@ -223,8 +219,8 @@ void MainWindow::load() {
            tr("The Data Directory doesn't exist. Plase set it"));
 
     loadDataDirectoryContent();
-    tagsContainer
-        ->loadCollapseOrExpand();    // remember if the items are expanded/collapsed the last time
+    // remember if the items are expanded/collapsed the last time
+    tagsContainer->loadCollapseOrExpand();
 }
 
 

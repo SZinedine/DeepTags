@@ -14,6 +14,7 @@ ReadersDialog::ReadersDialog(QWidget* parent) : QDialog(parent) {
     setup();
     setFixedSize(400, 300);
     setModal(true);
+    exec();
 }
 
 void ReadersDialog::setup() {

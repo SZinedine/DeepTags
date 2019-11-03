@@ -1,3 +1,6 @@
+#ifndef _READERSDIALOG_H
+#define _READERSDIALOG_H
+
 #include <QDialog>
 #include <QListWidget>
 #include <QLineEdit>
@@ -22,3 +25,5 @@ private:
     QLineEdit* editorLine;
     QDialogButtonBox* validateDialog;
 };
+
+#endif

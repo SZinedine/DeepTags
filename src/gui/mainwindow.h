@@ -71,7 +71,6 @@ private:
     void disableSomeWidgets(const bool& disable);
     void setTheme(QAction* action);
     void loadTheme();
-    void markdownEditorDialog();
 
 signals:
     /**
