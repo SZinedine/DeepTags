@@ -83,6 +83,7 @@ private:
     FilesContainer* filesContainer;
     QSplitter* splitter;
     QLineEdit* searchLineEdit;
+        QAction* eraseSearch;
     QPushButton* expandButton;
     QPushButton* collapseButton;
     QLabel* nbFiles;

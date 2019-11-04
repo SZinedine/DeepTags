@@ -16,7 +16,7 @@
 #include "readersdialog.h"
 #include "settings.h"
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), recentlyOpenedFilesMenu(nullptr) {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupCentral();
     setupLayout();
     setupMenu();
@@ -40,16 +40,11 @@ void MainWindow::setupCentral() {
     splitter->setChildrenCollapsible(false);
 
     searchLineEdit = new QLineEdit(this);
-    searchLineEdit->setMaximumWidth(200);
     searchLineEdit->setPlaceholderText(tr("Search"));
-    QAction* eraseSearch =
-        searchLineEdit->addAction(QIcon(":images/quit.png"), QLineEdit::TrailingPosition);
-    connect(eraseSearch, &QAction::triggered, [&] {
-        if ((tagsContainer->selectedItems().isEmpty()) && !(searchLineEdit->text().isEmpty()))
-            filesContainer->clearView();
-
-        searchLineEdit->clear();
-    });
+    searchLineEdit->setFixedWidth(300);
+    eraseSearch = searchLineEdit->addAction(QIcon(":images/quit.png"), QLineEdit::TrailingPosition);
+    searchLineEdit->setContentsMargins(0, 0, 0, 0);
+    eraseSearch->setVisible(false);
 
     expandButton = new QPushButton(QIcon(":images/expand.png"), "", this);
     expandButton->setToolTip(tr("Expand All"));
@@ -89,8 +84,6 @@ void MainWindow::setupLayout() {
     colLayout->setContentsMargins(0, 0, 0, 0);
     expandButton->setContentsMargins(0, 0, 0, 0);
     collapseButton->setContentsMargins(0, 0, 0, 0);
-
-    menuBar()->setCornerWidget(searchLineEdit);
 
     layout->addLayout(colLayout, 1, 0);
     layout->addWidget(splitter, 1, 1, 7, 7);
@@ -133,6 +126,13 @@ void MainWindow::setupMenu() {
     aboutAction   = new QAction(tr("&About"), this);
     menuHelp      = menuBar()->addMenu(tr("&Help"));
     menuHelp->addAction(aboutAction);
+
+    // append the search bar into the right of the menu bar
+    auto w = new QWidget(this);
+    w->setLayout(new QHBoxLayout);
+    w->layout()->addWidget(searchLineEdit);
+    w->setContentsMargins(0, 0, 5, 0);
+    menuBar()->setCornerWidget(w);
 }
 
 
@@ -150,6 +150,14 @@ void MainWindow::setupSignals() {
     connect(clearElementsAction, &QAction::triggered, filesContainer, &FilesContainer::clearView);
     connect(reloadElementsAction, &QAction::triggered, this, &MainWindow::reloadContent);
     connect(searchLineEdit, &QLineEdit::textEdited, this, &MainWindow::search);
+    connect(eraseSearch, &QAction::triggered, [&] {
+        if ((tagsContainer->selectedItems().isEmpty()) && !(searchLineEdit->text().isEmpty()))
+            filesContainer->clearView();
+        searchLineEdit->clear();
+        eraseSearch->setVisible(false);
+    });
+    connect(searchLineEdit, &QLineEdit::textEdited, eraseSearch,
+            [=] { eraseSearch->setVisible(!searchLineEdit->text().isEmpty()); });
     connect(newFileAction, &QAction::triggered, this, &MainWindow::newFiles);
     connect(recentlyOpenedFilesMenu, &QMenu::triggered, Settings::openFileAction);
     connect(recentlyOpenedFilesMenu, &QMenu::triggered, this,
