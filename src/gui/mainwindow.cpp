@@ -5,9 +5,11 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QInputDialog>
+#include <QKeySequence>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMovie>
+#include <QShortcut>
 #include <QStatusBar>
 #include <QVBoxLayout>
 
@@ -21,6 +23,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupLayout();
     setupMenu();
     setupSignals();
+    setupKeyboard();
 
     Settings::loadWindowSize(this);
     Settings::loadSplitterState(splitter);
@@ -181,6 +184,27 @@ void MainWindow::setupSignals() {
     connect(filesContainer, &FilesContainer::deletedItem, tagsContainer,
             &TagsContainer::permatentlyDelete);
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
+}
+
+
+void MainWindow::setupKeyboard() {
+    auto srch = new QShortcut(QKeySequence("Ctrl+f"), this);
+    connect(srch, &QShortcut::activated, this, [=] { searchLineEdit->setFocus(); });
+    newFileAction->setShortcut(QKeySequence("Ctrl+n"));
+    quitAction->setShortcut(QKeySequence("Ctrl+q"));
+    clearElementsAction->setShortcut(QKeySequence("Ctrl+Shift+c"));
+    reloadElementsAction->setShortcut(QKeySequence("Ctrl+Shift+r"));
+    auto ret = new QShortcut(QKeySequence("Return"), this);
+    connect(ret, &QShortcut::activated, this, [=] {
+        if (tagsContainer->hasFocus())
+            tagsContainer->selected();
+        else if (filesContainer->hasFocus())
+            filesContainer->openCurrent();
+    });
+    auto edel = new QShortcut(QKeySequence("Ctrl+e"), this);
+    connect(edel, &QShortcut::activated, this, [=] {
+        if (filesContainer->hasFocus()) filesContainer->editElement(filesContainer->currentItem());
+    });
 }
 
 

@@ -22,6 +22,7 @@ public slots:
      */
     void openFile(QListWidgetItem* item);
     void openFile_(QListWidgetItem* item, const QString& editor);
+    inline void openCurrent() { openFile(currentItem()); }
     void showContextMenu(const QPoint& p);
     void clearView();
     void moveToTrash(QListWidgetItem* item);

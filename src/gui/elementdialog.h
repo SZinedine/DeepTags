@@ -26,6 +26,7 @@ public:
      */
     ElementDialog(Element* element, QWidget* parent=nullptr);
     ~ElementDialog();
+    void setupKeyboard();
 
     void setListOfTags();
     /**

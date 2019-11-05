@@ -2,8 +2,10 @@
 
 #include <QFileDialog>
 #include <QFormLayout>
+#include <QKeySequence>
 #include <QMessageBox>
 #include <QRegExp>
+#include <QShortcut>
 
 #include "settings.h"
 
@@ -12,6 +14,7 @@ ElementDialog::ElementDialog(QWidget* parent) : QDialog(parent) {
     setModal(true);
     m_element = nullptr;
     setup_forNewFile();
+    setupKeyboard();
 }
 
 
@@ -20,6 +23,7 @@ ElementDialog::ElementDialog(Element* element, QWidget* parent) : QDialog(parent
     setModal(true);
     m_element = element;
     setup_forEditFile();
+    setupKeyboard();
 }
 
 ElementDialog::~ElementDialog() {
@@ -31,6 +35,18 @@ ElementDialog::~ElementDialog() {
     delete buttons;
 }
 
+void ElementDialog::setupKeyboard() {
+    auto t = new QShortcut(QKeySequence("Ctrl+t"), this);
+    auto g = new QShortcut(QKeySequence("Ctrl+g"), this);
+    auto p = new QShortcut(QKeySequence("Ctrl+p"), this);
+    auto f = new QShortcut(QKeySequence("Ctrl+f"), this);
+    connect(t, &QShortcut::activated, this, [=] {
+        m_title->setFocus();
+    });
+    connect(g, &QShortcut::activated, this, [=] { m_tags->setFocus(); });
+    connect(p, &QShortcut::activated, this, [=] { m_pinned->setChecked(!pinned()); });
+    connect(f, &QShortcut::activated, this, [=] { m_favorited->setChecked(!favorited()); });
+}
 
 void ElementDialog::setup_forEditFile() {
     auto* layout = new QFormLayout(this);

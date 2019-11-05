@@ -11,7 +11,6 @@
 #include "settings.h"
 #include "tagitem.h"
 
-
 TagsContainer::TagsContainer(QWidget* parent) : QTreeWidget(parent), prnt(nullptr) {
     construct();
     createBasicTags();
@@ -63,24 +62,24 @@ void TagsContainer::construct() {
 
 void TagsContainer::selected() {
     QList<QTreeWidgetItem*> lst = selectedItems();
-    if (lst.isEmpty())
-        return;
-    else if (lst.size() == 1)
+    if (lst.isEmpty()) return;
+    if (lst.size() == 1) {
         emit itemSelected(real(lst.at(0))->elements());
-    if (lst.isEmpty() || lst.size() == 1) return;
+        return;
+    }
 
     auto shared = [](const QList<QTreeWidgetItem*>& items, Element* el) -> bool {
         for (QTreeWidgetItem* i : items)
             if (!real(i)->contains(el)) return false;
         return true;
     };
-    auto*              res   = new QVector<Element*>();
+
+    QVector<Element*>  res;
     QVector<Element*>* first = real(lst.at(0))->elements();
     for (Element* e : *first)
-        if (shared(lst, e)) res->push_back(e);
+        if (shared(lst, e)) res.push_back(e);
 
-    emit itemSelected(res);
-    delete res;
+    emit itemSelected(&res);
 }
 
 

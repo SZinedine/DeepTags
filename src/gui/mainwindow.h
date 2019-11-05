@@ -25,6 +25,7 @@ private:
     void setupLayout();
     void setupMenu();
     void setupSignals();
+    void setupKeyboard();
     /**
      *  open saved files and always openning dirs at startup
      */
