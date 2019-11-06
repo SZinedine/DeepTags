@@ -78,33 +78,22 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     if (!item) return;
     FileItem* real_it = real(item);
 
-    auto abstraction = [=]() {
-        real_it->element()->reload();
-        real_it->reload();
-        emit elementChanged(real_it->element());
-        sortAndPin();
-    };
-
     QMenu*   menu = new QMenu;
     QAction* pin  = new QAction(tr("Pin to Top"), menu);
     QAction* fav  = new QAction(tr("Favorite"), menu);
+    pin->setShortcut(QKeySequence("Ctrl+p"));
+    fav->setShortcut(QKeySequence("Ctrl+s"));
     pin->setCheckable(true);
     fav->setCheckable(true);
     pin->setChecked(real_it->pinned());
     fav->setChecked(real_it->favorited());
 
-    connect(pin, &QAction::triggered, this, [=]() {
-        real_it->element()->changePinned(pin->isChecked());
-        abstraction();
-    });
-    connect(fav, &QAction::triggered, this, [=]() {
-        real_it->element()->changeFavorited(fav->isChecked());
-        abstraction();
-    });
+    connect(pin, &QAction::triggered, this, &FilesContainer::pinSelected);
+    connect(fav, &QAction::triggered, this, &FilesContainer::starSelected);
 
     // list of editors in a sub menu "open with..."
-    auto editor_list = Settings::mdEditors();
-    auto openWith    = new QMenu(tr("Open with"), this);
+    QStringList editor_list = Settings::mdEditors();
+    auto        openWith    = new QMenu(tr("Open with"), this);
     for (auto& i : editor_list) {
         auto edac = new QAction(i);
         openWith->addAction(edac);
@@ -113,7 +102,8 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
 
     menu->addAction(tr("Open"), this, [=]() { openFile(item); });
     if (editor_list.size() > 1) menu->addMenu(openWith);
-    menu->addAction(tr("Edit"), this, [=]() { editElement(item); });
+    menu->addAction(
+        tr("Edit"), this, [=]() { editElement(item); }, QKeySequence("Ctrl+e"));
     menu->addSeparator();
     menu->addAction(tr("Add a new tag"), this, [=]() { appendNewTagToItem(item); });
     menu->addAction(pin);
@@ -122,20 +112,58 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
 
     // if the element is deleted, that means that we are in the Trash tag
     if (real_it->element()->deleted()) {
-        menu->addAction(tr("Restore"), this, [=]() {
-            (real_it->element())->changeDeleted(false);
-            takeItem(row(item));
-            emit elementChanged(real_it->element());
-        });
-        menu->addAction(tr("Delete Permanently"), this, [=]() { permanentlyDelete(item); });
+        menu->addAction(tr("Restore"), this, &FilesContainer::restoreSelected,
+                        QKeySequence("Ctrl+r"));
+        menu->addAction(
+            tr("Delete Permanently"), this, [=]() { permanentlyDelete(item); },
+            QKeySequence(Qt::Key_Shift + Qt::Key_Delete));
     } else
-        menu->addAction(tr("Move to Trash"), this, [=]() { moveToTrash(item); });
+        menu->addAction(tr("Move to Trash"), this, &FilesContainer::trashSelected,
+                        QKeySequence(QKeySequence::Delete));
 
     menu->exec(globalPos);
 
     delete pin;
     delete fav;
     delete menu;
+}
+
+void FilesContainer::restoreSelected() {
+    if (!hasFocus()) return;
+    FileItem* item = real(currentItem());
+    if (!item) return;
+    Element* e = item->element();
+    if (!e) return;
+    if (!e->deleted()) return;
+    e->changeDeleted(false);
+    takeItem(row(item));
+    emit elementChanged(e);
+}
+
+void FilesContainer::pinSelected() {
+    if (!hasFocus()) return;
+    FileItem* item = real(currentItem());
+    if (!item) return;
+    Element* element = item->element();
+    if (!element) return;
+    element->changePinned(!element->pinned());
+    element->reload();
+    item->reload();
+    emit elementChanged(element);
+    sortAndPin();
+}
+
+void FilesContainer::starSelected() {
+    if (!hasFocus()) return;
+    FileItem* item = real(currentItem());
+    if (!item) return;
+    Element* element = item->element();
+    if (!element) return;
+    element->changeFavorited(!element->favorited());
+    element->reload();
+    item->reload();
+    emit elementChanged(element);
+    sortAndPin();
 }
 
 
@@ -167,17 +195,14 @@ void FilesContainer::moveToTrash(QListWidgetItem* item) {
 
 
 void FilesContainer::permanentlyDelete(QListWidgetItem* item) {
+    if (!hasFocus()) return;
     auto ok =
         QMessageBox::question(parentWidget(), tr("Permanently delete a file"),
                               tr("The file will permanently be deleted. Do you want to proceed?"));
     if (ok == QMessageBox::No) return;
     auto it  = real(item);
     bool rem = fs::remove(it->element()->path());
-    if (!rem) {
-        QMessageBox::critical(parentWidget(), tr("Deletion failed"),
-                              tr("Error. Failed to delete the file"));
-        return;
-    }
+    if (!rem) return;
     emit deletedItem(real(item)->element());
     delete real(takeItem(row(item)));
 }

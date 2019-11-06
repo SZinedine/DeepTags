@@ -32,6 +32,11 @@ public slots:
     void appendNewTagToItem(QListWidgetItem* item);
     void editElement(QListWidgetItem* item);
     FileItem* itemFromPath(const fs::path& path);
+    void pinSelected();
+    void starSelected();
+    inline void trashSelected() { moveToTrash(currentItem()); }
+    inline void permanentlyDeleteSelected() { permanentlyDelete(currentItem()); }
+    void restoreSelected();
 
 private:
     /**

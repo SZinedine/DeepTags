@@ -205,6 +205,17 @@ void MainWindow::setupKeyboard() {
     connect(edel, &QShortcut::activated, this, [=] {
         if (filesContainer->hasFocus()) filesContainer->editElement(filesContainer->currentItem());
     });
+    auto p = new QShortcut(QKeySequence("Ctrl+p"), this);
+    connect(p, &QShortcut::activated, filesContainer, &FilesContainer::pinSelected);
+    auto s = new QShortcut(QKeySequence("Ctrl+s"), this);
+    connect(s, &QShortcut::activated, filesContainer, &FilesContainer::starSelected);
+    auto supr = new QShortcut(QKeySequence(QKeySequence::Delete), this);
+    connect(supr, &QShortcut::activated, filesContainer, &FilesContainer::trashSelected);
+    auto permDel = new QShortcut(QKeySequence(QKeySequence(Qt::Key_Shift + Qt::Key_Delete)), this);
+    connect(permDel, &QShortcut::activated, filesContainer,
+            &FilesContainer::permanentlyDeleteSelected);
+    auto r = new QShortcut(QKeySequence("Ctrl+r"), this);
+    connect(r, &QShortcut::activated, filesContainer, &FilesContainer::restoreSelected);
 }
 
 

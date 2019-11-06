@@ -40,9 +40,7 @@ void ElementDialog::setupKeyboard() {
     auto g = new QShortcut(QKeySequence("Ctrl+g"), this);
     auto p = new QShortcut(QKeySequence("Ctrl+p"), this);
     auto f = new QShortcut(QKeySequence("Ctrl+f"), this);
-    connect(t, &QShortcut::activated, this, [=] {
-        m_title->setFocus();
-    });
+    connect(t, &QShortcut::activated, this, [=] { m_title->setFocus(); });
     connect(g, &QShortcut::activated, this, [=] { m_tags->setFocus(); });
     connect(p, &QShortcut::activated, this, [=] { m_pinned->setChecked(!pinned()); });
     connect(f, &QShortcut::activated, this, [=] { m_favorited->setChecked(!favorited()); });
