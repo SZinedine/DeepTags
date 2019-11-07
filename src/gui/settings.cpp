@@ -232,7 +232,7 @@ void Settings::loadTheme(QActionGroup* ag) {
 
 
 void Settings::applyTheme(const QString& theme) {
-    if (theme == "native") {
+    if (theme == "native" || theme == "") {
         qApp->setStyleSheet("");
         return;
     }
