@@ -31,19 +31,9 @@ private:
      */
     void load();
     /**
-     *  retrieve all the filepaths loaded
-     */
-    QStringList currentPaths() const;
-    /**
      *  reload the displayed content
      */
     void reloadContent();
-    /**
-     *  receives list of Qstrings of filepaths, 
-     *  make of them fs::path, construct Elements, 
-     *  then send them one by one to be displayed
-     */
-    void openStringListPaths(const QStringList& strlist);
     /**
      * when the data directory is changed
      * save the new data directory, clear all, and reload
@@ -59,7 +49,7 @@ private:
      *  open ElementDialog to create a new file
      *  by asking the user for information about the file
      */
-    void newFiles();
+    void newFile();
     /**
      *  called everytime the user write in the search LineEdit. 
      *  it searches in titles of loaded files and displays them
@@ -74,9 +64,6 @@ private:
     void loadTheme();
 
 signals:
-    /**
-     *  emited at the en of the constructor
-     */
     void started();
 
 private:

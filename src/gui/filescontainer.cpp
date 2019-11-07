@@ -7,11 +7,10 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <cstdlib>
-#include <thread>
 
 #include "elementdialog.h"
-#include "fileitem.h"
 #include "settings.h"
+#define real(item) (static_cast<FileItem*>(item))
 
 FilesContainer::FilesContainer(QWidget* parent) : QListWidget(parent) {
     setUniformItemSizes(true);
@@ -26,10 +25,6 @@ FilesContainer::FilesContainer(QWidget* parent) : QListWidget(parent) {
 
 FilesContainer::~FilesContainer() { clearView(); }
 
-void FilesContainer::addFile(Element* item) {
-    auto* f = new FileItem(item, this);
-    addItem(f);
-}
 
 void FilesContainer::addFiles(QVector<Element*>* items) {
     clearView();
@@ -78,9 +73,9 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     if (!item) return;
     FileItem* real_it = real(item);
 
-    QMenu*   menu = new QMenu;
-    QAction* pin  = new QAction(tr("Pin to Top"), menu);
-    QAction* fav  = new QAction(tr("Favorite"), menu);
+    auto menu = new QMenu;
+    auto pin  = new QAction(tr("Pin to Top"), menu);
+    auto fav  = new QAction(tr("Favorite"), menu);
     pin->setShortcut(QKeySequence("Ctrl+p"));
     fav->setShortcut(QKeySequence("Ctrl+s"));
     pin->setCheckable(true);

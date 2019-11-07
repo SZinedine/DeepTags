@@ -79,7 +79,7 @@ namespace BaseElement {
     inline bool hasPinnedKey(const StringList& header) { return !(findPinned(header).empty()); }
     inline bool hasFavoritedKey(const StringList& header) { return !(findFavorited(header).empty()); }
     inline bool hasDeletedKey(const StringList& header) { return !(findDeleted(header).empty()); }
-    inline bool hasTagsKey(const StringList& header) { return !(findTags(header) == ""); }
+    inline bool hasTagsKey(const StringList& header) { return !findTags(header).empty(); }
     /**
      * receive a line of a header. return the value
      * "myKey: my value" -> "my value"

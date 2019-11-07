@@ -9,26 +9,25 @@
 
 #include "settings.h"
 
-ElementDialog::ElementDialog(QWidget* parent) : QDialog(parent) {
+ElementDialog::ElementDialog(QWidget* parent) : QDialog(parent), m_element(nullptr) {
     setFixedSize(400, 300);
     setModal(true);
-    m_element = nullptr;
     setup_forNewFile();
     setupKeyboard();
 }
 
 
-ElementDialog::ElementDialog(Element* element, QWidget* parent) : QDialog(parent) {
+ElementDialog::ElementDialog(Element* element, QWidget* parent)
+    : QDialog(parent), m_element(element) {
     setFixedSize(400, 300);
     setModal(true);
-    m_element = element;
     setup_forEditFile();
     setupKeyboard();
 }
 
 ElementDialog::~ElementDialog() {
     delete m_title;
-    //    delete m_path;            // crash after quiting the app
+    delete m_path;
     delete m_pinned;
     delete m_favorited;
     delete m_tags;
@@ -53,14 +52,14 @@ void ElementDialog::setup_forEditFile() {
     layout->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
     layout->setLabelAlignment(Qt::AlignLeft);
 
-    m_title = new QLineEdit(QString::fromStdString(m_element->title()));
-    m_path  = new QLineEdit(QString::fromStdString(m_element->path().string()));
+    m_title = new QLineEdit(QString::fromStdString(m_element->title()), this);
+    m_path  = new QLineEdit(QString::fromStdString(m_element->path().string()), this);
     m_path->setEnabled(false);
     m_pinned = new QCheckBox;
     m_pinned->setChecked(m_element->pinned());
-    m_favorited = new QCheckBox;
+    m_favorited = new QCheckBox(this);
     m_favorited->setChecked(m_element->favorited());
-    m_tags = new QTextEdit;
+    m_tags = new QTextEdit(this);
 
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttons, &QDialogButtonBox::accepted, this, [=]() { accept_(); });
@@ -86,9 +85,11 @@ void ElementDialog::setup_forNewFile() {
 
     m_title = new QLineEdit(this);
     m_title->setText(tr("Untitled"));
-    m_pinned    = new QCheckBox;
-    m_favorited = new QCheckBox;
-    m_tags      = new QTextEdit;
+    m_pinned    = new QCheckBox(this);
+    m_favorited = new QCheckBox(this);
+    m_tags      = new QTextEdit(this);
+    m_path  = new QLineEdit(this);
+    m_path->setVisible(false);
 
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttons, &QDialogButtonBox::accepted, this, [=]() { save(); });
@@ -122,7 +123,7 @@ start:
 
     if (QFile::exists(filename)) goto start;
 
-    m_path = new QLineEdit;
+    m_path = new QLineEdit(this);
     m_path->setText(filename);
 
     fs::path path(filename.toStdString().c_str());

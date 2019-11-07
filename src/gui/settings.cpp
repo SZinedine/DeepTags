@@ -10,7 +10,7 @@
 #include "readersdialog.h"
 
 
-void Settings::saveUiSettings(const QSize& windowSize, QByteArray splitterState) {
+void Settings::saveUiSettings(const QSize& windowSize, const QByteArray& splitterState) {
     QSettings s;
     s.beginGroup("main");
     s.setValue("window_size", QVariant(windowSize));    // size of the window
@@ -45,7 +45,7 @@ void Settings::saveEditors(const QStringList& lst) {
     s.beginGroup("markdown_editors");
     s.setValue("list", lst);
     s.endGroup();
-    if (lst.size() > 0)
+    if (!lst.isEmpty())
         saveMainEditor(lst.at(0));
     else
         saveMainEditor("");
@@ -155,8 +155,8 @@ QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
     for (const QString& path : raw) {    // qaction data = path
         if (!fs::exists(fs::path(path.toStdString().c_str()))) continue;
         Element e(fs::path(path.toStdString()));    // make it more efficient by using low level api
-        QString title   = QString(e.title().c_str());
-        QAction* action = new QAction(title, menu);
+        QString title(e.title().c_str());
+        auto    action = new QAction(title, menu);
         action->setToolTip(path);
         action->setData(QVariant(path));
         menu->addAction(action);

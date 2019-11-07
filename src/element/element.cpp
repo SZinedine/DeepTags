@@ -1,6 +1,6 @@
 #include "element.h"
 
-Element::Element(const fs::path& path) { setup(path); }
+Element::Element(const fs::path& path): m_path(path) { setup(); }
 
 Element::Element(const Element& other) {
     m_path      = other.m_path;
@@ -12,9 +12,8 @@ Element::Element(const Element& other) {
     m_header    = other.m_header;
 }
 
-void Element::setup(const fs::path& path) {
-    m_path   = path;
-    m_header = be::getHeader(path);
+void Element::setup() {
+    m_header = be::getHeader(m_path);
     setTitle(be::getTitle(m_header));
     loadTags(m_header);
     setPinned(be::isPinned(m_header));

@@ -2,10 +2,10 @@
 #define FILESCONTAINER_H
 
 #include <QListWidget>
-#include "../element/element.h"
 #include <QMouseEvent>
-#include "fileitem.h"
 #include <QStyledItemDelegate>
+#include "../element/element.h"
+#include "fileitem.h"
 
 class FilesContainer : public QListWidget
 {
@@ -13,9 +13,6 @@ class FilesContainer : public QListWidget
 public:
     explicit FilesContainer(QWidget *parent=nullptr);
     ~FilesContainer() override;
-    static inline FileItem* real(QListWidgetItem* item) { return static_cast<FileItem*>(item);}
-
-public slots:
     void addFiles(QVector<Element*>* items);
     /**
      *  open the file in a Markdown Editor (to be set beforehand)
@@ -39,6 +36,10 @@ public slots:
     void restoreSelected();
 
 private:
+    /** 
+     * insert an item into the view
+     */
+    inline void addFile(Element* item) { addItem(new FileItem(item, this)); }
     /**
      *  pin the necessary files at the top
      */
@@ -47,7 +48,6 @@ private:
      *  to capture right clicks
      */
     void mousePressEvent(QMouseEvent *event) override;
-    void addFile(Element* item);
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
@@ -55,7 +55,6 @@ private:
 signals:
     void rightClick(QPoint pos);
     void numberOfElementsChanged();
-    void removedItem(Element* item);
     void deletedItem(Element* item);
     void restoredElement(Element* e);
     void elementChanged(Element* element);
@@ -78,6 +77,5 @@ public:
         QStyledItemDelegate::paint(painter, myOpt, index);
     }
 };
-
 
 #endif // FILESCONTAINER_H

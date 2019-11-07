@@ -73,7 +73,7 @@ void MainWindow::setupCentral() {
 }
 
 void MainWindow::setupLayout() {
-    QGridLayout* layout = new QGridLayout;
+    auto layout = new QGridLayout;
     centralWidget()->setLayout(layout);
 
     // containers
@@ -109,18 +109,18 @@ void MainWindow::setupMenu() {
     setStyleMenu      = new QMenu(tr("Themes"), menuEdit);
     themesActionGroup = new QActionGroup(this);
     themesActionGroup->setExclusive(true);
-    QAction* nativeStyleAction     = new QAction(tr("Native Style"), setStyleMenu);
-    QAction* breezeDarkStyleAction = new QAction(tr("Dark Style"), setStyleMenu);
+    auto nativeStyleAction     = new QAction(tr("Native Style"), setStyleMenu);
+    auto breezeDarkStyleAction = new QAction(tr("Dark Style"), setStyleMenu);
     setStyleMenu->addActions({nativeStyleAction, breezeDarkStyleAction});
     themesActionGroup->addAction(nativeStyleAction);
     themesActionGroup->addAction(breezeDarkStyleAction);
     nativeStyleAction->setData(QString("native"));
     breezeDarkStyleAction->setData(QString(":qdarkstyle/style.qss"));
     for (auto* ac : themesActionGroup->actions()) ac->setCheckable(true);
-    nativeStyleAction->setChecked("true");
+    nativeStyleAction->setChecked(true);
 
-    clearElementsAction  = new QAction(tr("Clear Elements"));
-    reloadElementsAction = new QAction(tr("Reload Elements"));
+    clearElementsAction  = new QAction(tr("Clear Elements"), menuEdit);
+    reloadElementsAction = new QAction(tr("Reload Elements"), menuEdit);
 
     menuEdit->addMenu(setStyleMenu);
     menuEdit->addActions({setMdReaderAction, clearElementsAction, reloadElementsAction});
@@ -161,7 +161,7 @@ void MainWindow::setupSignals() {
     });
     connect(searchLineEdit, &QLineEdit::textEdited, eraseSearch,
             [=] { eraseSearch->setVisible(!searchLineEdit->text().isEmpty()); });
-    connect(newFileAction, &QAction::triggered, this, &MainWindow::newFiles);
+    connect(newFileAction, &QAction::triggered, this, &MainWindow::newFile);
     connect(recentlyOpenedFilesMenu, &QMenu::triggered, Settings::openFileAction);
     connect(recentlyOpenedFilesMenu, &QMenu::triggered, this,
             [=]() { Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu); });
@@ -233,39 +233,15 @@ void MainWindow::disableSomeWidgets(const bool& disable) {
 
 void MainWindow::load() {
     qApp->processEvents();
-    auto op = [&](const QString& title, const QString& message) {
-        auto ask =
-            QMessageBox::information(this, title, message, QMessageBox::Ok | QMessageBox::Cancel);
-        if (ask == QMessageBox::Cancel) exit(0);
-        if (!Settings::setDataDirectory()) exit(0);
-    };
-
-    if (!Settings::dataDirectoryIsSet())
-        op(tr("Set a Data Directory"), tr("The Data directory isn't set, Please set it."));
-    if (Settings::dataDirectoryIsSet() && !QFile::exists(Settings::dataDirectory()))
-        op(tr("Data Directory doesn't exist"),
-           tr("The Data Directory doesn't exist. Plase set it"));
-
-    loadDataDirectoryContent();
-    // remember if the items are expanded/collapsed the last time
-    tagsContainer->loadCollapseOrExpand();
-}
-
-
-QStringList MainWindow::currentPaths() const {
-    QStringList paths;
-    // iterate through all the TagItems,
-    // get the vector containing the elements for each one,
-    // extract the filepath, add it to the list
-    QTreeWidgetItemIterator it(tagsContainer);
-    while (*it) {
-        TagItem*           item     = TagsContainer::real(*it);
-        QVector<Element*>* elements = item->elements();
-        for (Element* e : *elements) paths.append(QString(e->path().string().c_str()));
-        it++;
+    if (!Settings::dataDirectoryIsSet()) {
+        auto ask = QMessageBox::information(this, tr("Set a Data Directory"),
+                                            tr("The Data directory isn't set, Please set it."),
+                                            QMessageBox::Ok | QMessageBox::Cancel);
+        if (ask == QMessageBox::Cancel) return;
+        if (!Settings::setDataDirectory()) return;
     }
-    paths.removeDuplicates();
-    return paths;
+    loadDataDirectoryContent();
+    tagsContainer->loadCollapseOrExpand();
 }
 
 
@@ -273,17 +249,6 @@ void MainWindow::reloadContent() {
     tagsContainer->init();
     filesContainer->clearView();
     loadDataDirectoryContent();
-}
-
-void MainWindow::openStringListPaths(const QStringList& strlist) {
-    ElementsList res;
-
-    for (const QString& i : strlist) {
-        if (!QFile::exists(i)) continue;    // would crash if the file doesn't exist anymore
-        res.push_back(new Element(fs::path(i.toStdString())));
-    }
-
-    openElements(res);
 }
 
 
@@ -294,12 +259,12 @@ void MainWindow::loadDataDirectoryContent() {
 }
 
 
-void MainWindow::newFiles() {
-    ElementDialog* dialog = new ElementDialog(this);
-    auto           out    = dialog->exec();
+void MainWindow::newFile() {
+    auto dialog = new ElementDialog(this);
+    auto out    = dialog->exec();
     if (out == ElementDialog::Rejected) return;
 
-    Element* e = new Element(dialog->path());
+    auto e = new Element(dialog->path());
     if (!e) return;
     ElementsList lst{e};
     openElements(lst);
@@ -318,7 +283,7 @@ void MainWindow::search() {
     for (auto& s : keywords) s = s.simplified().toLower();
 
     auto* lst = TagsContainer::real(tagsContainer->topLevelItem(0))->elements();
-    auto* res = new QVector<Element*>();
+    auto  res = std::make_unique<QVector<Element*>>();
 
     auto contains = [&](const QString& title) {
         for (const QString& s : keywords)
@@ -329,8 +294,7 @@ void MainWindow::search() {
     for (Element* e : *lst)
         if (contains(QString(e->title().c_str()).simplified().toLower())) res->push_back(e);
 
-    filesContainer->addFiles(res);
-    delete res;
+    filesContainer->addFiles(res.get());
 }
 
 void MainWindow::changeNumberOfFilesLabel() {

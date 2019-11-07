@@ -17,7 +17,7 @@ struct Settings : public QObject {
     /**
      * save the main window related settings
      */
-    static void saveUiSettings(const QSize& windowSize, QByteArray splitterState);
+    static void saveUiSettings(const QSize& windowSize, const QByteArray& splitterState);
     /**
      * load the saved settings directely into the splitter
      */

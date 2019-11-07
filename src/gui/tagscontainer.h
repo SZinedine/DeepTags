@@ -18,7 +18,6 @@ class TagsContainer : public QTreeWidget
 public:
     TagsContainer(QWidget* parent=nullptr);
     ~TagsContainer() override;
-
     static inline TagItem* real(QTreeWidgetItem* item) { return static_cast<TagItem*>(item); }
     void createBasicTags();
     void addElements(const ElementsList& elements);
@@ -26,10 +25,9 @@ public:
     /**
      *  if multiple tags are selected, construct a list of
      *  Elements they share and send it to FilesContainer
+     *  By emitting a signal (itemSelected)
      */
     void selected();
-
-public slots:
     /**
      * remove all the tags and create the basic ones
      */
@@ -42,24 +40,7 @@ public slots:
     void loadCollapseOrExpand();
     void permatentlyDelete(Element* element);
     void deleteAllItems();
-
-signals:
-    /**
-     *  when one or multiple tags are selected,
-     *  send their content to be displayed
-     */
-    void itemSelected(QVector<Element*> *item);
-    /**
-     *  emited when a list of Elements are loading
-     */
-    void loadingFiles();
-    /**
-     *  emited when a list of Elements finished loading
-     */
-    void filesLoaded();
-
 private:
-    void construct();
     /**
      *  create a tag(s) from Element, 
      *  or append the Element to existing tags
@@ -79,6 +60,21 @@ private:
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
     void startDrag(Qt::DropActions supportedActions) override;
+
+signals:
+    /**
+     *  when one or multiple tags are selected,
+     *  send their content to be displayed
+     */
+    void itemSelected(QVector<Element*> *item);
+    /**
+     *  emited when a list of Elements are loading
+     */
+    void loadingFiles();
+    /**
+     *  emited when a list of Elements finished loading
+     */
+    void filesLoaded();
 
 private:
     QTreeWidgetItem* prnt;  // keep track on the previous parent when the items are added

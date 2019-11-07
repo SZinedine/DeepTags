@@ -69,9 +69,7 @@ void ReadersDialog::setup() {
 void ReadersDialog::accept_() {
     QStringList lst;
     for (int i = 0; i < listWidget->count(); i++) lst.push_back(listWidget->item(i)->text());
-
     Settings::saveEditors(lst);
-
     accept();
 }
 
@@ -79,7 +77,7 @@ void ReadersDialog::accept_() {
 void ReadersDialog::addItem() {
     QString editor = editorLine->text().simplified();
     if (editor.isEmpty()) return;
-    listWidget->addItem(new QListWidgetItem(editor));
+    listWidget->addItem(new QListWidgetItem(editor, listWidget));
     editorLine->clear();
 }
 

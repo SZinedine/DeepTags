@@ -12,7 +12,7 @@
 #include "tagitem.h"
 
 TagsContainer::TagsContainer(QWidget* parent) : QTreeWidget(parent), prnt(nullptr) {
-    construct();
+    connect(this, &TagsContainer::itemClicked, this, [=]() { selected(); });
     createBasicTags();
     setMaximumWidth(400);
     setMinimumWidth(50);
@@ -37,7 +37,6 @@ void TagsContainer::deleteAllItems() {
         delete real(*it);
         it++;
     }
-
     clear();
 }
 
@@ -55,10 +54,6 @@ void TagsContainer::init() {
     createBasicTags();
 }
 
-void TagsContainer::construct() {
-    connect(this, &TagsContainer::itemClicked, this, [=]() { selected(); });
-}
-
 
 void TagsContainer::selected() {
     QList<QTreeWidgetItem*> lst = selectedItems();
@@ -68,8 +63,9 @@ void TagsContainer::selected() {
         return;
     }
 
-    auto shared = [](const QList<QTreeWidgetItem*>& items, Element* el) -> bool {
-        for (QTreeWidgetItem* i : items)
+    // check if the different TagItems contain a specific element
+    auto shared = [lst](Element* el) -> bool {
+        for (QTreeWidgetItem* i : lst)
             if (!real(i)->contains(el)) return false;
         return true;
     };
@@ -77,7 +73,7 @@ void TagsContainer::selected() {
     QVector<Element*>  res;
     QVector<Element*>* first = real(lst.at(0))->elements();
     for (Element* e : *first)
-        if (shared(lst, e)) res.push_back(e);
+        if (shared(e)) res.push_back(e);
 
     emit itemSelected(&res);
 }
@@ -91,9 +87,8 @@ int TagsContainer::find(const QString& label, QTreeWidgetItem* parent) {
 
 
 int TagsContainer::find(const QString& label, QTreeWidget* parent) {
-    for (int i = 0; i < parent->topLevelItemCount(); i++) {
+    for (int i = 0; i < parent->topLevelItemCount(); i++)
         if ((real(parent->topLevelItem(i)))->label() == label) return i;
-    }
     return -1;
 }
 
@@ -117,10 +112,10 @@ void TagsContainer::addElements(const ElementsList& elements) {
 
 void TagsContainer::addElement(Element* element) {
     /**
-     * retrieve the tags of the Element. all the work will be based on them
-     * add the element to "All Notes" tag.
-     * add it to untagged if it hasn't any tags.
-     * add it to favorite if is favorited.
+     * TODO: THIS FUNCTION NEEDS TO BE OPTIMIZED. IT IS TOO SLOW AND TOO COMPLICATED
+     *
+     * Check if the element is deleted, if it is, append it to trash and return.
+     * add to the untagged/favorited if it requires so.
      *
      * iterate through the Tags (vector of vectors)
      * single tag treatment:
@@ -142,7 +137,10 @@ void TagsContainer::addElement(Element* element) {
     addToSpecificTopLevel(element, cnv_allNotes);    // add to All Notes if it isn't there
 
     if (element->favorited()) addToSpecificTopLevel(element, cnv_favorite);
-    if (element->untagged()) addToSpecificTopLevel(element, cnv_untagged);
+    if (element->untagged()) {
+        addToSpecificTopLevel(element, cnv_untagged);
+        return;
+    }
 
     const Tags& tags = element->tags();
 
@@ -164,7 +162,8 @@ void TagsContainer::addElement(Element* element) {
                 break;
             }
             default:    // append Element to an existing tag
-                // grab a topLevelItem or a sub Item depending on the level of deepness (i variable)
+                // grab a topLevelItem or a child Item depending on the level of deepness (level
+                // variable)
                 QTreeWidgetItem* foundItem =
                     (level == 0) ? topLevelItem(index) : prnt->child(index);
                 TagItem* castedItem = real(foundItem);
@@ -181,8 +180,7 @@ void TagsContainer::addElement(Element* element) {
 void TagsContainer::addToSpecificTopLevel(Element* e, const QString& name) {
     int index = find(name, this);
     if (index == -1) return;    // abort if the item isn't found
-    TagItem* it = real(topLevelItem(index));
-    it->addFile(e);
+    real(topLevelItem(index))->addFile(e);
 }
 
 
@@ -238,7 +236,7 @@ void TagsContainer::toTrash(Element* element) {
     } else
         trash = real(topLevelItem(index));
 
-    trash->addFile(element);
+    if (!trash->contains(element)) trash->addFile(element);
 }
 
 
@@ -270,9 +268,8 @@ void TagsContainer::dragMoveEvent(QDragMoveEvent* event) {
     if (event->mimeData()->hasText()) {
         event->setDropAction(Qt::CopyAction);
         event->accept();
-    } else {
+    } else
         event->ignore();
-    }
 }
 
 
@@ -280,9 +277,8 @@ void TagsContainer::dropEvent(QDropEvent* event) {
     if (event->mimeData()->hasText()) {
         event->setDropAction(Qt::CopyAction);
         event->accept();
-    } else {
+    } else
         event->ignore();
-    }
 }
 
 

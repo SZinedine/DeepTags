@@ -11,7 +11,7 @@ class TagItem : public QTreeWidgetItem
 {
 public:
     TagItem(const QString& label="", TagItem* parent=nullptr);
-    ~TagItem();
+    ~TagItem() override;
 
     inline void addFiles(const QVector<Element*>& els) { for (const auto& i : els) addFile(i);}
     inline void addFile(Element* element)      { m_elements->push_back(element);  }

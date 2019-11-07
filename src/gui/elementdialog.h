@@ -25,7 +25,7 @@ public:
      * @brief constructor to edit existing Elements
      */
     ElementDialog(Element* element, QWidget* parent=nullptr);
-    ~ElementDialog();
+    ~ElementDialog() override;
     void setupKeyboard();
 
     void setListOfTags();

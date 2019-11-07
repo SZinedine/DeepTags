@@ -34,8 +34,8 @@ public:
     /**
      * construct the object (this) by calling all the appropriate functions
      */
-    void setup(const fs::path& path);
-    inline void reload()          { setup( m_path );   }
+    void setup();
+    inline void reload()          { setup();   }
     inline void reloadHeader()    { m_header = be::getHeader(m_path); }
     static ElementsList constructElementList(const PathsList& f);
     /**
