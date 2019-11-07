@@ -58,7 +58,6 @@ void ReadersDialog::setup() {
     connect(validateDialog, &QDialogButtonBox::accepted, this, &ReadersDialog::accept_);
     connect(validateDialog, &QDialogButtonBox::rejected, this, &ReadersDialog::reject);
     connect(addLine, &QPushButton::clicked, this, &ReadersDialog::addItem);
-    connect(addLine, &QPushButton::clicked, this, &ReadersDialog::addItem);
     connect(rmButton, &QPushButton::clicked, this, &ReadersDialog::delItem);
     connect(upButton, &QPushButton::clicked, this, &ReadersDialog::itemUp);
     connect(downButton, &QPushButton::clicked, this, &ReadersDialog::itemDown);
@@ -77,20 +76,32 @@ void ReadersDialog::accept_() {
 void ReadersDialog::addItem() {
     QString editor = editorLine->text().simplified();
     if (editor.isEmpty()) return;
+    if (added(editor)) {
+        editorLine->clear();
+        return;
+    }
     listWidget->addItem(new QListWidgetItem(editor, listWidget));
     editorLine->clear();
 }
 
+bool ReadersDialog::added(const QString& ed) {
+    for (int i = 0; i < listWidget->count() ; i++)
+        if (listWidget->item(i)->text() == ed) return true;
+    return false;
+}
+
 void ReadersDialog::delItem() {
+    QListWidgetItem* item = listWidget->currentItem();
+    if (!item) return;
     auto answer = QMessageBox::question(this, "confirmation", "Do you really want to delete it?");
     if (answer == QMessageBox::No) return;
-    QListWidgetItem* item = listWidget->currentItem();
-    if (item) delete item;
+    delete item;
 }
 
 void ReadersDialog::itemUp() {
     int  row  = listWidget->currentRow();
     auto item = listWidget->takeItem(row);
+    if (!item) return;
     listWidget->insertItem(row - 1, item);
     listWidget->setCurrentItem(item);
 }
@@ -99,6 +110,7 @@ void ReadersDialog::itemUp() {
 void ReadersDialog::itemDown() {
     int  row  = listWidget->currentRow();
     auto item = listWidget->takeItem(row);
+    if (!item) return;
     listWidget->insertItem(row + 1, item);
     listWidget->setCurrentItem(item);
 }

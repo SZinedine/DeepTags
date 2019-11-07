@@ -1,5 +1,5 @@
-#ifndef _READERSDIALOG_H
-#define _READERSDIALOG_H
+#ifndef READERSDIALOG_H
+#define READERSDIALOG_H
 
 #include <QDialog>
 #include <QListWidget>
@@ -19,6 +19,7 @@ public:
     void itemUp();
     void itemDown();
     void browse();
+    bool added(const QString& ed);
 
 private:
     QListWidget* listWidget;
