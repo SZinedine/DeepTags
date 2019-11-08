@@ -41,11 +41,9 @@ void TagsContainer::deleteAllItems() {
 }
 
 void TagsContainer::createBasicTags() {
-    for (const QString& i : basicTags) addTopLevelItem(new TagItem(i));
-    topLevelItem(0)->setIcon(0, QIcon(":images/all_notes.png"));
-    topLevelItem(1)->setIcon(0, QIcon(":images/notebook.png"));
-    topLevelItem(2)->setIcon(0, QIcon(":images/star.png"));
-    topLevelItem(3)->setIcon(0, QIcon(":images/untagged.png"));
+    QStringList basicIcons {":images/all_notes.png", ":images/notebook.png", ":images/star.png", ":images/untagged.png"};
+    for (std::vector<QString>::size_type i = 0 ; i < basicTags.size() ; i++)
+        addTopLevelItem(new TagItem(basicTags[i], basicIcons[i]));
 }
 
 void TagsContainer::init() {
@@ -230,8 +228,7 @@ void TagsContainer::toTrash(Element* element) {
     TagItem* trash;
 
     if (index == -1) {
-        trash = new TagItem(tr("Trash"));
-        trash->setIcon(0, QIcon(":images/trash.png"));
+        trash = new TagItem(tr("Trash"), ":images/trash.png");
         addTopLevelItem(trash);
     } else
         trash = real(topLevelItem(index));

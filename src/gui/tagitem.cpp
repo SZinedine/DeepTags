@@ -4,6 +4,13 @@
 TagItem::TagItem(const QString& label, TagItem* parent)
     : QTreeWidgetItem(parent, QStringList(label), 1500), m_elements(new QVector<Element*>()) {}
 
+TagItem::TagItem(const QString& label, const QString& icon, TagItem* parent)
+    : TagItem(label, parent) 
+{
+    if (!icon.isEmpty())
+       setIcon(0, QIcon(icon)); 
+}
+
 TagItem::~TagItem() { delete m_elements; }
 
 
