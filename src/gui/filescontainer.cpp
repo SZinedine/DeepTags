@@ -73,9 +73,9 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     if (!item) return;
     FileItem* real_it = real(item);
 
-    auto menu = new QMenu;
-    auto pin  = new QAction(tr("Pin to Top"), menu);
-    auto fav  = new QAction(tr("Favorite"), menu);
+    auto menu = std::make_unique<QMenu>();
+    auto pin  = std::make_unique<QAction>(tr("Pin to Top"));
+    auto fav  = std::make_unique<QAction>(tr("Favorite"));
     pin->setShortcut(QKeySequence("Ctrl+p"));
     fav->setShortcut(QKeySequence("Ctrl+s"));
     pin->setCheckable(true);
@@ -83,26 +83,26 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     pin->setChecked(real_it->pinned());
     fav->setChecked(real_it->favorited());
 
-    connect(pin, &QAction::triggered, this, &FilesContainer::pinSelected);
-    connect(fav, &QAction::triggered, this, &FilesContainer::starSelected);
+    connect(pin.get(), &QAction::triggered, this, &FilesContainer::pinSelected);
+    connect(fav.get(), &QAction::triggered, this, &FilesContainer::starSelected);
 
     // list of editors in a sub menu "open with..."
     QStringList editor_list = Settings::mdEditors();
-    auto        openWith    = new QMenu(tr("Open with"), this);
+    auto        openWith    = std::make_unique<QMenu>(tr("Open with"), this);
     for (auto& i : editor_list) {
-        auto edac = new QAction(i);
+        auto edac = new QAction(i, openWith.get());
         openWith->addAction(edac);
         connect(edac, &QAction::triggered, this, [=] { openFile_(item, i); });
     }
 
     menu->addAction(tr("Open"), this, [=]() { openFile(item); });
-    if (editor_list.size() > 1) menu->addMenu(openWith);
+    if (editor_list.size() > 1) menu->addMenu(openWith.get());
     menu->addAction(
         tr("Edit"), this, [=]() { editElement(item); }, QKeySequence("Ctrl+e"));
     menu->addSeparator();
     menu->addAction(tr("Add a new tag"), this, [=]() { appendNewTagToItem(item); });
-    menu->addAction(pin);
-    menu->addAction(fav);
+    menu->addAction(pin.get());
+    menu->addAction(fav.get());
     menu->addSeparator();
 
     // if the element is deleted, that means that we are in the Trash tag
@@ -117,10 +117,6 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
                         QKeySequence(QKeySequence::Delete));
 
     menu->exec(globalPos);
-
-    delete pin;
-    delete fav;
-    delete menu;
 }
 
 void FilesContainer::restoreSelected() {
@@ -233,10 +229,9 @@ void FilesContainer::dropEvent(QDropEvent* event) {
         const QString actionText = QString(tr("Add the tag") + QString(" '") + tag + QString("'"));
 
         // context menu
-        QMenu* menu = new QMenu;
+        auto menu = std::make_unique<QMenu>();
         menu->addAction(actionText, this, [=]() { appendTagToItem(tag, item); });
         menu->exec(mapToGlobal(event->pos()));
-        delete menu;
 
         event->setDropAction(Qt::CopyAction);
         event->accept();

@@ -260,7 +260,7 @@ void MainWindow::loadDataDirectoryContent() {
 
 
 void MainWindow::newFile() {
-    auto dialog = new ElementDialog(this);
+    auto dialog = std::make_unique<ElementDialog>(this);
     auto out    = dialog->exec();
     if (out == ElementDialog::Rejected) return;
 
@@ -268,7 +268,6 @@ void MainWindow::newFile() {
     if (!e) return;
     ElementsList lst{e};
     openElements(lst);
-    delete dialog;
 }
 
 
