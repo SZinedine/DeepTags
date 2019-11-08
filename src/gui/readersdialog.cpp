@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QVBoxLayout>
+#include <QShortcut>
 #include <filesystem>
 
 #include "settings.h"
@@ -62,6 +63,10 @@ void ReadersDialog::setup() {
     connect(upButton, &QPushButton::clicked, this, &ReadersDialog::itemUp);
     connect(downButton, &QPushButton::clicked, this, &ReadersDialog::itemDown);
     // connect(browsEditor, &QPushButton::clicked, this, &ReadersDialog::browse);
+    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this, [=]{
+        if (editorLine->hasFocus()) addItem();
+        else accept_();
+    });
 }
 
 
