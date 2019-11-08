@@ -5,10 +5,8 @@ TagItem::TagItem(const QString& label, TagItem* parent)
     : QTreeWidgetItem(parent, QStringList(label), 1500), m_elements(new QVector<Element*>()) {}
 
 TagItem::TagItem(const QString& label, const QString& icon, TagItem* parent)
-    : TagItem(label, parent) 
-{
-    if (!icon.isEmpty())
-       setIcon(0, QIcon(icon)); 
+    : TagItem(label, parent) {
+    if (!icon.isEmpty()) setIcon(0, QIcon(icon));
 }
 
 TagItem::~TagItem() { delete m_elements; }
@@ -27,7 +25,7 @@ bool TagItem::contains(Element* e) {
 
 
 bool TagItem::isSpecial() const {
-    for (const auto& i : {"All Notes", "Notebooks", "Favorite", "Untagged"})
+    for (const auto& i : { "All Notes", "Notebooks", "Favorite", "Untagged" })
         if (label() == i) return true;
     return false;
 }

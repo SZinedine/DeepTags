@@ -101,7 +101,7 @@ void MainWindow::setupMenu() {
     quitAction          = new QAction(QIcon(":images/quit.png"), tr("&Quit"), this);
     menuFile->addAction(newFileAction);
     menuFile->addMenu(recentlyOpenedFilesMenu);
-    menuFile->addActions({changeDataDirAction, quitAction});
+    menuFile->addActions({ changeDataDirAction, quitAction });
 
     auto menuEdit     = menuBar()->addMenu(tr("&Edit"));
     setMdReaderAction = new QAction(tr("&Set MarkDown Reader"), this);
@@ -111,7 +111,7 @@ void MainWindow::setupMenu() {
     themesActionGroup->setExclusive(true);
     auto nativeStyleAction     = new QAction(tr("Native Style"), setStyleMenu);
     auto breezeDarkStyleAction = new QAction(tr("Dark Style"), setStyleMenu);
-    setStyleMenu->addActions({nativeStyleAction, breezeDarkStyleAction});
+    setStyleMenu->addActions({ nativeStyleAction, breezeDarkStyleAction });
     themesActionGroup->addAction(nativeStyleAction);
     themesActionGroup->addAction(breezeDarkStyleAction);
     nativeStyleAction->setData(QString("native"));
@@ -123,7 +123,7 @@ void MainWindow::setupMenu() {
     reloadElementsAction = new QAction(tr("Reload Elements"), menuEdit);
 
     menuEdit->addMenu(setStyleMenu);
-    menuEdit->addActions({setMdReaderAction, clearElementsAction, reloadElementsAction});
+    menuEdit->addActions({ setMdReaderAction, clearElementsAction, reloadElementsAction });
 
     auto menuHelp = new QMenu(this);
     aboutAction   = new QAction(tr("&About"), this);
@@ -266,7 +266,7 @@ void MainWindow::newFile() {
 
     auto e = new Element(dialog->path());
     if (!e) return;
-    ElementsList lst{e};
+    ElementsList lst{ e };
     openElements(lst);
 }
 
@@ -278,7 +278,7 @@ void MainWindow::search() {
     changeNumberOfFilesLabel();
     if (line.isEmpty()) return;
 
-    QStringList keywords{line.split(' ')};
+    QStringList keywords{ line.split(' ') };
     for (auto& s : keywords) s = s.simplified().toLower();
 
     auto* lst = TagsContainer::real(tagsContainer->topLevelItem(0))->elements();

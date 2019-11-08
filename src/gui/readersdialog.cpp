@@ -4,8 +4,8 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QMessageBox>
-#include <QVBoxLayout>
 #include <QShortcut>
+#include <QVBoxLayout>
 #include <filesystem>
 
 #include "settings.h"
@@ -63,9 +63,11 @@ void ReadersDialog::setup() {
     connect(upButton, &QPushButton::clicked, this, &ReadersDialog::itemUp);
     connect(downButton, &QPushButton::clicked, this, &ReadersDialog::itemDown);
     // connect(browsEditor, &QPushButton::clicked, this, &ReadersDialog::browse);
-    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this, [=]{
-        if (editorLine->hasFocus()) addItem();
-        else accept_();
+    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this, [=] {
+        if (editorLine->hasFocus())
+            addItem();
+        else
+            accept_();
     });
 }
 
@@ -90,7 +92,7 @@ void ReadersDialog::addItem() {
 }
 
 bool ReadersDialog::added(const QString& ed) {
-    for (int i = 0; i < listWidget->count() ; i++)
+    for (int i = 0; i < listWidget->count(); i++)
         if (listWidget->item(i)->text() == ed) return true;
     return false;
 }

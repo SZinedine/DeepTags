@@ -41,8 +41,9 @@ void TagsContainer::deleteAllItems() {
 }
 
 void TagsContainer::createBasicTags() {
-    QStringList basicIcons {":images/all_notes.png", ":images/notebook.png", ":images/star.png", ":images/untagged.png"};
-    for (std::vector<QString>::size_type i = 0 ; i < basicTags.size() ; i++)
+    QStringList basicIcons{ ":images/all_notes.png", ":images/notebook.png", ":images/star.png",
+                            ":images/untagged.png" };
+    for (std::vector<QString>::size_type i = 0; i < basicTags.size(); i++)
         addTopLevelItem(new TagItem(basicTags[i], basicIcons[i]));
 }
 
@@ -201,7 +202,7 @@ bool TagsContainer::alreadyAdded(Element* element) {
 void TagsContainer::restoreElement(Element* element) {
     element->changeDeleted(false);
     pullElement(element);
-    addElements({element});
+    addElements({ element });
     removeEmptyItems();
 }
 

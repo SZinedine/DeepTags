@@ -88,7 +88,7 @@ void ElementDialog::setup_forNewFile() {
     m_pinned    = new QCheckBox(this);
     m_favorited = new QCheckBox(this);
     m_tags      = new QTextEdit(this);
-    m_path  = new QLineEdit(this);
+    m_path      = new QLineEdit(this);
     m_path->setVisible(false);
 
     buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
@@ -157,7 +157,7 @@ StringList ElementDialog::tags() const {
 void ElementDialog::formatFilename(QString& str) {
     str                 = str.simplified();
     auto hasMdExtension = [](const QString& s) -> bool {
-        QStringList ex{".md", ".markdown", ".mdown", ".mrkdn"};
+        QStringList ex{ ".md", ".markdown", ".mdown", ".mrkdn" };
         for (auto& e : ex)
             if (s.endsWith(e, Qt::CaseInsensitive)) return true;
         return false;
