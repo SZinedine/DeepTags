@@ -54,7 +54,7 @@ void ElementDialog::setup_forEditFile() {
 
     m_title = new QLineEdit(QString::fromStdString(m_element->title()), this);
     m_path  = new QLineEdit(QString::fromStdString(m_element->path().string()), this);
-    m_path->setEnabled(false);
+    m_path->setReadOnly(true);
     m_pinned = new QCheckBox;
     m_pinned->setChecked(m_element->pinned());
     m_favorited = new QCheckBox(this);
