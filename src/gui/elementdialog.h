@@ -5,9 +5,10 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QTextEdit>
+#include <QListWidget>
 #include "../element/element.h"
 #include <QDialogButtonBox>
-
+class TagsWidget;
 /**
  * Dialog box that serves 2 purposes
  *   * create a new file (first constructor
@@ -27,8 +28,6 @@ public:
     ElementDialog(Element* element, QWidget* parent=nullptr);
     ~ElementDialog() override;
     void setupKeyboard();
-
-    void setListOfTags();
     /**
      * Get info
      */
@@ -41,6 +40,7 @@ public:
     static void formatFilename(QString& str);
 
 private:
+    void setup(bool visiblePath);
     void setup_forEditFile();
     void setup_forNewFile();
     /**
@@ -62,7 +62,26 @@ private:
     QLineEdit* m_path;
     QCheckBox* m_pinned;
     QCheckBox* m_favorited;
-    QTextEdit* m_tags;
+    TagsWidget* m_tags;
+    QPushButton* m_addTag;
+    QPushButton* m_delTag;
 };
+
+/**
+ * the widget that contain the list of tags
+ */
+class TagsWidget : public QListWidget {
+    Q_OBJECT
+public:
+    explicit TagsWidget(QWidget* parent);
+    explicit TagsWidget(StringList labels, QWidget* parent);
+    inline void add(QString label) { addItem(label); }
+    void add();
+    void del();
+    void closeAllPersistentEditors();
+    StringList tags() const;
+    void setTags(StringList);
+};
+
 
 #endif // ElementDialog_H
