@@ -21,6 +21,10 @@
         <file>images/star.png</file>
         <file>images/trash.png</file>
         <file>images/untagged.png</file>
+        <file>images/color_red.png</file>
+        <file>images/color_green.png</file>
+        <file>images/color_blue.png</file>
+        <file>images/color_yellow.png</file>
         
         <file>locale/deeptags_fr.qm</file>
     </qresource>

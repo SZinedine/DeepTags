@@ -68,8 +68,7 @@ void FilesContainer::mousePressEvent(QMouseEvent* event) {
 
 void FilesContainer::showContextMenu(const QPoint& pos) {
     if (count() == 0) return;
-    QPoint           globalPos = mapToGlobal(pos);
-    QListWidgetItem* item      = itemAt(pos);
+    QListWidgetItem* item = itemAt(pos);
     if (!item) return;
     FileItem* real_it = real(item);
 
@@ -116,7 +115,7 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
         menu->addAction(tr("Move to Trash"), this, &FilesContainer::trashSelected,
                         QKeySequence(QKeySequence::Delete));
 
-    menu->exec(globalPos);
+    menu->exec(mapToGlobal(pos));
 }
 
 void FilesContainer::restoreSelected() {

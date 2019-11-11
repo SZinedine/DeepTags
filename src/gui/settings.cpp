@@ -241,3 +241,23 @@ void Settings::applyTheme(const QString& theme) {
     QTextStream ts(&f);
     qApp->setStyleSheet(ts.readAll());
 }
+
+
+void Settings::setTagItemColor(const QString& item, const QString& color) {
+    auto map  = getTagItemColor();
+    map[item] = QVariant(color);
+    if (color.isEmpty()) map.remove(item);
+    QSettings s;
+    s.beginGroup("main");
+    s.setValue("item_color", map);
+    s.endGroup();
+}
+
+QHash<QString, QVariant> Settings::getTagItemColor() {
+    QHash<QString, QVariant> map;
+    QSettings               s;
+    s.beginGroup("main");
+    map = s.value("item_color").toHash();
+    s.endGroup();
+    return map;
+}

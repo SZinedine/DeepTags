@@ -10,8 +10,8 @@
 class TagItem : public QTreeWidgetItem
 {
 public:
-    TagItem(const QString& label, TagItem* parent=nullptr);
-    TagItem(const QString& label, const QString& icon, TagItem* parent=nullptr);
+    TagItem(const QString& label, bool special=false, TagItem* parent=nullptr);
+    TagItem(const QString& label, const QString& icon, bool special=false);
     ~TagItem() override;
 
     inline void addFiles(const QVector<Element*>& els) { for (const auto& i : els) addFile(i);}
@@ -22,13 +22,15 @@ public:
     inline int number() const                  { return m_elements->size();       }
     inline void remove(Element* e)             { m_elements->removeAll(e);        }
     inline bool empty() const                  { return m_elements->isEmpty();    }
-    bool isSpecial() const;
+    inline bool isSpecial() const              { return m_special;                }
     bool contains(Element* e);
     void removeElement(Element* element);
+    void setColor(const QString& color);
 
 private:
     char prevent_padding_warning[4];
-    QVector<Element*> *m_elements;
+    QVector<Element*>* m_elements;
+    bool m_special;
 };
 
 #endif // TAGITEM_H

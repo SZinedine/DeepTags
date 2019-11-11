@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     app.installTranslator(&tran);
 
     MainWindow w;
-    w.setWindowTitle(QString(TITLEBAR) + QString(VERSION));
+    w.setWindowTitle(QString(NAME));
     w.setWindowIcon(QIcon(":images/icon128.png"));
     w.show();
 

@@ -1,11 +1,14 @@
 #include "tagitem.h"
+#include <QApplication>
+
+#include "settings.h"
 
 
-TagItem::TagItem(const QString& label, TagItem* parent)
-    : QTreeWidgetItem(parent, QStringList(label), 1500), m_elements(new QVector<Element*>()) {}
+TagItem::TagItem(const QString& label, bool special, TagItem* parent)
+    : QTreeWidgetItem(parent, QStringList(label), 1500), m_elements(new QVector<Element*>()), m_special(special) {}
 
-TagItem::TagItem(const QString& label, const QString& icon, TagItem* parent)
-    : TagItem(label, parent) {
+TagItem::TagItem(const QString& label, const QString& icon, bool special)
+    : TagItem(label, special, nullptr) {
     if (!icon.isEmpty()) setIcon(0, QIcon(icon));
 }
 
@@ -24,8 +27,13 @@ bool TagItem::contains(Element* e) {
 }
 
 
-bool TagItem::isSpecial() const {
-    for (const auto& i : { "All Notes", "Notebooks", "Favorite", "Untagged" })
-        if (label() == i) return true;
-    return false;
+void TagItem::setColor(const QString& color) {
+    if (color.isEmpty())
+        setForeground(0, qApp->palette().text());
+    else {
+        QBrush brush(foreground(0));
+        brush.setColor(color);
+        setForeground(0, brush);
+    }
+    Settings::setTagItemColor(label(), color);
 }

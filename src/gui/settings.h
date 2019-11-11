@@ -63,6 +63,11 @@ struct Settings : public QObject {
     static void saveTheme(QAction* ac);
     static void loadTheme(QActionGroup* ag);
     static void applyTheme(const QString& theme);
+    /**
+     * topLevel TagItems colors
+     */
+    static void setTagItemColor(const QString& item, const QString& color);
+    static QHash<QString, QVariant> getTagItemColor();
 };
 
 #endif

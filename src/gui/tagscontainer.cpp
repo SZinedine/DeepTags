@@ -44,7 +44,8 @@ void TagsContainer::createBasicTags() {
     QStringList basicIcons{ ":images/all_notes.png", ":images/notebook.png", ":images/star.png",
                             ":images/untagged.png" };
     for (std::vector<QString>::size_type i = 0; i < basicTags.size(); i++)
-        addTopLevelItem(new TagItem(basicTags[i], basicIcons[i]));
+        addTopLevelItem(new TagItem(basicTags[i], basicIcons[i], true));
+    applyColors();
 }
 
 void TagsContainer::init() {
@@ -102,9 +103,11 @@ void TagsContainer::addElements(const ElementsList& elements) {
         if (i % 500 == 0) {
             sort();
             qApp->processEvents();
+            applyColors();
         }
     }
     sort();
+    applyColors();
     emit filesLoaded();
 }
 
@@ -229,7 +232,7 @@ void TagsContainer::toTrash(Element* element) {
     TagItem* trash;
 
     if (index == -1) {
-        trash = new TagItem(tr("Trash"), ":images/trash.png");
+        trash = new TagItem(tr("Trash"), ":images/trash.png", true);
         addTopLevelItem(trash);
     } else
         trash = real(topLevelItem(index));
@@ -321,4 +324,49 @@ void TagsContainer::loadCollapseOrExpand() {
         expandAll();
     else
         collapseAll();
+}
+
+void TagsContainer::mousePressEvent(QMouseEvent* event) {
+    if (event->button() == Qt::RightButton) {
+        QPoint qp(event->pos());
+        setCurrentItem(itemAt(qp));
+        showContextMenu(qp);
+    } else
+        QTreeWidget::mousePressEvent(event);
+}
+
+void TagsContainer::showContextMenu(QPoint pos) {
+    QTreeWidgetItem* item = itemAt(pos);
+    if (!item) return;
+    if (item->parent()) return;    // only topLevel items
+    TagItem* it = real(item);
+    if (it->isSpecial()) return;
+
+    auto menu      = std::make_unique<QMenu>();
+    auto colorMenu = std::make_unique<QMenu>(tr("Change the color"), this);
+    auto def       = std::make_unique<QAction>(tr("default color"));
+    auto red       = std::make_unique<QAction>(QIcon(":images/color_red"), tr("red"));
+    auto green     = std::make_unique<QAction>(QIcon(":images/color_green"), tr("green"));
+    auto blue      = std::make_unique<QAction>(QIcon(":images/color_blue"), tr("blue"));
+    auto yellow    = std::make_unique<QAction>(QIcon(":images/color_yellow"), tr("yellow"));
+    colorMenu->addActions({ def.get(), red.get(), green.get(), blue.get(), yellow.get() });
+    menu->addMenu(colorMenu.get());
+
+    connect(def.get(), &QAction::triggered, this, [it] { it->setColor(""); });
+    connect(red.get(), &QAction::triggered, this, [it] { it->setColor("red"); });
+    connect(green.get(), &QAction::triggered, this, [it] { it->setColor("green"); });
+    connect(blue.get(), &QAction::triggered, this, [it] { it->setColor("blue"); });
+    connect(yellow.get(), &QAction::triggered, this, [it] { it->setColor("yellow"); });
+
+    menu->exec(mapToGlobal(pos));
+}
+
+void TagsContainer::applyColors() {
+    auto map = Settings::getTagItemColor();
+    for (auto i = map.begin(); i != map.end(); i++) {
+        int row = find(i.key(), this);
+        if (row == -1) continue;
+        auto it = real(topLevelItem(row));
+        it->setColor(i.value().toString());
+    }
 }
