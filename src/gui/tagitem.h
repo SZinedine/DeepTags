@@ -26,11 +26,14 @@ public:
     bool contains(Element* e);
     void removeElement(Element* element);
     void setColor(const QString& color);
+    bool pinned() const                        { return m_pinned;                 }
+    void setPinned(bool pinned);
 
 private:
     char prevent_padding_warning[4];
     QVector<Element*>* m_elements;
     bool m_special;
+    bool m_pinned;
 };
 
 #endif // TAGITEM_H

@@ -68,6 +68,9 @@ struct Settings : public QObject {
      */
     static void setTagItemColor(const QString& item, const QString& color);
     static QHash<QString, QVariant> getTagItemColor();
+    static void setTagPinned(const QString& item);
+    static void setTagUnpinned(const QString& item);
+    static QStringList getTagPinned();
 };
 
 #endif

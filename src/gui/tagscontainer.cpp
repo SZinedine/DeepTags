@@ -194,7 +194,8 @@ void TagsContainer::pinBasicItems() {
 
 void TagsContainer::sort() {
     sortByColumn(0, Qt::AscendingOrder);
-    pinBasicItems();
+    pinTags();
+    // pinBasicItems();
 }
 
 bool TagsContainer::alreadyAdded(Element* element) {
@@ -352,6 +353,12 @@ void TagsContainer::showContextMenu(QPoint pos) {
     colorMenu->addActions({ def.get(), red.get(), green.get(), blue.get(), yellow.get() });
     menu->addMenu(colorMenu.get());
 
+    if (!it->isSpecial())
+        menu->addAction(((it->pinned())? "Unpin" : "Pin"), [&]{
+            it->setPinned(!(it->pinned()));
+            sort();
+        });
+
     connect(def.get(), &QAction::triggered, this, [it] { it->setColor(""); });
     connect(red.get(), &QAction::triggered, this, [it] { it->setColor("red"); });
     connect(green.get(), &QAction::triggered, this, [it] { it->setColor("green"); });
@@ -369,4 +376,18 @@ void TagsContainer::applyColors() {
         auto it = real(topLevelItem(row));
         it->setColor(i.value().toString());
     }
+}
+
+
+void TagsContainer::pinTags() {
+    QStringList lst = Settings::getTagPinned();
+    // for (const QString& i : lst) {
+    for (auto i = lst.rbegin() ; i != lst.rend() ; i++) {
+        int row = find(*i, this);
+        if (row == -1) continue;
+        auto it = real(takeTopLevelItem(row));
+        it->setPinned(true);
+        insertTopLevelItem(0, it);
+    }
+    pinBasicItems();
 }

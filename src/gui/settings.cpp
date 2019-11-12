@@ -261,3 +261,34 @@ QHash<QString, QVariant> Settings::getTagItemColor() {
     s.endGroup();
     return map;
 }
+
+
+void Settings::setTagPinned(const QString& item) {
+    auto lst = getTagPinned();
+    if (lst.contains(item)) return;
+    lst.append(item);
+    QSettings s;
+    s.beginGroup("main");
+    s.setValue("item_pinned", lst);
+    s.endGroup();
+
+}
+
+void Settings::setTagUnpinned(const QString& item) {
+    auto lst = getTagPinned();
+    if (!lst.contains(item)) return;
+    lst.removeAll(item);
+    QSettings s;
+    s.beginGroup("main");
+    s.setValue("item_pinned", lst);
+    s.endGroup();
+}
+
+QStringList Settings::getTagPinned() {
+    QSettings s;
+    s.beginGroup("main");
+    QStringList lst = s.value("item_pinned").toStringList();
+    s.endGroup();
+    return lst;
+}
+

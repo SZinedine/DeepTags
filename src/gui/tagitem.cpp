@@ -5,7 +5,7 @@
 
 
 TagItem::TagItem(const QString& label, bool special, TagItem* parent)
-    : QTreeWidgetItem(parent, QStringList(label), 1500), m_elements(new QVector<Element*>()), m_special(special) {}
+    : QTreeWidgetItem(parent, QStringList(label), 1500), m_elements(new QVector<Element*>()), m_special(special), m_pinned(false) {}
 
 TagItem::TagItem(const QString& label, const QString& icon, bool special)
     : TagItem(label, special, nullptr) {
@@ -36,4 +36,13 @@ void TagItem::setColor(const QString& color) {
         setForeground(0, brush);
     }
     Settings::setTagItemColor(label(), color);
+}
+
+void TagItem::setPinned(bool pinned) {
+    m_pinned = pinned;
+    QFont f = font(0);
+    f.setBold(pinned);
+    setFont(0, f);
+    if (pinned) Settings::setTagPinned(label());
+    else Settings::setTagUnpinned(label());
 }

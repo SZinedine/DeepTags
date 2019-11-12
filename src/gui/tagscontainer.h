@@ -63,6 +63,7 @@ private:
     void mousePressEvent(QMouseEvent *event) override;
     void showContextMenu(QPoint pos);
     void applyColors();
+    void pinTags();
 
 signals:
     /**
