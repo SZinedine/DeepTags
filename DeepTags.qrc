@@ -25,6 +25,8 @@
         <file>images/color_green.png</file>
         <file>images/color_blue.png</file>
         <file>images/color_yellow.png</file>
+        <file>images/color_magenta.png</file>
+        <file>images/color_cyan.png</file>
         
         <file>locale/deeptags_fr.qm</file>
     </qresource>

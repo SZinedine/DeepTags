@@ -349,11 +349,14 @@ void TagsContainer::showContextMenu(QPoint pos) {
     auto green     = std::make_unique<QAction>(QIcon(":images/color_green"), tr("green"));
     auto blue      = std::make_unique<QAction>(QIcon(":images/color_blue"), tr("blue"));
     auto yellow    = std::make_unique<QAction>(QIcon(":images/color_yellow"), tr("yellow"));
-    colorMenu->addActions({ def.get(), red.get(), green.get(), blue.get(), yellow.get() });
+    auto magenta   = std::make_unique<QAction>(QIcon(":images/color_magenta"), tr("magenta"));
+    auto cyan      = std::make_unique<QAction>(QIcon(":images/color_cyan"), tr("cyan"));
+    colorMenu->addActions(
+        { def.get(), red.get(), green.get(), blue.get(), yellow.get(), magenta.get(), cyan.get() });
     menu->addMenu(colorMenu.get());
 
     if (!it->isSpecial())
-        menu->addAction(((it->pinned())? "Unpin" : "Pin"), [&]{
+        menu->addAction(((it->pinned()) ? "Unpin" : "Pin"), [&] {
             it->setPinned(!(it->pinned()));
             sort();
         });
@@ -363,6 +366,8 @@ void TagsContainer::showContextMenu(QPoint pos) {
     connect(green.get(), &QAction::triggered, this, [it] { it->setColor("green"); });
     connect(blue.get(), &QAction::triggered, this, [it] { it->setColor("blue"); });
     connect(yellow.get(), &QAction::triggered, this, [it] { it->setColor("yellow"); });
+    connect(magenta.get(), &QAction::triggered, this, [it] { it->setColor("magenta"); });
+    connect(cyan.get(), &QAction::triggered, this, [it] { it->setColor("cyan"); });
 
     menu->exec(mapToGlobal(pos));
 }
@@ -381,7 +386,7 @@ void TagsContainer::applyColors() {
 void TagsContainer::pinTags() {
     QStringList lst = Settings::getTagPinned();
     // for (const QString& i : lst) {
-    for (auto i = lst.rbegin() ; i != lst.rend() ; i++) {
+    for (auto i = lst.rbegin(); i != lst.rend(); i++) {
         int row = find(*i, this);
         if (row == -1) continue;
         auto it = real(takeTopLevelItem(row));

@@ -24,7 +24,8 @@ QString Settings::getString(const QString& group, const QString& label) {
     return val;
 }
 
-void Settings::saveStringList(const QString& group, const QString& label, const QStringList& value) {
+void Settings::saveStringList(const QString& group, const QString& label,
+                              const QStringList& value) {
     QSettings s;
     s.beginGroup(group);
     s.setValue(label, QVariant(value));
@@ -78,17 +79,13 @@ void Settings::saveEditors(const QStringList& lst) {
         saveMainEditor("");
 }
 
-QStringList Settings::mdEditors() {
-    return getStringList("markdown_editors", "list");
-}
+QStringList Settings::mdEditors() { return getStringList("markdown_editors", "list"); }
 
 void Settings::saveMainEditor(const QString& editor) {
     saveString("markdown_editors", "main", editor);
 }
 
-QString Settings::mainMdEditor() {
-    return getString("markdown_editors", "main");
-}
+QString Settings::mainMdEditor() { return getString("markdown_editors", "main"); }
 
 
 bool Settings::setDataDirectory() {
@@ -257,7 +254,7 @@ void Settings::setTagItemColor(const QString& item, const QString& color) {
 
 QHash<QString, QVariant> Settings::getTagItemColor() {
     QHash<QString, QVariant> map;
-    QSettings               s;
+    QSettings                s;
     s.beginGroup("main");
     map = s.value("item_color").toHash();
     s.endGroup();
@@ -286,10 +283,6 @@ void Settings::setTagUnpinned(const QString& item) {
     saveStringList("main", "item_pinned", lst);
 }
 
-QStringList Settings::getTagPinned() {
-    return getStringList("main", "item_pinned");
-}
+QStringList Settings::getTagPinned() { return getStringList("main", "item_pinned"); }
 
-void Settings::clearPinnedItems() {
-    saveStringList("main", "item_pinned", {});
-}
+void Settings::clearPinnedItems() { saveStringList("main", "item_pinned", {}); }
