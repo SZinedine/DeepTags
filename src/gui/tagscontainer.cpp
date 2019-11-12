@@ -341,7 +341,6 @@ void TagsContainer::showContextMenu(QPoint pos) {
     if (!item) return;
     if (item->parent()) return;    // only topLevel items
     TagItem* it = real(item);
-    if (it->isSpecial()) return;
 
     auto menu      = std::make_unique<QMenu>();
     auto colorMenu = std::make_unique<QMenu>(tr("Change the color"), this);
