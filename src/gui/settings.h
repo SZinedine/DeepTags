@@ -11,6 +11,10 @@
 #include "mainwindow.h"
 
 struct Settings : public QObject {
+    static void saveString(const QString& group, const QString& label, const QString& value);
+    static QString getString(const QString& group, const QString& label);
+    static void saveStringList(const QString& group, const QString& label, const QStringList& value);
+    static QStringList getStringList(const QString& group, const QString& label);
 
     static void openFileAction(QAction* action);
     static void openFile(QString editor, const fs::path& path, QWidget* parent=nullptr);
@@ -68,9 +72,11 @@ struct Settings : public QObject {
      */
     static void setTagItemColor(const QString& item, const QString& color);
     static QHash<QString, QVariant> getTagItemColor();
+    static void clearColorItems();
     static void setTagPinned(const QString& item);
     static void setTagUnpinned(const QString& item);
     static QStringList getTagPinned();
+    static void clearPinnedItems();
 };
 
 #endif

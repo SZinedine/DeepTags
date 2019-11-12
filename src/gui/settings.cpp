@@ -9,6 +9,36 @@
 #include "../element/element.h"
 #include "readersdialog.h"
 
+void Settings::saveString(const QString& group, const QString& label, const QString& value) {
+    QSettings s;
+    s.beginGroup(group);
+    s.setValue(label, QVariant(value));
+    s.endGroup();
+}
+
+QString Settings::getString(const QString& group, const QString& label) {
+    QSettings s;
+    s.beginGroup(group);
+    QString val = s.value(label).toString();
+    s.endGroup();
+    return val;
+}
+
+void Settings::saveStringList(const QString& group, const QString& label, const QStringList& value) {
+    QSettings s;
+    s.beginGroup(group);
+    s.setValue(label, QVariant(value));
+    s.endGroup();
+}
+
+QStringList Settings::getStringList(const QString& group, const QString& label) {
+    QSettings s;
+    s.beginGroup(group);
+    QStringList val = s.value(label).toStringList();
+    s.endGroup();
+    return val;
+}
+
 
 void Settings::saveUiSettings(const QSize& windowSize, const QByteArray& splitterState) {
     QSettings s;
@@ -41,10 +71,7 @@ void Settings::loadWindowSize(MainWindow* w) {
 
 
 void Settings::saveEditors(const QStringList& lst) {
-    QSettings s;
-    s.beginGroup("markdown_editors");
-    s.setValue("list", lst);
-    s.endGroup();
+    saveStringList("markdown_editors", "list", lst);
     if (!lst.isEmpty())
         saveMainEditor(lst.at(0));
     else
@@ -52,28 +79,15 @@ void Settings::saveEditors(const QStringList& lst) {
 }
 
 QStringList Settings::mdEditors() {
-    QSettings s;
-    s.beginGroup("markdown_editors");
-    QStringList lst(s.value("list").toStringList());
-    s.endGroup();
-
-    return lst;
+    return getStringList("markdown_editors", "list");
 }
 
 void Settings::saveMainEditor(const QString& editor) {
-    QSettings s;
-    s.beginGroup("markdown_editors");
-    s.setValue("main", editor);
-    s.endGroup();
+    saveString("markdown_editors", "main", editor);
 }
 
 QString Settings::mainMdEditor() {
-    QSettings s;
-    s.beginGroup("markdown_editors");
-    QString e = s.value("main").toString();
-    s.endGroup();
-
-    return e;
+    return getString("markdown_editors", "main");
 }
 
 
@@ -91,12 +105,7 @@ bool Settings::setDataDirectory() {
 
 QString Settings::dataDirectory() {
     if (!dataDirectoryIsSet()) return QDir::homePath();
-    QSettings s;
-    s.beginGroup("main");
-    QString dir = s.value("data_dir").toString();
-    s.endGroup();
-
-    return dir;
+    return getString("main", "data_dir");
 }
 
 bool Settings::dataDirectoryIsSet() {
@@ -119,7 +128,7 @@ void Settings::expand(const bool& expanded) {
 bool Settings::expandedItems() {
     QSettings s;
     s.beginGroup("main");
-    bool res = s.value("expanded", true).toBool();
+    bool res = s.value("expanded").toBool();
     s.endGroup();
     return res;
 }
@@ -128,7 +137,7 @@ bool Settings::expandedItems() {
 void Settings::saveRecentlyOpenedFile(const fs::path& p) {
     QStringList paths = getRawRecentlyOpenedFiles();
     // remove the entry from the list if it already exists
-    QString string = QString(p.string().c_str());
+    QString string(p.string().c_str());
     while (paths.contains(string)) paths.removeAt(paths.indexOf(string));
 
     paths.prepend(string);
@@ -180,11 +189,7 @@ void Settings::eraseRecentlyOpenedFiles() {
 }
 
 QStringList Settings::getRawRecentlyOpenedFiles() {
-    QSettings s;
-    s.beginGroup("files");
-    QStringList sl = s.value("recently_opened_files").toStringList();
-    s.endGroup();
-    return sl;
+    return getStringList("files", "recently_opened_files");
 }
 
 
@@ -221,10 +226,7 @@ void Settings::saveTheme(QAction* ac) {
 }
 
 void Settings::loadTheme(QActionGroup* ag) {
-    QSettings s;
-    s.beginGroup("main");
-    QString theme = s.value("theme").toString();
-    s.endGroup();
+    QString theme = getString("main", "theme");
     applyTheme(theme);
     for (QAction* ac : ag->actions())
         if (ac->data().toString() == theme) ac->setChecked(true);
@@ -262,33 +264,32 @@ QHash<QString, QVariant> Settings::getTagItemColor() {
     return map;
 }
 
+void Settings::clearColorItems() {
+    QSettings s;
+    s.beginGroup("main");
+    s.remove("item_color");
+    s.endGroup();
+}
+
 
 void Settings::setTagPinned(const QString& item) {
     auto lst = getTagPinned();
     if (lst.contains(item)) return;
     lst.append(item);
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("item_pinned", lst);
-    s.endGroup();
-
+    saveStringList("main", "item_pinned", lst);
 }
 
 void Settings::setTagUnpinned(const QString& item) {
     auto lst = getTagPinned();
     if (!lst.contains(item)) return;
     lst.removeAll(item);
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("item_pinned", lst);
-    s.endGroup();
+    saveStringList("main", "item_pinned", lst);
 }
 
 QStringList Settings::getTagPinned() {
-    QSettings s;
-    s.beginGroup("main");
-    QStringList lst = s.value("item_pinned").toStringList();
-    s.endGroup();
-    return lst;
+    return getStringList("main", "item_pinned");
 }
 
+void Settings::clearPinnedItems() {
+    saveStringList("main", "item_pinned", {});
+}
