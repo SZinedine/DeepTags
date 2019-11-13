@@ -260,6 +260,10 @@ void MainWindow::loadDataDirectoryContent() {
 
 
 void MainWindow::newFile() {
+    if (!Settings::dataDirectoryIsSet()) {
+        QMessageBox::information(this, "Data Directory is not set", "You have to set a Data Directory before creating a file");
+        return;
+    }
     auto dialog = std::make_unique<ElementDialog>(this);
     auto out    = dialog->exec();
     if (out == ElementDialog::Rejected) return;
