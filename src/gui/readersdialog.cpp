@@ -15,6 +15,7 @@ ReadersDialog::ReadersDialog(QWidget* parent) : QDialog(parent) {
     setup();
     setFixedSize(400, 300);
     setModal(true);
+    setWindowTitle("Markdown Readers Dialog");
     exec();
 }
 

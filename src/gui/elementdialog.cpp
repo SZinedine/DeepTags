@@ -31,6 +31,7 @@ ElementDialog::~ElementDialog() {
 void ElementDialog::setup(bool visiblePath) {
     setFixedSize(450, 350);
     setModal(true);
+    setWindowTitle(tr("Element Dialog"));
 
     auto* layout = new QFormLayout(this);
     setLayout(layout);

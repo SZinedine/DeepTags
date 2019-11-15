@@ -101,7 +101,9 @@ void MainWindow::setupMenu() {
     quitAction          = new QAction(QIcon(":images/quit.png"), tr("&Quit"), this);
     menuFile->addAction(newFileAction);
     menuFile->addMenu(recentlyOpenedFilesMenu);
-    menuFile->addActions({ changeDataDirAction, quitAction });
+    menuFile->addAction(changeDataDirAction);
+    menuFile->addSeparator();
+    menuFile->addAction(quitAction);
 
     auto menuEdit     = menuBar()->addMenu(tr("&Edit"));
     setMdReaderAction = new QAction(tr("&Set MarkDown Reader"), this);
