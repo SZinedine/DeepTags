@@ -57,7 +57,6 @@ private:
 
     Element* m_element;
     QDialogButtonBox* buttons;
-
     QLineEdit* m_title;
     QLineEdit* m_path;
     QCheckBox* m_pinned;
@@ -81,7 +80,7 @@ public:
     void closeAllPersistentEditors();
     StringList tags() const;
     void setTags(StringList);
+    void persistentEditor();
 };
-
 
 #endif // ElementDialog_H

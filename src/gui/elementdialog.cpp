@@ -201,12 +201,9 @@ start:
 /*********** TagsWidget **************/
 
 TagsWidget::TagsWidget(QWidget* parent) : QListWidget(parent) {
-    connect(this, &TagsWidget::itemDoubleClicked, this, &TagsWidget::openPersistentEditor);
+    connect(this, &TagsWidget::itemDoubleClicked, this, &TagsWidget::persistentEditor);
     connect(this, &TagsWidget::itemSelectionChanged, this, &TagsWidget::closeAllPersistentEditors);
-    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this, [=] {
-        openPersistentEditor(currentItem());
-        editItem(currentItem());
-    });
+    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this, &TagsWidget::persistentEditor);
 }
 
 
@@ -242,3 +239,15 @@ void TagsWidget::del() {
     int row = currentRow();
     if (item(row)) delete takeItem(row);
 }
+
+void TagsWidget::persistentEditor() {
+    auto it = currentItem();
+    if (!it) return;
+    if (isPersistentEditorOpen(it))
+        closePersistentEditor(it);
+    else {
+        openPersistentEditor(currentItem());
+        editItem(currentItem());
+    }
+}
+
