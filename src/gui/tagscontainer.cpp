@@ -223,7 +223,10 @@ void TagsContainer::removeEmptyItems() {
     QTreeWidgetItemIterator it(this);
     while (*it) {
         TagItem* current = real(*it);
-        if (current->empty() && !current->isSpecial()) delete current;
+        if (current->empty()) {
+            if (current->isSpecial() && current->label() == "Trash") delete current;
+            else if (!current->isSpecial()) delete current;
+        }
         it++;
     }
 }
