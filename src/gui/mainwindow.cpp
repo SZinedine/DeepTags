@@ -235,7 +235,7 @@ void MainWindow::disableSomeWidgets(const bool& disable) {
 
 void MainWindow::load() {
     qApp->processEvents();
-    if (!Settings::dataDirectoryIsSet()) {
+    if (!Settings::dataDirectoryIsSet() || !fs::exists(Settings::dataDirectory().toStdString())) {
         auto ask = QMessageBox::information(this, tr("Set a Data Directory"),
                                             tr("The Data directory isn't set, Please set it."),
                                             QMessageBox::Ok | QMessageBox::Cancel);
