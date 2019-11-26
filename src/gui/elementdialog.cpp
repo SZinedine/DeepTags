@@ -203,7 +203,8 @@ start:
 TagsWidget::TagsWidget(QWidget* parent) : QListWidget(parent) {
     connect(this, &TagsWidget::itemDoubleClicked, this, &TagsWidget::persistentEditor);
     connect(this, &TagsWidget::itemSelectionChanged, this, &TagsWidget::closeAllPersistentEditors);
-    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this, &TagsWidget::persistentEditor);
+    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this,
+            &TagsWidget::persistentEditor);
 }
 
 
@@ -250,4 +251,3 @@ void TagsWidget::persistentEditor() {
         editItem(currentItem());
     }
 }
-

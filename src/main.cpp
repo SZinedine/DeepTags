@@ -4,8 +4,7 @@
 
 #include "gui/mainwindow.h"
 
-#define VERSION  "0.3.9"
-#define TITLEBAR "DeepTags v."
+#define VERSION  "0.4"
 #define NAME     "DeepTags"
 #define WEBSITE  "https://github.com/SZinedine"
 

@@ -178,7 +178,7 @@ void FilesContainer::sortAndPin() {
 void FilesContainer::moveToTrash(QListWidgetItem* item) {
     if (!item) return;
     auto e = real(item)->element();
-    if (e->deleted()) return;   // if it is deleted, it is already in Trash
+    if (e->deleted()) return;    // if it is deleted, it is already in Trash
     e->changeDeleted(true);
     emit elementChanged(e);
     delete takeItem(row(item));

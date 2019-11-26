@@ -1,3 +1,5 @@
+#!/bin/bash
+
 BIN=build/release/DeepTags
 PROG=DeepTags
 ICO=DeepTags.png
@@ -47,6 +49,7 @@ read -p "Do you want to create a shortcut to your desktop? (y/n) " yesOrNot
 
 if [ "$yesOrNot" == "y" ] ;
 then
-    cp $DSKTP /home/$USER/Desktop/
+    SHORTCUT_DESTINATION=$(xdg-user-dir DESKTOP)
+    cp $DSKTP $SHORTCUT_DESTINATION
 fi
 
