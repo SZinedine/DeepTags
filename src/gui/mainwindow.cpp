@@ -202,6 +202,8 @@ void MainWindow::setupKeyboard() {
             tagsContainer->selected();
         else if (filesContainer->hasFocus())
             filesContainer->openCurrent();
+        else if (searchLineEdit->hasFocus())
+            search();
     });
     auto edel = new QShortcut(QKeySequence("Ctrl+e"), this);
     connect(edel, &QShortcut::activated, this, [=] {
