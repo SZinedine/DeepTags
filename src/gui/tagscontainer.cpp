@@ -350,14 +350,15 @@ void TagsContainer::showContextMenu(QPoint pos) {
     auto menu      = std::make_unique<QMenu>();
     auto colorMenu = std::make_unique<QMenu>(tr("Change the color"), this);
     auto def       = std::make_unique<QAction>(tr("default color"));
-    auto red       = std::make_unique<QAction>(QIcon(":images/color_red"), tr("red"));
     auto green     = std::make_unique<QAction>(QIcon(":images/color_green"), tr("green"));
-    auto blue      = std::make_unique<QAction>(QIcon(":images/color_blue"), tr("blue"));
     auto yellow    = std::make_unique<QAction>(QIcon(":images/color_yellow"), tr("yellow"));
+    auto orange    = std::make_unique<QAction>(QIcon(":images/color_orange"), tr("orange"));
+    auto red       = std::make_unique<QAction>(QIcon(":images/color_red"), tr("red"));
     auto magenta   = std::make_unique<QAction>(QIcon(":images/color_magenta"), tr("magenta"));
+    auto blue      = std::make_unique<QAction>(QIcon(":images/color_blue"), tr("blue"));
     auto cyan      = std::make_unique<QAction>(QIcon(":images/color_cyan"), tr("cyan"));
     colorMenu->addActions(
-        { def.get(), red.get(), green.get(), blue.get(), yellow.get(), magenta.get(), cyan.get() });
+        { def.get(), green.get(), yellow.get(), orange.get(), red.get(), magenta.get(),  blue.get(), cyan.get() });
     menu->addMenu(colorMenu.get());
 
     if (!it->isSpecial())
@@ -373,6 +374,7 @@ void TagsContainer::showContextMenu(QPoint pos) {
     connect(yellow.get(), &QAction::triggered, this, [it] { it->setColor("yellow"); });
     connect(magenta.get(), &QAction::triggered, this, [it] { it->setColor("magenta"); });
     connect(cyan.get(), &QAction::triggered, this, [it] { it->setColor("cyan"); });
+    connect(orange.get(), &QAction::triggered, this, [it] { it->setColor("orange"); });
 
     menu->exec(mapToGlobal(pos));
 }
