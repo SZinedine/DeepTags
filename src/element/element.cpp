@@ -14,6 +14,13 @@ Element::Element(const Element& other) {
 
 void Element::setup() {
     m_header = be::getHeader(m_path);
+    if (m_header.empty()) {
+        setTitle(m_path.stem().string());
+        setPinned(false);
+        setFavorited(false);
+        setDeleted(false);
+        return;
+    }
     setTitle(be::getTitle(m_header));
     loadTags(m_header);
     setPinned(be::isPinned(m_header));
@@ -25,7 +32,6 @@ ElementsList Element::constructElementList(const PathsList& f) {
     ElementsList elems;
     for (const fs::path& p : f) {
         if (!be::isMD(p)) continue;
-        if (!be::hasHeader(p)) continue;
         elems.push_back(new Element(p));
     }
     return elems;
@@ -58,7 +64,6 @@ void Element::addTagsLine(const StringList& list) {
     std::string line = be::makeTagsLine(list);
     be::addTagsItem(line, m_path);
     loadTags();
-    reloadHeader();
 }
 
 

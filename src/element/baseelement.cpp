@@ -187,12 +187,17 @@ PathsList BaseElement::fetch_files(const std::string& dir) {
 StringList BaseElement::getHeader(const fs::path& path) {
     StringList    header;
     std::ifstream myfile(path);
-    if (!myfile.is_open())
+    if (!myfile.is_open()) {
         std::cerr << "the following file failed to open:\n"
                   << "    " << path << "\n";
+        return header;
+    }
 
     int         headerMark = 0;    // how many times "---" have been encountered before stopping (2)
     std::string line;
+    std::getline(myfile, line);
+    if (line == "---") headerMark++;    // stop if the first line doesn't start with "---"
+    else return header;
     while (std::getline(myfile, line)) {
         if (headerMark == 2) break;    // break if we finished the header
         if (line == "---")
@@ -251,7 +256,7 @@ void BaseElement::createHeader(const fs::path& file, const std::string& title) {
     StringList header;
     header.push_back("---");
     header.push_back(makeTitleLine(title));
-    header.push_back("---");
+    header.push_back("---\n");
 
     StringList entire_file = getFileContent(file);
     for (const std::string& i : entire_file) header.push_back(i);
@@ -354,7 +359,8 @@ bool BaseElement::hasHeader(const fs::path& fi) {
 
 
 void BaseElement::addItemToHeader(const std::string& item, const fs::path& path) {
-    if (!hasHeader(path)) return;
+    if (!hasHeader(path)) 
+        createHeader(path, path.stem().string());
 
     StringList entire_file = getFileContent(path);
     StringList newFile;

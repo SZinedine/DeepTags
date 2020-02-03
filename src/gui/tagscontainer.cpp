@@ -357,8 +357,8 @@ void TagsContainer::showContextMenu(QPoint pos) {
     auto magenta   = std::make_unique<QAction>(QIcon(":images/color_magenta"), tr("magenta"));
     auto blue      = std::make_unique<QAction>(QIcon(":images/color_blue"), tr("blue"));
     auto cyan      = std::make_unique<QAction>(QIcon(":images/color_cyan"), tr("cyan"));
-    colorMenu->addActions(
-        { def.get(), green.get(), yellow.get(), orange.get(), red.get(), magenta.get(),  blue.get(), cyan.get() });
+    colorMenu->addActions({ def.get(), green.get(), yellow.get(), orange.get(), red.get(),
+                            magenta.get(), blue.get(), cyan.get() });
     menu->addMenu(colorMenu.get());
 
     if (!it->isSpecial())
