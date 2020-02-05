@@ -244,10 +244,16 @@ void TagsWidget::del() {
 void TagsWidget::persistentEditor() {
     auto it = currentItem();
     if (!it) return;
+    // QListWidget::isPersistentEditorOpen exists only since Qt 5.10
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     if (isPersistentEditorOpen(it))
         closePersistentEditor(it);
     else {
         openPersistentEditor(currentItem());
         editItem(currentItem());
     }
+#else
+    openPersistentEditor(currentItem());
+    editItem(currentItem());
+#endif
 }

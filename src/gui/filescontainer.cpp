@@ -73,8 +73,8 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     FileItem* real_it = real(item);
 
     auto menu = std::make_unique<QMenu>();
-    auto pin  = std::make_unique<QAction>(tr("Pin to Top"));
-    auto fav  = std::make_unique<QAction>(tr("Favorite"));
+    auto pin  = std::make_unique<QAction>(tr("Pin to Top"), this);
+    auto fav  = std::make_unique<QAction>(tr("Favorite"), this);
     pin->setShortcut(QKeySequence("Ctrl+p"));
     fav->setShortcut(QKeySequence("Ctrl+s"));
     pin->setCheckable(true);

@@ -349,14 +349,14 @@ void TagsContainer::showContextMenu(QPoint pos) {
 
     auto menu      = std::make_unique<QMenu>();
     auto colorMenu = std::make_unique<QMenu>(tr("Change the color"), this);
-    auto def       = std::make_unique<QAction>(tr("default color"));
-    auto green     = std::make_unique<QAction>(QIcon(":images/color_green"), tr("green"));
-    auto yellow    = std::make_unique<QAction>(QIcon(":images/color_yellow"), tr("yellow"));
-    auto orange    = std::make_unique<QAction>(QIcon(":images/color_orange"), tr("orange"));
-    auto red       = std::make_unique<QAction>(QIcon(":images/color_red"), tr("red"));
-    auto magenta   = std::make_unique<QAction>(QIcon(":images/color_magenta"), tr("magenta"));
-    auto blue      = std::make_unique<QAction>(QIcon(":images/color_blue"), tr("blue"));
-    auto cyan      = std::make_unique<QAction>(QIcon(":images/color_cyan"), tr("cyan"));
+    auto def       = std::make_unique<QAction>(tr("default color"), this);
+    auto green     = std::make_unique<QAction>(QIcon(":images/color_green"), tr("green"), this);
+    auto yellow    = std::make_unique<QAction>(QIcon(":images/color_yellow"), tr("yellow"), this);
+    auto orange    = std::make_unique<QAction>(QIcon(":images/color_orange"), tr("orange"), this);
+    auto red       = std::make_unique<QAction>(QIcon(":images/color_red"), tr("red"), this);
+    auto magenta   = std::make_unique<QAction>(QIcon(":images/color_magenta"), tr("magenta"), this);
+    auto blue      = std::make_unique<QAction>(QIcon(":images/color_blue"), tr("blue"), this);
+    auto cyan      = std::make_unique<QAction>(QIcon(":images/color_cyan"), tr("cyan"), this);
     colorMenu->addActions({ def.get(), green.get(), yellow.get(), orange.get(), red.get(),
                             magenta.get(), blue.get(), cyan.get() });
     menu->addMenu(colorMenu.get());
