@@ -1,5 +1,4 @@
 #include "baseelement.h"
-
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -49,13 +48,21 @@ bool BaseElement::isDeleted(const StringList& header) {
 }
 
 
-std::string BaseElement::getTitle(const fs::path& path) { return getTitle(getHeader(path)); }
+std::string BaseElement::getTitle(const fs::path& path) {
+    return getTitle(getHeader(path));
+}
 
-bool BaseElement::isPinned(const fs::path& path) { return isPinned(getHeader(path)); }
+bool BaseElement::isPinned(const fs::path& path) {
+    return isPinned(getHeader(path));
+}
 
-bool BaseElement::isFavorited(const fs::path& path) { return isFavorited(getHeader(path)); }
+bool BaseElement::isFavorited(const fs::path& path) {
+    return isFavorited(getHeader(path));
+}
 
-bool BaseElement::isDeleted(const fs::path& path) { return isDeleted(getHeader(path)); }
+bool BaseElement::isDeleted(const fs::path& path) {
+    return isDeleted(getHeader(path));
+}
 
 
 // used by all other functions that search for a key in a header
@@ -113,7 +120,9 @@ std::string BaseElement::getValue(std::string line) {
 }
 
 
-std::string BaseElement::parseString(const std::string& line) { return getValue(line); }
+std::string BaseElement::parseString(const std::string& line) {
+    return getValue(line);
+}
 
 
 bool BaseElement::parseBool(const std::string& line) {
@@ -185,7 +194,7 @@ PathsList BaseElement::fetch_files(const std::string& dir) {
 
 
 StringList BaseElement::getHeader(const fs::path& path) {
-    StringList    header;
+    StringList header;
     std::ifstream myfile(path);
     if (!myfile.is_open()) {
         std::cerr << "the following file failed to open:\n"
@@ -193,17 +202,19 @@ StringList BaseElement::getHeader(const fs::path& path) {
         return header;
     }
 
-    int         headerMark = 0;    // how many times "---" have been encountered before stopping (2)
+    int headerMark = 0;   // how many times "---" have been encountered before stopping (2)
     std::string line;
     std::getline(myfile, line);
-    if (line == "---") headerMark++;    // stop if the first line doesn't start with "---"
-    else return header;
+    if (line == "---")
+        headerMark++;   // stop if the first line doesn't start with "---"
+    else
+        return header;
     while (std::getline(myfile, line)) {
-        if (headerMark == 2) break;    // break if we finished the header
+        if (headerMark == 2) break;   // break if we finished the header
         if (line == "---")
             headerMark++;
         else
-            header.push_back(line);    // add to the vector if the current line is metadata
+            header.push_back(line);   // add to the vector if the current line is metadata
     }
     myfile.close();
 
@@ -223,8 +234,8 @@ int BaseElement::nbItemsInHeader(const fs::path& fi) {
         std::cerr << "the following file failed to open:\n"
                   << "    " << fi << "\n";
     std::string line;
-    int         headerItems  = 0;    // lines between the header markers
-    int         headerMarker = 0;
+    int headerItems  = 0;   // lines between the header markers
+    int headerMarker = 0;
     while (std::getline(myfile, line)) {
         if (headerMarker == 2) break;
         if (headerMarker == 1) headerItems++;
@@ -238,7 +249,7 @@ int BaseElement::nbItemsInHeader(const fs::path& fi) {
 StringList BaseElement::split(const std::string& s, const std::string& delimiter) {
     std::size_t pos_start = 0, pos_end, delim_len = delimiter.length();
     std::string token;
-    StringList  res;
+    StringList res;
 
     while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
         token     = s.substr(pos_start, pos_end - pos_start);
@@ -320,14 +331,14 @@ std::string BaseElement::composeArrayItem(std::string key, const StringList& val
 bool BaseElement::validTagToAdd(const std::string& tag) {
     // test if reserved tags
     if (tag.empty()) return false;
-    for (const std::string& s : {"All Notes", "Notebooks", "Favorite", "Untagged", "Trash"})
+    for (const std::string& s : { "All Notes", "Notebooks", "Favorite", "Untagged", "Trash" })
         if (s == tag) {
             std::cerr << "Error. Cannot add a basic tag to a file\n";
             return false;
         }
 
     // forbidden characters (,/)
-    auto hasChar = [tag](const std::string& c) {    // has one of the characters in the string
+    auto hasChar = [tag](const std::string& c) {   // has one of the characters in the string
         for (const auto& i : c)
             if (tag.find(i) != std::string::npos) return true;
         return false;
@@ -346,8 +357,8 @@ bool BaseElement::hasHeader(const fs::path& fi) {
                   << "    " << fi << "\n";
 
     std::string line;
-    int         headerItems  = 0;    // lines between the header markers
-    int         headerMarker = 0;
+    int headerItems  = 0;   // lines between the header markers
+    int headerMarker = 0;
     while (std::getline(myfile, line)) {
         if (headerMarker == 1 && line != "---") headerItems++;
         if (line == "---") headerMarker++;
@@ -359,8 +370,7 @@ bool BaseElement::hasHeader(const fs::path& fi) {
 
 
 void BaseElement::addItemToHeader(const std::string& item, const fs::path& path) {
-    if (!hasHeader(path)) 
-        createHeader(path, path.stem().string());
+    if (!hasHeader(path)) createHeader(path, path.stem().string());
 
     StringList entire_file = getFileContent(path);
     StringList newFile;
@@ -514,7 +524,7 @@ bool BaseElement::replace(const std::string& old_str, const std::string& new_str
 StringList BaseElement::getFileContent(const fs::path& file) {
     std::ifstream f(file);
 
-    StringList  entire_file;
+    StringList entire_file;
     std::string line;
     while (std::getline(f, line)) entire_file.push_back(line);
     f.close();

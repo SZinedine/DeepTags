@@ -1,24 +1,23 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QMenu>
 #include <QAction>
-#include <QPushButton>
 #include <QCloseEvent>
 #include <QLabel>
-#include <QSplitter>
 #include <QLineEdit>
-#include "tagscontainer.h"
-#include "filescontainer.h"
+#include <QMainWindow>
+#include <QMenu>
+#include <QPushButton>
+#include <QSplitter>
 #include <iostream>
+#include "filescontainer.h"
+#include "tagscontainer.h"
 
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent=nullptr);
+    MainWindow(QWidget* parent = nullptr);
 
 private:
     void setupCentral();
@@ -51,12 +50,12 @@ private:
      */
     void newFile();
     /**
-     *  called everytime the user write in the search LineEdit. 
+     *  called everytime the user write in the search LineEdit.
      *  it searches in titles of loaded files and displays them
      */
     void search();
     void changeNumberOfFilesLabel();
-    inline void openElements(const ElementsList& els) { tagsContainer->addElements(els);}
+    inline void openElements(const ElementsList& els) { tagsContainer->addElements(els); }
     void about();
     void closeEvent(QCloseEvent* event) override;
     void disableSomeWidgets(const bool& disable);
@@ -67,11 +66,11 @@ signals:
     void started();
 
 private:
-    TagsContainer *tagsContainer;
+    TagsContainer* tagsContainer;
     FilesContainer* filesContainer;
     QSplitter* splitter;
     QLineEdit* searchLineEdit;
-        QAction* eraseSearch;
+    QAction* eraseSearch;
     QPushButton* expandButton;
     QPushButton* collapseButton;
     QLabel* nbFiles;
@@ -84,9 +83,9 @@ private:
     QAction* reloadElementsAction;
     QAction* setMdReaderAction;
     QMenu* setStyleMenu;
-        QActionGroup* themesActionGroup;
+    QActionGroup* themesActionGroup;
     QAction* aboutAction;
 };
 
 
-#endif // MAINWINDOW_H
+#endif   // MAINWINDOW_H

@@ -1,7 +1,5 @@
 #include "tagitem.h"
-
 #include <QApplication>
-
 #include "settings.h"
 
 
@@ -14,7 +12,9 @@ TagItem::TagItem(const QString& label, const QString& icon, bool special)
     if (!icon.isEmpty()) setIcon(0, QIcon(icon));
 }
 
-TagItem::~TagItem() { delete m_elements; }
+TagItem::~TagItem() {
+    delete m_elements;
+}
 
 
 void TagItem::removeElement(Element* element) {

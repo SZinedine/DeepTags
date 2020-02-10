@@ -1,5 +1,4 @@
 #include "tagscontainer.h"
-
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QDebug>
@@ -7,7 +6,6 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <iostream>
-
 #include "settings.h"
 #include "tagitem.h"
 
@@ -24,7 +22,9 @@ TagsContainer::TagsContainer(QWidget* parent) : QTreeWidget(parent), prnt(nullpt
     setDropIndicatorShown(true);
 }
 
-TagsContainer::~TagsContainer() { deleteAllItems(); }
+TagsContainer::~TagsContainer() {
+    deleteAllItems();
+}
 
 void TagsContainer::deleteAllItems() {
     auto lst = real(topLevelItem(find(cnv_allNotes, this)))->elements();
@@ -70,7 +70,7 @@ void TagsContainer::selected() {
         return true;
     };
 
-    QVector<Element*>  res;
+    QVector<Element*> res;
     QVector<Element*>* first = real(lst.at(0))->elements();
     for (Element* e : *first)
         if (shared(e)) res.push_back(e);
@@ -81,8 +81,8 @@ void TagsContainer::selected() {
 
 int TagsContainer::find(const QString& label, QTreeWidgetItem* parent) {
     for (int i = 0; i < parent->childCount(); i++)
-        if ((real(parent->child(i)))->label() == label) return i;    // index of the found element
-    return -1;                                                       // it doesn't exist
+        if ((real(parent->child(i)))->label() == label) return i;   // index of the found element
+    return -1;                                                      // it doesn't exist
 }
 
 
@@ -95,7 +95,7 @@ int TagsContainer::find(const QString& label, QTreeWidget* parent) {
 
 void TagsContainer::addElements(const ElementsList& elements) {
     emit loadingFiles();
-    int  i = 0;
+    int i = 0;
     for (Element* e : elements) {
         addElement(e);
 
@@ -136,7 +136,7 @@ void TagsContainer::addElement(Element* element) {
         return;
     }
     if (alreadyAdded(element)) return;
-    addToSpecificTopLevel(element, cnv_allNotes);    // add to All Notes if it isn't there
+    addToSpecificTopLevel(element, cnv_allNotes);   // add to All Notes if it isn't there
 
     if (element->favorited()) addToSpecificTopLevel(element, cnv_favorite);
     if (element->untagged()) {
@@ -148,12 +148,12 @@ void TagsContainer::addElement(Element* element) {
 
     for (const StringList& chain : tags) {
         for (std::string::size_type level = 0; level < chain.size(); level++) {
-            const QString particle(chain.at(level).c_str());    // item name to be treated
-            int           index = (level == 0) ? find(particle, this)
-                                     : find(particle, prnt);    // index 0 == search fo a top level
+            const QString particle(chain.at(level).c_str());   // item name to be treated
+            int index = (level == 0) ? find(particle, this)
+                                     : find(particle, prnt);   // index 0 == search fo a top level
 
             switch (index) {
-            case -1: {    // create the tag
+            case -1: {   // create the tag
                 auto* newItem = new TagItem(particle);
                 newItem->addFile(element);
                 if (level == 0)
@@ -163,7 +163,7 @@ void TagsContainer::addElement(Element* element) {
                 prnt = newItem;
                 break;
             }
-            default:    // append Element to an existing tag
+            default:   // append Element to an existing tag
                 // grab a topLevelItem or a child Item depending on the level of deepness (level
                 // variable)
                 QTreeWidgetItem* foundItem =
@@ -181,7 +181,7 @@ void TagsContainer::addElement(Element* element) {
 
 void TagsContainer::addToSpecificTopLevel(Element* e, const QString& name) {
     int index = find(name, this);
-    if (index == -1) return;    // abort if the item isn't found
+    if (index == -1) return;   // abort if the item isn't found
     real(topLevelItem(index))->addFile(e);
 }
 
@@ -199,7 +199,7 @@ void TagsContainer::sort() {
 }
 
 bool TagsContainer::alreadyAdded(Element* element) {
-    return (real(topLevelItem(0)))->contains(element);    // search inside All notes
+    return (real(topLevelItem(0)))->contains(element);   // search inside All notes
 }
 
 
@@ -234,7 +234,7 @@ void TagsContainer::removeEmptyItems() {
 }
 
 void TagsContainer::toTrash(Element* element) {
-    int      index = find(tr("Trash"), this);
+    int index = find(tr("Trash"), this);
     TagItem* trash;
 
     if (index == -1) {
@@ -293,7 +293,7 @@ void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
     TagItem* item = real(currentItem());
     if (!item) return;
 
-    TagItem*    i = item;
+    TagItem* i = item;
     QStringList strl;
     while (true) {
         if (!i) break;
@@ -344,7 +344,7 @@ void TagsContainer::mousePressEvent(QMouseEvent* event) {
 void TagsContainer::showContextMenu(QPoint pos) {
     QTreeWidgetItem* item = itemAt(pos);
     if (!item) return;
-    if (item->parent()) return;    // only topLevel items
+    if (item->parent()) return;   // only topLevel items
     TagItem* it = real(item);
 
     auto menu      = std::make_unique<QMenu>();

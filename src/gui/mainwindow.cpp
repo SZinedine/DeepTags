@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-
 #include <QApplication>
 #include <QFileDialog>
 #include <QGridLayout>
@@ -12,7 +11,6 @@
 #include <QShortcut>
 #include <QStatusBar>
 #include <QVBoxLayout>
-
 #include "../element/element.h"
 #include "elementdialog.h"
 #include "readersdialog.h"
@@ -257,7 +255,7 @@ void MainWindow::reloadContent() {
 
 
 void MainWindow::loadDataDirectoryContent() {
-    const PathsList    paths    = be::fetch_files(Settings::dataDirectory().toStdString());
+    const PathsList paths       = be::fetch_files(Settings::dataDirectory().toStdString());
     const ElementsList elements = Element::constructElementList(paths);
     if (!elements.empty()) openElements(elements);
 }
@@ -291,7 +289,7 @@ void MainWindow::search() {
     for (auto& s : keywords) s = s.simplified().toLower();
 
     auto* lst = TagsContainer::real(tagsContainer->topLevelItem(0))->elements();
-    auto  res = std::make_unique<QVector<Element*>>();
+    auto res  = std::make_unique<QVector<Element*>>();
 
     auto contains = [&](const QString& title) {
         for (const QString& s : keywords)

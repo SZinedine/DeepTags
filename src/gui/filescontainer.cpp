@@ -1,5 +1,4 @@
 #include "filescontainer.h"
-
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QInputDialog>
@@ -7,7 +6,6 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <cstdlib>
-
 #include "elementdialog.h"
 #include "settings.h"
 #define real(item) (static_cast<FileItem*>(item))
@@ -23,7 +21,9 @@ FilesContainer::FilesContainer(QWidget* parent) : QListWidget(parent) {
     setIconSize(QSize(35, 20));
 }
 
-FilesContainer::~FilesContainer() { clearView(); }
+FilesContainer::~FilesContainer() {
+    clearView();
+}
 
 
 void FilesContainer::addFiles(QVector<Element*>* items) {
@@ -60,7 +60,7 @@ void FilesContainer::openFile_(QListWidgetItem* item, const QString& editor) {
 void FilesContainer::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::RightButton) {
         QPoint qp(event->pos());
-        setCurrentItem(itemAt(qp));    // select when right clicked
+        setCurrentItem(itemAt(qp));   // select when right clicked
         emit rightClick(qp);
     } else
         QListWidget::mousePressEvent(event);
@@ -87,7 +87,7 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
 
     // list of editors in a sub menu "open with..."
     QStringList editor_list = Settings::mdEditors();
-    auto        openWith    = std::make_unique<QMenu>(tr("Open with"), this);
+    auto openWith           = std::make_unique<QMenu>(tr("Open with"), this);
     for (auto& i : editor_list) {
         auto edac = new QAction(i, openWith.get());
         openWith->addAction(edac);
@@ -167,7 +167,7 @@ void FilesContainer::sortAndPin() {
         if (real(item(i))->pinned()) pinned.push_back(i);
 
     int index = 0;
-    for (const int& i : pinned) {    // take the items and pin them
+    for (const int& i : pinned) {   // take the items and pin them
         QListWidgetItem* item = takeItem(i);
         insertItem(index, item);
         index++;
@@ -178,7 +178,7 @@ void FilesContainer::sortAndPin() {
 void FilesContainer::moveToTrash(QListWidgetItem* item) {
     if (!item) return;
     auto e = real(item)->element();
-    if (e->deleted()) return;    // if it is deleted, it is already in Trash
+    if (e->deleted()) return;   // if it is deleted, it is already in Trash
     e->changeDeleted(true);
     emit elementChanged(e);
     delete takeItem(row(item));
@@ -220,7 +220,7 @@ void FilesContainer::dragMoveEvent(QDragMoveEvent* event) {
 void FilesContainer::dropEvent(QDropEvent* event) {
     if (event->mimeData()->hasText()) {
         if (count() == 0) return;
-        QPoint    pos  = event->pos();
+        QPoint pos     = event->pos();
         FileItem* item = real(itemAt(pos));
         if (!item) return;
         setCurrentItem(item);
@@ -259,8 +259,8 @@ void FilesContainer::overrideTags(const StringList& tags, FileItem* item) {
 
 
 void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
-    const QString lb  = tr("Write the new Tag to append");
-    QString       tag = QInputDialog::getText(this, tr("Append New Tag"), lb, QLineEdit::Normal);
+    const QString lb = tr("Write the new Tag to append");
+    QString tag      = QInputDialog::getText(this, tr("Append New Tag"), lb, QLineEdit::Normal);
     if (tag.isEmpty()) return;
     appendTagToItem(tag, real(item));
     real(item)->element()->reload();
@@ -270,10 +270,10 @@ void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
 
 void FilesContainer::editElement(QListWidgetItem* item) {
     if (!item) return;
-    FileItem*  it   = real(item);
-    Element*   e    = it->element();
-    auto       edit = std::make_unique<ElementDialog>(e, this);
-    const auto out  = edit->exec();
+    FileItem* it   = real(item);
+    Element* e     = it->element();
+    auto edit      = std::make_unique<ElementDialog>(e, this);
+    const auto out = edit->exec();
     if (out == ElementDialog::Rejected) return;
 
     e->changeTitle(edit->title());

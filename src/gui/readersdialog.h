@@ -2,16 +2,16 @@
 #define READERSDIALOG_H
 
 #include <QDialog>
-#include <QListWidget>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QDialogButtonBox>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QPushButton>
 
 
 class ReadersDialog : public QDialog {
     Q_OBJECT
 public:
-    ReadersDialog(QWidget* parent=nullptr);
+    ReadersDialog(QWidget* parent = nullptr);
     void setup();
     void accept_();
     void addItem();

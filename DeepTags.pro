@@ -9,7 +9,9 @@ TARGET = DeepTags
 TEMPLATE = app
 DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x060000
 CONFIG += c++17 -lstdc++fs -pthread
+CONFIG -= c++14
 QMAKE_CXXFLAGS += -std=c++17 -lstdc++fs
+QMAKE_CXXFLAGS -= -std=gnu++1z
 TRANSLATIONS = locale/deeptags_fr.ts
 RC_ICONS = ./images/DeepTags.ico
 SUBDIRS = src

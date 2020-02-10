@@ -1,10 +1,10 @@
 #ifndef BaseElement_H
 #define BaseElement_H
 
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <filesystem>
 
 namespace fs = std::filesystem;
 
@@ -12,13 +12,13 @@ class Element;
 typedef std::vector<std::string> StringList;
 typedef std::vector<fs::path> PathsList;
 typedef std::vector<Element*> ElementsList;
-typedef std::vector< std::vector<std::string> > Tags;
+typedef std::vector<std::vector<std::string> > Tags;
 
 namespace BaseElement {
 
     void createNewFile(const fs::path& p, std::string title);
     /**
-     * scans all the files inside a directory 
+     * scans all the files inside a directory
      * and returns the markdown files a vector of fs::path
      */
     PathsList fetch_files(const std::string& dir);
@@ -31,7 +31,7 @@ namespace BaseElement {
     /**
      * verify if the file has a markdown extension
      */
-    bool isMD(const fs::path &f);
+    bool isMD(const fs::path& f);
     /**
      * how many header items a file has
      */
@@ -67,17 +67,21 @@ namespace BaseElement {
      * look for a string from its key in the header
      */
     std::string findLine(const std::string& key, const StringList& header);
-    inline std::string findTitle(const StringList& header) { return findLine("title", header);}
-    inline std::string findPinned(const StringList& header) { return findLine("pinned", header);}
-    inline std::string findFavorited(const StringList& header){ return findLine("favorited", header);}
-    inline std::string findDeleted(const StringList& header) { return findLine("deleted", header);}
-    inline std::string findTags(const StringList& header) { return findLine("tags", header);}
+    inline std::string findTitle(const StringList& header) { return findLine("title", header); }
+    inline std::string findPinned(const StringList& header) { return findLine("pinned", header); }
+    inline std::string findFavorited(const StringList& header) {
+        return findLine("favorited", header);
+    }
+    inline std::string findDeleted(const StringList& header) { return findLine("deleted", header); }
+    inline std::string findTags(const StringList& header) { return findLine("tags", header); }
     /**
      * Check if a particular key exist in the header
      */
     inline bool hasTitleKey(const StringList& header) { return !(findTitle(header).empty()); }
     inline bool hasPinnedKey(const StringList& header) { return !(findPinned(header).empty()); }
-    inline bool hasFavoritedKey(const StringList& header) { return !(findFavorited(header).empty()); }
+    inline bool hasFavoritedKey(const StringList& header) {
+        return !(findFavorited(header).empty());
+    }
     inline bool hasDeletedKey(const StringList& header) { return !(findDeleted(header).empty()); }
     inline bool hasTagsKey(const StringList& header) { return !findTags(header).empty(); }
     /**
@@ -100,15 +104,15 @@ namespace BaseElement {
      * prepend a header to a file
      * with a title line
      */
-    void createHeader(const fs::path& file, const std::string& title="untitled");
+    void createHeader(const fs::path& file, const std::string& title = "untitled");
     /**
      * receive: "this is a title"
      * returns: "title: this is a title"
      */
-    std::string makeTitleLine(std::string title="untitled");
-    std::string makePinnedLine(const bool& pinned=false);
-    std::string makeFavoritedLine(const bool& fav=false);
-    std::string makeDeletedLine(const bool& del=false);
+    std::string makeTitleLine(std::string title = "untitled");
+    std::string makePinnedLine(const bool& pinned = false);
+    std::string makeFavoritedLine(const bool& fav = false);
+    std::string makeDeletedLine(const bool& del = false);
     /**
      * receives: ["shallow/deep", "something/nothing"]
      * returns : "tags: [shallow/deep, something/nothing]"
@@ -121,7 +125,7 @@ namespace BaseElement {
     std::string composeStringItem(std::string key, std::string value);
     std::string composeBoolItem(std::string key, const bool& value);
     std::string composeArrayItem(std::string key, const StringList& value);
-    
+
     /**
      * check if the provided tags:
      *  - aren't the basic onces
@@ -143,7 +147,7 @@ namespace BaseElement {
      * "/tag/ " -> "tag"
      */
     bool hasHeader(const fs::path& fi);
-    
+
     /***********************************************************************/
     /************ Insert an item into the header of a file *****************/
     /***********************************************************************/
@@ -175,7 +179,7 @@ namespace BaseElement {
      * remove trailing spaces
      * found in: https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
      */
-    void trim(std::string &s);
+    void trim(std::string& s);
     [[nodiscard]] std::string trim(const std::string& s);
     /**
      * remove the quotations around strings
@@ -206,23 +210,22 @@ namespace BaseElement {
      * function found in:
           https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
     */
-    StringList split(const std::string& s, const std::string& delimiter="/");
- 
+    StringList split(const std::string& s, const std::string& delimiter = "/");
 
 
     /**
      * Delete some variations of functions to prevent errors
      */
-    std::string makePinnedLine(const std::string& pinned) = delete;
-    std::string makePinnedLine(const char* pinned) = delete;
-    std::string makeDeletedLine(const std::string& fav) = delete;
-    std::string makeDeletedLine(const char* fav) = delete;
-    std::string makeFavoritedLine(const std::string& fav) = delete;
-    std::string makeFavoritedLine(const char* fav) = delete;
+    std::string makePinnedLine(const std::string& pinned)                  = delete;
+    std::string makePinnedLine(const char* pinned)                         = delete;
+    std::string makeDeletedLine(const std::string& fav)                    = delete;
+    std::string makeDeletedLine(const char* fav)                           = delete;
+    std::string makeFavoritedLine(const std::string& fav)                  = delete;
+    std::string makeFavoritedLine(const char* fav)                         = delete;
     std::string composeBoolItem(std::string key, const std::string& value) = delete;
-    std::string composeBoolItem(std::string key, const char* value) = delete;
+    std::string composeBoolItem(std::string key, const char* value)        = delete;
 
 
-}
+}   // namespace BaseElement
 
-#endif // BaseElement_H
+#endif   // BaseElement_H

@@ -1,12 +1,10 @@
 #include "elementdialog.h"
-
 #include <QFileDialog>
 #include <QFormLayout>
 #include <QKeySequence>
 #include <QMessageBox>
 #include <QRegExp>
 #include <QShortcut>
-
 #include "settings.h"
 
 ElementDialog::ElementDialog(QWidget* parent) : QDialog(parent), m_element(nullptr) {
@@ -121,8 +119,8 @@ void ElementDialog::save() {
     }
 
     const QString dataDir = Settings::dataDirectory();
-    QString       filename;
-    int           n = 0;
+    QString filename;
+    int n = 0;
 
 start:
     filename = m_title->text();
@@ -148,7 +146,9 @@ start:
 }
 
 
-StringList ElementDialog::tags() const { return m_tags->tags(); }
+StringList ElementDialog::tags() const {
+    return m_tags->tags();
+}
 
 void ElementDialog::formatFilename(QString& str) {
     str                 = str.simplified();
@@ -179,7 +179,7 @@ void ElementDialog::accept_() {
     }
     QString currentCompletePath = m_path->text();
     QString newFilePath;
-    int     n = 0;
+    int n = 0;
 
 start:
     newFilePath = m_title->text();
@@ -208,7 +208,9 @@ TagsWidget::TagsWidget(QWidget* parent) : QListWidget(parent) {
 }
 
 
-TagsWidget::TagsWidget(StringList labels, QWidget* parent) : TagsWidget(parent) { setTags(labels); }
+TagsWidget::TagsWidget(StringList labels, QWidget* parent) : TagsWidget(parent) {
+    setTags(labels);
+}
 
 void TagsWidget::closeAllPersistentEditors() {
     for (auto i = 0; i < count(); i++) closePersistentEditor(item(i));
@@ -244,7 +246,7 @@ void TagsWidget::del() {
 void TagsWidget::persistentEditor() {
     auto it = currentItem();
     if (!it) return;
-    // QListWidget::isPersistentEditorOpen exists only since Qt 5.10
+        // QListWidget::isPersistentEditorOpen exists only since Qt 5.10
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     if (isPersistentEditorOpen(it))
         closePersistentEditor(it);

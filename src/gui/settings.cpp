@@ -1,11 +1,9 @@
 #include "settings.h"
-
 #include <QApplication>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <thread>
-
 #include "../element/element.h"
 #include "readersdialog.h"
 
@@ -44,7 +42,7 @@ QStringList Settings::getStringList(const QString& group, const QString& label) 
 void Settings::saveUiSettings(const QSize& windowSize, const QByteArray& splitterState) {
     QSettings s;
     s.beginGroup("main");
-    s.setValue("window_size", QVariant(windowSize));    // size of the window
+    s.setValue("window_size", QVariant(windowSize));   // size of the window
     s.setValue("splitter_size", splitterState);
     s.endGroup();
 }
@@ -79,13 +77,17 @@ void Settings::saveEditors(const QStringList& lst) {
         saveMainEditor("");
 }
 
-QStringList Settings::mdEditors() { return getStringList("markdown_editors", "list"); }
+QStringList Settings::mdEditors() {
+    return getStringList("markdown_editors", "list");
+}
 
 void Settings::saveMainEditor(const QString& editor) {
     saveString("markdown_editors", "main", editor);
 }
 
-QString Settings::mainMdEditor() { return getString("markdown_editors", "main"); }
+QString Settings::mainMdEditor() {
+    return getString("markdown_editors", "main");
+}
 
 
 bool Settings::setDataDirectory() {
@@ -158,11 +160,11 @@ QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
     QStringList raw = getRawRecentlyOpenedFiles();
     if (raw.isEmpty()) return nullptr;
 
-    for (const QString& path : raw) {    // qaction data = path
+    for (const QString& path : raw) {   // qaction data = path
         if (!fs::exists(fs::path(path.toStdString().c_str()))) continue;
-        Element e(fs::path(path.toStdString()));    // make it more efficient by using low level api
+        Element e(fs::path(path.toStdString()));   // make it more efficient by using low level api
         QString title(e.title().c_str());
-        auto    action = new QAction(title, menu);
+        auto action = new QAction(title, menu);
         action->setToolTip(path);
         action->setData(QVariant(path));
         menu->addAction(action);
@@ -192,7 +194,7 @@ QStringList Settings::getRawRecentlyOpenedFiles() {
 
 void Settings::openFileAction(QAction* action) {
     QVariant data = action->data();
-    if (data.isNull()) return;    // in case clear is triggered
+    if (data.isNull()) return;   // in case clear is triggered
     fs::path p(action->data().toString().toStdString().c_str());
     openFile("", p, action->parentWidget());
 }
@@ -254,7 +256,7 @@ void Settings::setTagItemColor(const QString& item, const QString& color) {
 
 QHash<QString, QVariant> Settings::getTagItemColor() {
     QHash<QString, QVariant> map;
-    QSettings                s;
+    QSettings s;
     s.beginGroup("main");
     map = s.value("item_color").toHash();
     s.endGroup();
@@ -283,6 +285,10 @@ void Settings::setTagUnpinned(const QString& item) {
     saveStringList("main", "item_pinned", lst);
 }
 
-QStringList Settings::getTagPinned() { return getStringList("main", "item_pinned"); }
+QStringList Settings::getTagPinned() {
+    return getStringList("main", "item_pinned");
+}
 
-void Settings::clearPinnedItems() { saveStringList("main", "item_pinned", {}); }
+void Settings::clearPinnedItems() {
+    saveStringList("main", "item_pinned", {});
+}

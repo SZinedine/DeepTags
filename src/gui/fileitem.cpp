@@ -1,5 +1,4 @@
 #include "fileitem.h"
-
 #include "filescontainer.h"
 
 FileItem::FileItem(FilesContainer* parent)

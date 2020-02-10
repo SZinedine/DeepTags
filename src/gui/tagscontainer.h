@@ -1,22 +1,21 @@
 #ifndef TAGSCONTAINER_H
 #define TAGSCONTAINER_H
 
-#include <QWidget>
 #include <QTreeWidget>
+#include <QWidget>
 #include "tagitem.h"
 
 // convinient variables
 static const std::vector<QString> basicTags = { "All Notes", "Notebooks", "Favorite", "Untagged" };
-static const QString& cnv_allNotes     = basicTags[0];
-static const QString& cnv_notebooks    = basicTags[1];
-static const QString& cnv_favorite     = basicTags[2];
-static const QString& cnv_untagged     = basicTags[3];
+static const QString& cnv_allNotes          = basicTags[0];
+static const QString& cnv_notebooks         = basicTags[1];
+static const QString& cnv_favorite          = basicTags[2];
+static const QString& cnv_untagged          = basicTags[3];
 
-class TagsContainer : public QTreeWidget
-{
+class TagsContainer : public QTreeWidget {
     Q_OBJECT
 public:
-    TagsContainer(QWidget* parent=nullptr);
+    TagsContainer(QWidget* parent = nullptr);
     ~TagsContainer() override;
     static inline TagItem* real(QTreeWidgetItem* item) { return static_cast<TagItem*>(item); }
     void createBasicTags();
@@ -35,14 +34,15 @@ public:
     void restoreElement(Element* element);
     void reloadElement(Element* element);
     void removeEmptyItems();
-    void collapseItems();                // remember if collapsed/expanded
+    void collapseItems();   // remember if collapsed/expanded
     void expandItems();
     void loadCollapseOrExpand();
     void permatentlyDelete(Element* element);
     void deleteAllItems();
+
 private:
     /**
-     *  create a tag(s) from Element, 
+     *  create a tag(s) from Element,
      *  or append the Element to existing tags
      */
     void addElement(Element* element);
@@ -53,14 +53,14 @@ private:
     int find(const QString& label, QTreeWidgetItem* parent);
     int find(const QString& label, QTreeWidget* parent);
     void pinBasicItems();
-    void sort();                         // sort and pin the basic items
+    void sort();   // sort and pin the basic items
     void toTrash(Element* element);
     void pullElement(Element* element);
-    void dragEnterEvent(QDragEnterEvent *event) override;
-    void dragMoveEvent(QDragMoveEvent *event) override;
-    void dropEvent(QDropEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent* event) override;
+    void dragMoveEvent(QDragMoveEvent* event) override;
+    void dropEvent(QDropEvent* event) override;
     void startDrag(Qt::DropActions supportedActions) override;
-    void mousePressEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
     void showContextMenu(QPoint pos);
     void applyColors();
     void pinTags();
@@ -70,7 +70,7 @@ signals:
      *  when one or multiple tags are selected,
      *  send their content to be displayed
      */
-    void itemSelected(QVector<Element*> *item);
+    void itemSelected(QVector<Element*>* item);
     /**
      *  emited when a list of Elements are loading
      */
@@ -81,8 +81,7 @@ signals:
     void filesLoaded();
 
 private:
-    QTreeWidgetItem* prnt;  // keep track on the previous parent when the items are added
+    QTreeWidgetItem* prnt;   // keep track on the previous parent when the items are added
 };
 
-#endif // TAGSCONTAINER_H
-
+#endif   // TAGSCONTAINER_H

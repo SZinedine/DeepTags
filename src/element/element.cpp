@@ -1,6 +1,8 @@
 #include "element.h"
 
-Element::Element(const fs::path& path): m_path(path) { setup(); }
+Element::Element(const fs::path& path) : m_path(path) {
+    setup();
+}
 
 Element::Element(const Element& other) {
     m_path      = other.m_path;
@@ -118,16 +120,16 @@ void Element::changeDeleted(bool deleted) {
 
 
 void Element::overrideTags(const StringList& list) {
-    if (list.empty()) {    // if the list is empty, remove the tag item from the file
+    if (list.empty()) {   // if the list is empty, remove the tag item from the file
         removeTagsLine();
         return;
     }
-    if (!hasTagsLine()) {    // if the file doesn't have a tag item, create it
+    if (!hasTagsLine()) {   // if the file doesn't have a tag item, create it
         addTagsLine(list);
         return;
     }
     std::string old = be::findTags(m_header);
-    StringList  valid;
+    StringList valid;
     for (std::string i : list) {
         be::processTag(i);
         if (be::validTagToAdd(i))
@@ -146,19 +148,19 @@ bool Element::appendTag(std::string tag) {
     be::processTag(tag);
     if (!be::validTagToAdd(tag)) return false;
     if (!hasTagsLine()) {
-        addTagsLine(StringList{tag});
+        addTagsLine(StringList{ tag });
         return true;
     }
 
     const std::string raw_tag_header = be::findTags(m_header);
-    StringList        tags           = be::getUnparsedTags(m_header);
+    StringList tags                  = be::getUnparsedTags(m_header);
 
-    for (const std::string& i : tags)    // verify if the file doesn't contain the tag
+    for (const std::string& i : tags)   // verify if the file doesn't contain the tag
         if (tag == i) return false;
     tags.push_back(tag);
 
     const std::string res = be::makeTagsLine(tags);
-    bool ret = be::replace(raw_tag_header, res, m_path);    // write the changes into the file
+    bool ret = be::replace(raw_tag_header, res, m_path);   // write the changes into the file
 
     loadTags();
 

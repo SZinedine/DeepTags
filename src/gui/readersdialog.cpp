@@ -1,5 +1,4 @@
 #include "readersdialog.h"
-
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -7,7 +6,6 @@
 #include <QShortcut>
 #include <QVBoxLayout>
 #include <filesystem>
-
 #include "settings.h"
 
 
@@ -26,9 +24,9 @@ void ReadersDialog::setup() {
 
     listWidget = new QListWidget(this);
     listWidget->addItems(Settings::mdEditors());
-    auto      rmButton    = new QPushButton(QIcon(":images/delete.png"), "", this);
-    auto      upButton    = new QPushButton(QIcon(":images/arrowup.png"), "", this);
-    auto      downButton  = new QPushButton(QIcon(":images/arrowdown.png"), "", this);
+    auto rmButton         = new QPushButton(QIcon(":images/delete.png"), "", this);
+    auto upButton         = new QPushButton(QIcon(":images/arrowup.png"), "", this);
+    auto downButton       = new QPushButton(QIcon(":images/arrowdown.png"), "", this);
     const int buttonWidth = 35;
     rmButton->setMaximumWidth(buttonWidth);
     upButton->setMaximumWidth(buttonWidth);
@@ -107,7 +105,7 @@ void ReadersDialog::delItem() {
 }
 
 void ReadersDialog::itemUp() {
-    int  row  = listWidget->currentRow();
+    int row   = listWidget->currentRow();
     auto item = listWidget->takeItem(row);
     if (!item) return;
     listWidget->insertItem(row - 1, item);
@@ -116,7 +114,7 @@ void ReadersDialog::itemUp() {
 
 
 void ReadersDialog::itemDown() {
-    int  row  = listWidget->currentRow();
+    int row   = listWidget->currentRow();
     auto item = listWidget->takeItem(row);
     if (!item) return;
     listWidget->insertItem(row + 1, item);

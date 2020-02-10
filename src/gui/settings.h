@@ -1,23 +1,23 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <QWidget>
-#include <QSettings>
-
-#include <QSplitter>
-#include <QVariant>
-#include <QStringList>
 #include <QMenu>
+#include <QSettings>
+#include <QSplitter>
+#include <QStringList>
+#include <QVariant>
+#include <QWidget>
 #include "mainwindow.h"
 
 struct Settings : public QObject {
     static void saveString(const QString& group, const QString& label, const QString& value);
     static QString getString(const QString& group, const QString& label);
-    static void saveStringList(const QString& group, const QString& label, const QStringList& value);
+    static void saveStringList(const QString& group, const QString& label,
+                               const QStringList& value);
     static QStringList getStringList(const QString& group, const QString& label);
 
     static void openFileAction(QAction* action);
-    static void openFile(QString editor, const fs::path& path, QWidget* parent=nullptr);
+    static void openFile(QString editor, const fs::path& path, QWidget* parent = nullptr);
     /**
      * save the main window related settings
      */
@@ -59,7 +59,7 @@ struct Settings : public QObject {
      * construct a QAction from each stored path and add them
      * into a provided menu after it is cleared
      */
-    static QMenu*  getActionsRecentlyOpenedFiles(QMenu * menu);
+    static QMenu* getActionsRecentlyOpenedFiles(QMenu* menu);
     static void eraseRecentlyOpenedFiles();
     /**
      * Save the theme chosen by the user
@@ -80,4 +80,3 @@ struct Settings : public QObject {
 };
 
 #endif
-
