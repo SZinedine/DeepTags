@@ -25,8 +25,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
     Settings::loadWindowSize(this);
     Settings::loadSplitterState(splitter);
+#ifdef INCLUDE_QBREEZE   // use QBreeze if it exists
     Settings::loadTheme(themesActionGroup);
-
+#endif
     emit started();
 }
 
@@ -105,24 +106,27 @@ void MainWindow::setupMenu() {
 
     auto menuEdit     = menuBar()->addMenu(tr("&Edit"));
     setMdReaderAction = new QAction(tr("&Set MarkDown Reader"), this);
-
-    setStyleMenu      = new QMenu(tr("Themes"), menuEdit);
+#ifdef INCLUDE_QBREEZE   // use QBreeze if it exists
+    auto setStyleMenu = new QMenu(tr("Themes"), menuEdit);
     themesActionGroup = new QActionGroup(this);
     themesActionGroup->setExclusive(true);
-    auto nativeStyleAction     = new QAction(tr("Native Style"), setStyleMenu);
-    auto breezeDarkStyleAction = new QAction(tr("Dark Style"), setStyleMenu);
-    setStyleMenu->addActions({ nativeStyleAction, breezeDarkStyleAction });
+    auto nativeStyleAction      = new QAction(tr("Native Style"), setStyleMenu);
+    auto breezeDarkStyleAction  = new QAction(tr("Dark Style"), setStyleMenu);
+    auto breezeLightStyleAction = new QAction(tr("Light Style"), setStyleMenu);
+    setStyleMenu->addActions({ nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction });
     themesActionGroup->addAction(nativeStyleAction);
     themesActionGroup->addAction(breezeDarkStyleAction);
+    themesActionGroup->addAction(breezeLightStyleAction);
     nativeStyleAction->setData(QString("native"));
-    breezeDarkStyleAction->setData(QString(":qdarkstyle/style.qss"));
+    breezeDarkStyleAction->setData(QString(":qbreeze/dark.qss"));
+    breezeLightStyleAction->setData(QString(":qbreeze/light.qss"));
     for (auto* ac : themesActionGroup->actions()) ac->setCheckable(true);
     nativeStyleAction->setChecked(true);
-
+    menuEdit->addMenu(setStyleMenu);
+#endif
     clearElementsAction  = new QAction(tr("Clear Elements"), menuEdit);
     reloadElementsAction = new QAction(tr("Reload Elements"), menuEdit);
 
-    menuEdit->addMenu(setStyleMenu);
     menuEdit->addActions({ setMdReaderAction, clearElementsAction, reloadElementsAction });
 
     auto menuHelp = new QMenu(this);
@@ -183,7 +187,9 @@ void MainWindow::setupSignals() {
     connect(tagsContainer, &TagsContainer::filesLoaded, this, [=]() { disableSomeWidgets(false); });
     connect(filesContainer, &FilesContainer::deletedItem, tagsContainer,
             &TagsContainer::permatentlyDelete);
+#ifdef INCLUDE_QBREEZE
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
+#endif
 }
 
 

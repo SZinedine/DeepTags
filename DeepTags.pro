@@ -8,9 +8,13 @@ QT += core gui widgets
 TARGET = DeepTags
 TEMPLATE = app
 DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x060000
-CONFIG += c++17 -lstdc++fs -pthread
-gcc:QMAKE_CXXFLAGS += -std=c++17 -lstdc++fs
+CONFIG += c++17 -pthread
 msvc:QMAKE_CXXFLAGS += /std:c++17
+gcc:QMAKE_CXXFLAGS += -std=c++17 -lstdc++fs
+gcc:QMAKE_CXXFLAGS_GNUCXX11 = -std=c++17
+gcc:QMAKE_CXXFLAGS_GNUCXX14 = -std=c++17
+gcc:QMAKE_CXXFLAGS_GNUCXX1Z = -std=c++17
+RESOURCES += DeepTags.qrc
 TRANSLATIONS = locale/deeptags_fr.ts
 RC_ICONS = ./images/DeepTags.ico
 SUBDIRS = src
@@ -45,10 +49,14 @@ OBJECTS_DIR = $$DESTDIR/obj
 MOC_DIR = $$DESTDIR/moc
 RCC_DIR = $$DESTDIR/rc
 
+# make QBreeze an optional dependency
+exists(3rdParty/QBreeze/qbreeze.qrc){
+    RESOURCES += 3rdParty/QBreeze/qbreeze.qrc
+    DEFINES += INCLUDE_QBREEZE
+}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$$TARGET/bin
 else: unix:!android: target.path = /opt/$$TARGET/bin
 !isEmpty(target.path): INSTALLS += target
 
-RESOURCES += DeepTags.qrc 3rdParty/QDarkStyleSheet/qdarkstyle/style.qrc

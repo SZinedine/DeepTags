@@ -82,9 +82,10 @@ private:
     QAction* clearElementsAction;
     QAction* reloadElementsAction;
     QAction* setMdReaderAction;
-    QMenu* setStyleMenu;
-    QActionGroup* themesActionGroup;
     QAction* aboutAction;
+#ifdef INCLUDE_QBREEZE
+    QActionGroup* themesActionGroup;
+#endif
 };
 
 
