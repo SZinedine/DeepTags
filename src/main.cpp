@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 
     QString     locale = ":locale/deeptags_" + QLocale::system().name().section('_', 0, 0) + ".qm";
     QTranslator tran;
-    //    tran.load(":locale/deeptags_fr.qm");		// for test
+    // tran.load(":locale/deeptags_fr.qm");		// for test
     tran.load(locale);
     app.installTranslator(&tran);
 
