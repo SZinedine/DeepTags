@@ -319,9 +319,10 @@ void MainWindow::about() {
     str.append("<br><b>Name: </b>DeepTags<br>");
     str.append("<b>Version: </b>");
     str.append(qApp->applicationVersion());
+    str.append(" (compiled in " + QString(__DATE__) + " at " + QString(__TIME__) + ")");
     str.append("<br><b>Author:</b> Zineddine SAIBI.<br>");
     str.append("<b>E-mail: </b> saibi.zineddine@yahoo.com<br>");
-    str.append("<b>website: </b> https://github.com/SZinedine <br>");
+    str.append("<b>website: </b> https://github.com/SZinedine/DeepTags <br>");
     QMessageBox::about(this, tr("About"), str);
 }
 
