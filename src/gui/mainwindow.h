@@ -78,6 +78,7 @@ private:
     QAction* newFileAction;
     QMenu* recentlyOpenedFilesMenu;
     QAction* changeDataDirAction;
+    QAction* openDataDirAction;
     QAction* quitAction;
     QAction* clearElementsAction;
     QAction* reloadElementsAction;

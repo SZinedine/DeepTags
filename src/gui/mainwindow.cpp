@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -97,10 +98,12 @@ void MainWindow::setupMenu() {
     recentlyOpenedFilesMenu = new QMenu(tr("&Recently Opened Files"), this);
     Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu);
     changeDataDirAction = new QAction(tr("&Change Data Directory"), this);
+    openDataDirAction   = new QAction(tr("Open Data Directory"), this);
     quitAction          = new QAction(QIcon(":images/quit.png"), tr("&Quit"), this);
     menuFile->addAction(newFileAction);
     menuFile->addMenu(recentlyOpenedFilesMenu);
     menuFile->addAction(changeDataDirAction);
+    menuFile->addAction(openDataDirAction);
     menuFile->addSeparator();
     menuFile->addAction(quitAction);
 
@@ -173,6 +176,8 @@ void MainWindow::setupSignals() {
     connect(setMdReaderAction, &QAction::triggered, this,
             [=] { std::make_unique<ReadersDialog>(this); });
     connect(changeDataDirAction, &QAction::triggered, this, &MainWindow::changeDataDirectory);
+    connect(openDataDirAction, &QAction::triggered, this,
+            [=] { QDesktopServices::openUrl(QUrl(Settings::dataDirectory())); });
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(this, &MainWindow::started, this, &MainWindow::load,
             Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
