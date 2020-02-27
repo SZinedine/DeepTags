@@ -1,5 +1,6 @@
 #include "settings.h"
 #include <QApplication>
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -207,11 +208,12 @@ void Settings::openFile(QString editor, const fs::path& path, QWidget* parent) {
     }
     if (editor.isEmpty()) editor = mainMdEditor();
     if (editor.isEmpty()) {
-        QMessageBox::critical(parent, "Set a Markdown editor", "No Markdown editor set");
-        return;
+        QString p = path.string().c_str();
+        QDesktopServices::openUrl(QUrl(p));
+    } else {
+        QString command = editor + QString(" \"") + QString(path.string().c_str()) + QString("\"");
+        std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     }
-    QString command = editor + QString(" \"") + QString(path.string().c_str()) + QString("\"");
-    std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     saveRecentlyOpenedFile(path);
 }
 
