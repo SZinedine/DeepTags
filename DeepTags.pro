@@ -55,6 +55,13 @@ exists(3rdParty/QBreeze/qbreeze.qrc){
     DEFINES += INCLUDE_QBREEZE
 }
 
+exists(3rdParty/qmarkdowntextedit/qmarkdowntextedit.pri) {
+    include (3rdParty/qmarkdowntextedit/qmarkdowntextedit.pri)
+    SOURCES += $$GUI_DIR/editorwidget.cpp
+    HEADERS += $$GUI_DIR/editorwidget.h
+    DEFINES += INSIDE_EDITOR
+}
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$$TARGET/bin
 else: unix:!android: target.path = /opt/$$TARGET/bin

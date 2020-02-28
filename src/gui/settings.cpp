@@ -294,3 +294,18 @@ QStringList Settings::getTagPinned() {
 void Settings::clearPinnedItems() {
     saveStringList("main", "item_pinned", {});
 }
+
+void Settings::saveUseEditor(bool use) {
+    QSettings s;
+    s.beginGroup("main");
+    s.setValue("use_integrated_editor", QVariant(use));
+    s.endGroup();
+}
+
+bool Settings::loadUseEditor() {
+    QSettings s;
+    s.beginGroup("main");
+    bool res = s.value("use_integrated_editor").toBool();
+    s.endGroup();
+    return res;
+}

@@ -77,6 +77,11 @@ struct Settings : public QObject {
     static void setTagUnpinned(const QString& item);
     static QStringList getTagPinned();
     static void clearPinnedItems();
+    /**
+     * use the integrated editor or not
+     */
+    static void saveUseEditor(bool use);
+    static bool loadUseEditor();
 };
 
 #endif

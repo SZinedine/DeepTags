@@ -13,6 +13,9 @@
 #include "filescontainer.h"
 #include "tagscontainer.h"
 
+#ifdef INSIDE_EDITOR
+    #include "editorwidget.h"
+#endif
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -86,6 +89,10 @@ private:
     QAction* aboutAction;
 #ifdef INCLUDE_QBREEZE
     QActionGroup* themesActionGroup;
+#endif
+#ifdef INSIDE_EDITOR
+    EditorWidget* editorWidget;
+    QAction* editorWidgetAction;
 #endif
 };
 

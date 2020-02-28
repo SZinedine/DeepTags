@@ -58,6 +58,7 @@ signals:
     void restoredElement(Element* e);
     void elementChanged(Element* element);
     void openedFile(fs::path f);   // open in a markdown editor
+    void selectionChanged_(QString f);
 };
 
 

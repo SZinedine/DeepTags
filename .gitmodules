@@ -1,3 +1,6 @@
 [submodule "3rdParty/QBreeze"]
 	path = 3rdParty/QBreeze
 	url = https://github.com/SZinedine/QBreeze
+[submodule "3rdParty/qmarkdowntextedit"]
+	path = 3rdParty/qmarkdowntextedit
+	url = https://github.com/pbek/qmarkdowntextedit

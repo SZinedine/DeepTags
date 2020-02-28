@@ -15,6 +15,12 @@ FilesContainer::FilesContainer(QWidget* parent) : QListWidget(parent) {
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &FilesContainer::itemDoubleClicked, this, &FilesContainer::openFile);
     connect(this, &FilesContainer::rightClick, this, &FilesContainer::showContextMenu);
+    connect(this, &FilesContainer::itemSelectionChanged, this, [&] {
+        FileItem* it = real(currentItem());
+        QString p    = "";
+        if (it) p = it->pathQstr();
+        emit selectionChanged_(p);
+    });
     setAcceptDrops(true);
     setDropIndicatorShown(true);
     setItemDelegate(new CustomDelegateListWidget(this));

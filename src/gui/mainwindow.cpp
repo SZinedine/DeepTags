@@ -29,6 +29,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 #ifdef INCLUDE_QBREEZE   // use QBreeze if it exists
     Settings::loadTheme(themesActionGroup);
 #endif
+#ifdef INSIDE_EDITOR
+    editorWidgetAction->setChecked(Settings::loadUseEditor());
+#endif
     emit started();
 }
 
@@ -79,6 +82,10 @@ void MainWindow::setupLayout() {
     // containers
     splitter->addWidget(tagsContainer);
     splitter->addWidget(filesContainer);
+#ifdef INSIDE_EDITOR
+    editorWidget = new EditorWidget(this);
+    splitter->addWidget(editorWidget);
+#endif
 
     auto* colLayout = new QVBoxLayout;
     colLayout->addWidget(collapseButton);
@@ -117,9 +124,8 @@ void MainWindow::setupMenu() {
     auto breezeDarkStyleAction  = new QAction(tr("Dark Style"), setStyleMenu);
     auto breezeLightStyleAction = new QAction(tr("Light Style"), setStyleMenu);
     setStyleMenu->addActions({ nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction });
-    themesActionGroup->addAction(nativeStyleAction);
-    themesActionGroup->addAction(breezeDarkStyleAction);
-    themesActionGroup->addAction(breezeLightStyleAction);
+    for (auto& ac : { nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction })
+        themesActionGroup->addAction(ac);
     nativeStyleAction->setData(QString("native"));
     breezeDarkStyleAction->setData(QString(":qbreeze/dark.qss"));
     breezeLightStyleAction->setData(QString(":qbreeze/light.qss"));
@@ -131,6 +137,13 @@ void MainWindow::setupMenu() {
     reloadElementsAction = new QAction(tr("Reload Elements"), menuEdit);
 
     menuEdit->addActions({ setMdReaderAction, clearElementsAction, reloadElementsAction });
+
+#ifdef INSIDE_EDITOR
+    editorWidgetAction = new QAction("Activate Integrated Editor (experimental)", menuEdit);
+    editorWidgetAction->setCheckable(true);
+    editorWidgetAction->setChecked(false);
+    menuEdit->addAction(editorWidgetAction);
+#endif
 
     auto menuHelp = new QMenu(this);
     aboutAction   = new QAction(tr("&About"), this);
@@ -194,6 +207,22 @@ void MainWindow::setupSignals() {
             &TagsContainer::permatentlyDelete);
 #ifdef INCLUDE_QBREEZE
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
+#endif
+#ifdef INSIDE_EDITOR
+    connect(filesContainer, &FilesContainer::openedFile, editorWidget, &EditorWidget::closeFile);
+    connect(filesContainer, &FilesContainer::elementChanged, editorWidget, &EditorWidget::reload);
+    connect(editorWidgetAction, &QAction::toggled, this, [=] {
+        bool checked = editorWidgetAction->isChecked();
+        Settings::saveUseEditor(checked);
+        if (checked)
+            connect(filesContainer, &FilesContainer::selectionChanged_, editorWidget,
+                    &EditorWidget::open);
+        else {
+            disconnect(filesContainer, &FilesContainer::selectionChanged_, editorWidget,
+                       &EditorWidget::open);
+            editorWidget->closeFile();
+        }
+    });
 #endif
 }
 
