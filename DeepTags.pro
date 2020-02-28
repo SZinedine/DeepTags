@@ -7,7 +7,6 @@
 QT += core gui widgets
 TARGET = DeepTags
 TEMPLATE = app
-DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x060000
 CONFIG += c++17 -pthread
 msvc:QMAKE_CXXFLAGS += /std:c++17
 gcc:QMAKE_CXXFLAGS += -std=c++17 -lstdc++fs
