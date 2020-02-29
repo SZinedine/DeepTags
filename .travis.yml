@@ -14,5 +14,6 @@ install:
 - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 90
 
 script:
+- git submodule update --init --recursive
 - /opt/qt56/bin/qmake
 - make
