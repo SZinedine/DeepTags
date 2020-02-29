@@ -1,0 +1,14 @@
+image:
+  - Visual Studio 2017
+
+
+install:
+  - set PATH=%PATH%;C:\Qt\5.11.3\msvc2017_64\bin
+
+before_build:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+  - qmake --version
+  - qmake -r -spec win32-msvc CONFIG+=x86_64
+
+build_script:
+  - nmake

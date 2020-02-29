@@ -2,10 +2,11 @@
 #define FILESCONTAINER_H
 
 #include <QListWidget>
-#include <QMouseEvent>
 #include <QStyledItemDelegate>
 #include "../element/element.h"
 #include "fileitem.h"
+
+class QMouseEvent;
 
 class FilesContainer : public QListWidget {
     Q_OBJECT

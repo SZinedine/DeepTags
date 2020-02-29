@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QTreeWidgetItem>
 #include <QVector>
-#include <QWidget>
 #include "../element/element.h"
 
 class TagItem : public QTreeWidgetItem {

@@ -1,8 +1,10 @@
 #include "elementdialog.h"
+#include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFormLayout>
 #include <QKeySequence>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QRegExp>
 #include <QShortcut>
 #include "settings.h"

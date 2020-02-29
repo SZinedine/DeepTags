@@ -2,11 +2,10 @@
 #define READERSDIALOG_H
 
 #include <QDialog>
-#include <QDialogButtonBox>
-#include <QLineEdit>
-#include <QListWidget>
-#include <QPushButton>
 
+class QLineEdit;
+class QDialogButtonBox;
+class QListWidget;
 
 class ReadersDialog : public QDialog {
     Q_OBJECT

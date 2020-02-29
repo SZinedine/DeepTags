@@ -3,12 +3,15 @@
 
 #include <QCheckBox>
 #include <QDialog>
-#include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QListWidget>
-#include <QTextEdit>
 #include "../element/element.h"
+
 class TagsWidget;
+class QCheckBox;
+class QDialogButtonBox;
+class QPushButton;
+
 /**
  * Dialog box that serves 2 purposes
  *   * create a new file (first constructor

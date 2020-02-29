@@ -9,7 +9,7 @@ EditorWidget::EditorWidget(QWidget* parent)
     auto layout = new QVBoxLayout;
     setLayout(layout);
     // m_toolBar = new QToolBar(this);
-    m_editor  = new QMarkdownTextEdit(this);
+    m_editor = new QMarkdownTextEdit(this);
     // layout->addWidget(m_toolBar);
     layout->addWidget(m_editor);
     // m_toolBar->addAction("save", [&] { save(); });

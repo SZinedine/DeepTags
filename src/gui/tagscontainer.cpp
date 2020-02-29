@@ -4,8 +4,8 @@
 #include <QDebug>
 #include <QDrag>
 #include <QDragEnterEvent>
+#include <QMenu>
 #include <QMimeData>
-#include <iostream>
 #include "settings.h"
 #include "tagitem.h"
 

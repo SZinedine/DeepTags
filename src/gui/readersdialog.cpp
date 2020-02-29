@@ -1,8 +1,13 @@
 #include "readersdialog.h"
+#include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QShortcut>
 #include <QVBoxLayout>
 #include <filesystem>

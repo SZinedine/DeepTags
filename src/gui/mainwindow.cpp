@@ -12,6 +12,13 @@
 #include <QShortcut>
 #include <QStatusBar>
 #include <QVBoxLayout>
+#include <QAction>
+#include <QCloseEvent>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMenu>
+#include <QPushButton>
+#include <QSplitter>
 #include "../element/element.h"
 #include "elementdialog.h"
 #include "readersdialog.h"

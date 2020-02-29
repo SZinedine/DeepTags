@@ -2,7 +2,6 @@
 #define FILEITEM_H
 
 #include <QListWidgetItem>
-#include <QStyledItemDelegate>
 #include "../element/element.h"
 
 class FilesContainer;

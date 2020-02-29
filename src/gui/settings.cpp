@@ -3,7 +3,13 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMenu>
 #include <QMessageBox>
+#include <QSettings>
+#include <QSplitter>
+#include <QStringList>
+#include <QVariant>
+#include <QWidget>
 #include <thread>
 #include "../element/element.h"
 #include "readersdialog.h"

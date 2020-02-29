@@ -1,21 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QAction>
-#include <QCloseEvent>
-#include <QLabel>
-#include <QLineEdit>
 #include <QMainWindow>
-#include <QMenu>
-#include <QPushButton>
-#include <QSplitter>
-#include <iostream>
 #include "filescontainer.h"
 #include "tagscontainer.h"
-
 #ifdef INSIDE_EDITOR
     #include "editorwidget.h"
 #endif
+
+class QAction;
+class QCloseEvent;
+class QLabel;
+class QLineEdit;
+class QMenu;
+class QPushButton;
+class QSplitter;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

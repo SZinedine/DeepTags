@@ -1,13 +1,14 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <QMenu>
-#include <QSettings>
-#include <QSplitter>
-#include <QStringList>
-#include <QVariant>
-#include <QWidget>
 #include "mainwindow.h"
+
+class QSplitter;
+class QMenu;
+class QVariant;
+class QStringList;
+class QWidget;
+class QActionGroup;
 
 struct Settings : public QObject {
     static void saveString(const QString& group, const QString& label, const QString& value);

@@ -5,6 +5,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QMouseEvent>
 #include <cstdlib>
 #include "elementdialog.h"
 #include "settings.h"
