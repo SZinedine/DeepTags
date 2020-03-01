@@ -1,6 +1,7 @@
 # <img src="DeepTags.png" alt="DeepTags" width="100" align="left" > DeepTags
 
-[![Build Status](https://travis-ci.com/SZinedine/DeepTags.svg?branch=master)](https://travis-ci.com/SZinedine/DeepTags)
+[![Github Releases](https://img.shields.io/github/v/release/SZinedine/DeepTags)](https://github.com/SZinedine/DeepTags/releases)
+[![Build Status](https://travis-ci.org/SZinedine/DeepTags.svg?branch=master)](https://travis-ci.org/SZinedine/DeepTags)
 [![Build Status Windows](https://ci.appveyor.com/api/projects/status/github/SZinedine/DeepTags)](https://ci.appveyor.com/project/SZinedine/DeepTags)
 
 
