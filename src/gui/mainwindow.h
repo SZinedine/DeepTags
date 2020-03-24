@@ -15,6 +15,7 @@ class QLineEdit;
 class QMenu;
 class QPushButton;
 class QSplitter;
+class QActionGroup;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

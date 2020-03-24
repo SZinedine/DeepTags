@@ -15,9 +15,11 @@ EditorWidget::EditorWidget(QWidget* parent)
     // m_toolBar->addAction("save", [&] { save(); });
     setVisible(false);
     m_editor->setReadOnly(true);
+    m_watcher = new QFileSystemWatcher(this);
 
     connect(this, &EditorWidget::openedFile, this, [=] { setVisible(true); });
     connect(this, &EditorWidget::closedFile, this, [=] { setVisible(false); });
+    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, [=] { reload(); });
 }
 
 
@@ -32,6 +34,7 @@ void EditorWidget::open(const QString& path) {
     m_currentPath = path;
     emit openedFile(path);
     setVisible(true);
+    m_watcher->addPath(path);
 }
 
 void EditorWidget::save() {
@@ -49,8 +52,17 @@ void EditorWidget::closeFile() {
         return;
     }
     // bool changed = m_fileContent != m_editor->toPlainText();
-    emit closedFile(m_currentPath);
+    m_watcher->removePath(m_currentPath);
     m_editor->clear();
     m_currentPath.clear();
     m_fileContent.clear();
+    emit closedFile(m_currentPath);
+}
+
+void EditorWidget::reload() {
+    auto cur = m_editor->textCursor();
+    auto path = m_currentPath;
+    open(path);
+    m_editor->setTextCursor(cur);
+    m_watcher->addPath(m_currentPath);
 }

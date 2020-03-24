@@ -1,4 +1,5 @@
 #include <QToolBar>
+#include <QFileSystemWatcher>
 #include <filesystem>
 #include "./../../3rdParty/qmarkdowntextedit/qmarkdowntextedit.h"
 
@@ -13,7 +14,7 @@ public slots:
     void open(const QString& path);
     void save();
     void closeFile();
-    inline void reload() { open(m_currentPath); }
+    void reload();
 
 signals:
     void openedFile(QString file);
@@ -22,6 +23,7 @@ signals:
 
 private:
     QMarkdownTextEdit* m_editor;
+    QFileSystemWatcher* m_watcher;
     // QToolBar* m_toolBar;
     QString m_currentPath;
     QString m_fileContent;
