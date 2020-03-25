@@ -1,5 +1,5 @@
-#include <QToolBar>
 #include <QFileSystemWatcher>
+#include <QToolBar>
 #include <filesystem>
 #include "./../../3rdParty/qmarkdowntextedit/qmarkdowntextedit.h"
 

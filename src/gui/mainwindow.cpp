@@ -18,6 +18,7 @@
 #include <QShortcut>
 #include <QSplitter>
 #include <QStatusBar>
+#include <QSystemTrayIcon>
 #include <QVBoxLayout>
 #include "../element/element.h"
 #include "elementdialog.h"
@@ -69,6 +70,9 @@ void MainWindow::setupCentral() {
     QStatusBar* statusB = statusBar();
     nbFiles             = new QLabel(tr("0 files"), this);
     statusB->addPermanentWidget(nbFiles);
+
+    systray = new QSystemTrayIcon(QIcon(":images/icon128.png"), this);
+    systray->show();
 
     spinnerLabel = new QLabel(this);
     auto* movie  = new QMovie(this);
@@ -163,6 +167,12 @@ void MainWindow::setupMenu() {
     w->layout()->addWidget(searchLineEdit);
     w->setContentsMargins(0, 0, 5, 0);
     menuBar()->setCornerWidget(w);
+
+    // systray menu
+    systrayExitAction = new QAction("Exit", this);
+    auto systrayMenu  = new QMenu(this);
+    systrayMenu->addAction(systrayExitAction);
+    systray->setContextMenu(systrayMenu);
 }
 
 
@@ -212,6 +222,11 @@ void MainWindow::setupSignals() {
     connect(tagsContainer, &TagsContainer::filesLoaded, this, [=]() { disableSomeWidgets(false); });
     connect(filesContainer, &FilesContainer::deletedItem, tagsContainer,
             &TagsContainer::permatentlyDelete);
+    connect(systray, &QSystemTrayIcon::activated, this, [=]{ setVisible(!isVisible()); });
+    connect(systrayExitAction, &QAction::triggered, this, [=] {
+        systray->hide();
+        close();
+    });
 #ifdef INCLUDE_QBREEZE
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
 #endif

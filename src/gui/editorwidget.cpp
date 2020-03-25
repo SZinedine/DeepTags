@@ -48,9 +48,8 @@ void EditorWidget::save() {
 }
 
 void EditorWidget::closeFile() {
-    if (m_currentPath.isEmpty() || m_fileContent.isEmpty()) {
+    if (m_currentPath.isEmpty() || m_fileContent.isEmpty())
         return;
-    }
     // bool changed = m_fileContent != m_editor->toPlainText();
     m_watcher->removePath(m_currentPath);
     m_editor->clear();
@@ -60,7 +59,7 @@ void EditorWidget::closeFile() {
 }
 
 void EditorWidget::reload() {
-    auto cur = m_editor->textCursor();
+    auto cur  = m_editor->textCursor();
     auto path = m_currentPath;
     open(path);
     m_editor->setTextCursor(cur);

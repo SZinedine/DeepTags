@@ -16,6 +16,7 @@ class QMenu;
 class QPushButton;
 class QSplitter;
 class QActionGroup;
+class QSystemTrayIcon;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -87,6 +88,8 @@ private:
     QAction* reloadElementsAction;
     QAction* setMdReaderAction;
     QAction* aboutAction;
+    QAction* systrayExitAction;
+    QSystemTrayIcon* systray;
 #ifdef INCLUDE_QBREEZE
     QActionGroup* themesActionGroup;
 #endif
