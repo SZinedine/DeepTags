@@ -23,7 +23,7 @@ EditorWidget::EditorWidget(QWidget* parent)
 }
 
 
-void EditorWidget::open(const QString& path) {
+void EditorWidget::open(QString path) {
     closeFile();
     if (path.isEmpty()) return;
     QFile f(path);
@@ -50,7 +50,6 @@ void EditorWidget::save() {
 void EditorWidget::closeFile() {
     if (m_currentPath.isEmpty() || m_fileContent.isEmpty())
         return;
-    // bool changed = m_fileContent != m_editor->toPlainText();
     m_watcher->removePath(m_currentPath);
     m_editor->clear();
     m_currentPath.clear();
@@ -59,9 +58,9 @@ void EditorWidget::closeFile() {
 }
 
 void EditorWidget::reload() {
-    auto cur  = m_editor->textCursor();
-    auto path = m_currentPath;
-    open(path);
+    QTextCursor cur(m_editor->textCursor());
+    auto po = cur.position();
+    open(m_currentPath);
+    cur.setPosition(po);
     m_editor->setTextCursor(cur);
-    m_watcher->addPath(m_currentPath);
 }

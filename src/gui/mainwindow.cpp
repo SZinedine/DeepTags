@@ -231,7 +231,7 @@ void MainWindow::setupSignals() {
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
 #endif
 #ifdef INSIDE_EDITOR
-    connect(filesContainer, &FilesContainer::openedFile, editorWidget, &EditorWidget::closeFile);
+    // connect(filesContainer, &FilesContainer::openedFile, editorWidget, &EditorWidget::closeFile);
     connect(filesContainer, &FilesContainer::elementChanged, editorWidget, &EditorWidget::reload);
     connect(editorWidgetAction, &QAction::toggled, this, [=] {
         bool checked = editorWidgetAction->isChecked();

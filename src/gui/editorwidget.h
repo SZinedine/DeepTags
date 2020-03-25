@@ -11,7 +11,7 @@ public:
     EditorWidget(QWidget* parent = nullptr);
 
 public slots:
-    void open(const QString& path);
+    void open(QString path);
     void save();
     void closeFile();
     void reload();
