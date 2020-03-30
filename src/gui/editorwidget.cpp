@@ -48,8 +48,7 @@ void EditorWidget::save() {
 }
 
 void EditorWidget::closeFile() {
-    if (m_currentPath.isEmpty() || m_fileContent.isEmpty())
-        return;
+    if (m_currentPath.isEmpty() || m_fileContent.isEmpty()) return;
     m_watcher->removePath(m_currentPath);
     m_editor->clear();
     m_currentPath.clear();

@@ -222,7 +222,7 @@ void MainWindow::setupSignals() {
     connect(tagsContainer, &TagsContainer::filesLoaded, this, [=]() { disableSomeWidgets(false); });
     connect(filesContainer, &FilesContainer::deletedItem, tagsContainer,
             &TagsContainer::permatentlyDelete);
-    connect(systray, &QSystemTrayIcon::activated, this, [=]{ setVisible(!isVisible()); });
+    connect(systray, &QSystemTrayIcon::activated, this, [=] { setVisible(!isVisible()); });
     connect(systrayExitAction, &QAction::triggered, this, [=] {
         systray->hide();
         close();

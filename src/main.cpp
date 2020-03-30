@@ -7,8 +7,15 @@
 #define NAME    "DeepTags"
 #define WEBSITE "https://github.com/SZinedine"
 
+#ifdef INCLUDE_SINGLE_APPLICATION
+#include <SingleApplication>
+#define _QAPP SingleApplication
+#else
+#define _QAPP QApplication
+#endif
+
 int main(int argc, char* argv[]) {
-    QApplication app(argc, argv);
+    _QAPP app(argc, argv);
     app.setApplicationName(NAME);
     app.setApplicationVersion(VERSION);
     app.setOrganizationDomain(WEBSITE);

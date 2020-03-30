@@ -54,11 +54,19 @@ exists(3rdParty/QBreeze/qbreeze.qrc){
     DEFINES += INCLUDE_QBREEZE
 }
 
+# if QMarkdownTextEdit is cloned
 exists(3rdParty/qmarkdowntextedit/qmarkdowntextedit.pri) {
     include (3rdParty/qmarkdowntextedit/qmarkdowntextedit.pri)
     SOURCES += $$GUI_DIR/editorwidget.cpp
     HEADERS += $$GUI_DIR/editorwidget.h
     DEFINES += INSIDE_EDITOR
+}
+
+# if SingleApplication is cloned
+exists(3rdParty/SingleApplication/singleapplication.pri) {
+    include (3rdParty/SingleApplication/singleapplication.pri)
+    DEFINES += INCLUDE_SINGLE_APPLICATION
+    DEFINES += QAPPLICATION_CLASS=QApplication
 }
 
 # Default rules for deployment.
