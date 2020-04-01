@@ -21,7 +21,7 @@ script:
 - make -j$(nproc)
 - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
 - mkdir appdir && cp -t appdir DeepTags.png DeepTags.desktop build/release/DeepTags
-- wget -c https://github.com/probonopd/linuxdeployqt/releases/download/6/linuxdeployqt-6-x86_64.AppImage
+- wget -c https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
 - chmod +x linuxdeployqt-*.AppImage
 - ./linuxdeployqt-*.AppImage ./appdir/DeepTags -bundle-non-qt-libs -appimage -verbose=2
 - mv DeepTags-*.AppImage DeepTags-x86_64.AppImage && mv DeepTags-*.AppImage.zsync DeepTags-x86_64.AppImage.zsync
