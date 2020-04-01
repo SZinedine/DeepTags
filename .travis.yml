@@ -5,11 +5,11 @@ dist: trusty
 
 before_install:
 - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-- sudo add-apt-repository --yes ppa:beineri/opt-qt562-trusty
+- sudo add-apt-repository --yes ppa:beineri/opt-qt-5.10.1-trusty
 - sudo apt-get update -qq
 
 install:
-- sudo apt-get install -qq g++-8 qt56-meta-minimal software-properties-common checkinstall xvfb dh-make fakeroot gpgv2 tree
+- sudo apt-get install -qq g++-8 qt510-meta-minimal software-properties-common checkinstall xvfb dh-make fakeroot gpgv2 tree
 - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 90
 - source /opt/qt5*/bin/qt5*-env.sh
 
