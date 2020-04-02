@@ -3,7 +3,7 @@
 #include <QTranslator>
 #include "gui/mainwindow.h"
 
-#define VERSION "0.4.2"
+#define VERSION "0.5"
 #define NAME    "DeepTags"
 #define WEBSITE "https://github.com/SZinedine"
 
