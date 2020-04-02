@@ -254,8 +254,8 @@ void MainWindow::setupKeyboard() {
     connect(srch, &QShortcut::activated, this, [=] { searchLineEdit->setFocus(); });
     newFileAction->setShortcut(QKeySequence("Ctrl+n"));
     quitAction->setShortcut(QKeySequence("Ctrl+q"));
-    clearElementsAction->setShortcut(QKeySequence("Ctrl+Shift+c"));
-    reloadElementsAction->setShortcut(QKeySequence("Ctrl+Shift+r"));
+    // clearElementsAction->setShortcut(QKeySequence("Ctrl+Shift+c"));
+    // reloadElementsAction->setShortcut(QKeySequence("Ctrl+Shift+r"));
     auto ret = new QShortcut(QKeySequence("Return"), this);
     connect(ret, &QShortcut::activated, this, [=] {
         if (tagsContainer->hasFocus())
