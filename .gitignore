@@ -6,3 +6,5 @@ tests/*.o
 .qmake.stash
 build/
 ui_qplaintexteditsearchwidget.h
+packaging/*.AppImage
+packaging/deeptags*
