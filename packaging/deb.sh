@@ -34,8 +34,8 @@ Version: $_APP_VERSION
 Architecture: amd64
 Essential: no
 Priority: optional
-Section: base
-Depends: qt5-default (>= 5.6)
+Section: utils
+Depends: libqt5widgets5 (>= 5.6), libqt5gui5 (>= 5.6), libqt5network5 (>= 5.6), libqt5core5a (>= 5.6), libc6, libgcc1, libstdc++6, libx11-6
 Maintainer: Zineddine SAIBI <saibi.zineddine@yahoo.com>
 Homepage: https://www.github.com/SZinedine/DeepTags
 Description: A Markdown notes manager
