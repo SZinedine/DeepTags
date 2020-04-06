@@ -150,7 +150,7 @@ void MainWindow::setupMenu() {
     menuEdit->addActions({ setMdReaderAction, clearElementsAction, reloadElementsAction });
 
 #ifdef INSIDE_EDITOR
-    editorWidgetAction = new QAction("Activate Integrated Editor (experimental)", menuEdit);
+    editorWidgetAction = new QAction("Activate Integrated Reader (experimental)", menuEdit);
     editorWidgetAction->setCheckable(true);
     editorWidgetAction->setChecked(false);
     menuEdit->addAction(editorWidgetAction);
