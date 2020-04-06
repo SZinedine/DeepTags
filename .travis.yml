@@ -8,24 +8,25 @@ before_install:
 - sudo add-apt-repository --yes ppa:beineri/opt-qt-5.10.1-trusty
 - sudo apt-get update -qq
 
+
 install:
-- sudo apt-get install -qq g++-8 qt510-meta-minimal software-properties-common checkinstall xvfb dh-make fakeroot gpgv2 tree
-- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 90
+- sudo apt-get install -qq g++-9 tree qt510-meta-minimal libgl1-mesa-dev
+- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90 && sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90
 - source /opt/qt5*/bin/qt5*-env.sh
+
 
 before_script:
 - git submodule update --init --recursive
-- /opt/qt5*/bin/qmake
+- qmake
+
 
 script:
 - make -j$(nproc)
-- unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-- mkdir appdir && cp -t appdir DeepTags.png DeepTags.desktop build/release/DeepTags
+- cd packaging/
 - wget -c https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
 - chmod +x linuxdeployqt-*.AppImage
-- ./linuxdeployqt-*.AppImage ./appdir/DeepTags -bundle-non-qt-libs -appimage -verbose=2
-- mv DeepTags-*.AppImage DeepTags-x86_64.AppImage && mv DeepTags-*.AppImage.zsync DeepTags-x86_64.AppImage.zsync
-- tree .
+- ./appimage.sh --add-libstdc++
+- pwd && tree . && cd ..
 
 
 deploy:
@@ -33,13 +34,12 @@ deploy:
   draft: true
   edge: true
   skip_cleanup: true
+  #cleanup: false
   token: $GITHUB_TOKEN
   file_glob: true
-  file: 
-    - DeepTags*.AppImage
-    - DeepTags*.AppImage.zsync
+  file:
+    - packaging/DeepTags*.AppImage
+    - packaging/DeepTags*.AppImage.zsync
   on:
     repo: SZinedine/DeepTags
     tags: false
-
-
