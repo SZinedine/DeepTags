@@ -33,8 +33,7 @@ deploy:
   provider: releases
   draft: true
   edge: true
-  skip_cleanup: true
-  #cleanup: false
+  cleanup: false
   token: $GITHUB_TOKEN
   file_glob: true
   file:
@@ -42,4 +41,4 @@ deploy:
     - packaging/DeepTags*.AppImage.zsync
   on:
     repo: SZinedine/DeepTags
-    tags: false
+    tags: true
