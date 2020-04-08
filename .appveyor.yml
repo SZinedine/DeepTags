@@ -1,15 +1,49 @@
 image:
-  - Visual Studio 2017
+    - Visual Studio 2017
+platform: x64
+configuration: Release
+clone_folder: c:\ci\DeepTags
+cache:
+    - C:\Program Files (x86)\Inno Setup 5
 
 
 install:
-  - set PATH=%PATH%;C:\Qt\5.11.3\msvc2017_64\bin
-  - git submodule update --init --recursive
+    - if not exist "C:\Program Files (x86)\Inno Setup 5" choco install innosetup
+    - set PATH=C:\Program Files (x86)\\Inno Setup 5;%PATH%
+    - set PATH=%PATH%;C:\Qt\5.11.3\msvc2017_64\bin
+    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+    - cd c:\ci\DeepTags
+    
 
 before_build:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-  - qmake --version
-  - qmake -r -spec win32-msvc CONFIG+=x86_64
+    - git submodule update --init --recursive
+    - qmake -r -spec win32-msvc CONFIG+=x86_64 -config release
 
 build_script:
-  - nmake
+    - set CL=/MP
+    - nmake
+    - cd packaging && mkdir DeepTags && cd DeepTags
+    - copy ..\..\build\release\DeepTags.exe .
+    - copy ..\..\LICENSE .
+    - copy ..\..\images\DeepTags.ico .
+    - mkdir translations && copy ..\..\locale\*.qm translations\
+    - windeployqt.exe . --compiler-runtime
+    - dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\"
+    - copy "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\msvcp140.dll" .
+    - copy "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\vcruntime140.dll" .
+    - iscc c:\ci\DeepTags\packaging\win_inno.iss
+
+
+artifacts:
+- path: packaging\DeepTags_setup.exe
+  name: DeepTags_setup.exe
+
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: 3MtVN4ezpTjkn9g64kcNASvLF8N3n5FoMd+Z5M3tLHnPgLrFu530Wa/FhuVtg1mm
+  repository: SZinedine/DeepTags
+  artifact: DeepTags_setup.exe
+  draft: true
+  prerelease: true
+  force_update: false
