@@ -1,5 +1,5 @@
-DeepTags
-DeepTags.pro.*
+deeptags
+deeptags.pro.*
 Makefile
 !tests/Makefile
 tests/test

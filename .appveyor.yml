@@ -23,7 +23,7 @@ build_script:
     - set CL=/MP
     - nmake
     - cd packaging && mkdir DeepTags && cd DeepTags
-    - copy ..\..\DeepTags.exe .
+    - copy ..\..\deeptags.exe .
     - copy ..\..\LICENSE .
     - copy ..\..\images\DeepTags.ico .
     - mkdir translations && copy ..\..\locale\*.qm translations\

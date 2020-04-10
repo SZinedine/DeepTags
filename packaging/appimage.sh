@@ -1,12 +1,13 @@
 #!/bin/bash
 
 _APP_NAME=DeepTags
+_APP_BIN_NAME=deeptags
 _PKG_DIR=$(readlink -f $(dirname $0))
 _ROOT=$(readlink -f $_PKG_DIR/..)
-_APP_BIN=$_ROOT/$_APP_NAME
+_APP_BIN=$_ROOT/$_APP_BIN_NAME
 _RC_DIR=$_PKG_DIR/resources
-_DESKTOP_FILE=$_RC_DIR/$_APP_NAME.desktop
-_ICON_FILE=$_ROOT/$_APP_NAME.png
+_DESKTOP_FILE=$_RC_DIR/$_APP_BIN_NAME.desktop
+_ICON_FILE=$_ROOT/$_APP_BIN_NAME.png
 _ICON_DIR=$_RC_DIR/icons
 _TRANSLATIONS=$_ROOT/locale/*.qm
 _APP_VERSION=$($_APP_BIN --version)
@@ -61,7 +62,7 @@ fi
 
 
 echo "creating the appimage"
-RESULT=$($_LINUXDEPLOYQT $_APPIMAGE_DIR/usr/bin/$_APP_NAME -appimage -bundle-non-qt-libs)
+RESULT=$($_LINUXDEPLOYQT $_APPIMAGE_DIR/usr/bin/$_APP_BIN_NAME -appimage -bundle-non-qt-libs)
 
 if [ $? != 0 ]; then
     >&2 echo "ERROR. LinuxDeployQt failed."

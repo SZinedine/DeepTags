@@ -6,7 +6,7 @@
 
 DEFINES += DEEPTAGS_VERSION=\\\"0.5\\\"
 QT += core gui widgets
-TARGET = DeepTags
+TARGET = deeptags
 TEMPLATE = app
 CONFIG += c++17 -pthread
 msvc:QMAKE_CXXFLAGS += /std:c++17
@@ -14,9 +14,9 @@ gcc:QMAKE_CXXFLAGS += -std=c++17 -lstdc++fs
 gcc:QMAKE_CXXFLAGS_GNUCXX11 = -std=c++17
 gcc:QMAKE_CXXFLAGS_GNUCXX14 = -std=c++17
 gcc:QMAKE_CXXFLAGS_GNUCXX1Z = -std=c++17
-RESOURCES += DeepTags.qrc
+RESOURCES += deeptags.qrc
 TRANSLATIONS = locale/deeptags_fr.ts
-RC_ICONS = ./images/DeepTags.ico
+RC_ICONS = ./images/deeptags.ico
 SUBDIRS = src
 PARENT_DIR = $$PWD/
 DESTDIR = $$PARENT_DIR

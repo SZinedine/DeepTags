@@ -26,15 +26,15 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-; Source: "C:\ci\DeepTags\packaging\DeepTags\DeepTags.exe"; DestDir: "{app}"; Flags: ignoreversion
+; Source: "C:\ci\DeepTags\packaging\DeepTags\deeptags.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\ci\DeepTags\packaging\DeepTags\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 
 [Icons]
-Name: "{commonprograms}\DeepTags"; Filename: "{app}\DeepTags.exe"
-Name: "{commondesktop}\DeepTags"; Filename: "{app}\DeepTags.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\DeepTags"; Filename: "{app}\DeepTags.exe"; Tasks: quicklaunchicon
+Name: "{commonprograms}\DeepTags"; Filename: "{app}\deeptags.exe"
+Name: "{commondesktop}\DeepTags"; Filename: "{app}\deeptags.exe"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\DeepTags"; Filename: "{app}\deeptags.exe"; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{app}\DeepTags.exe"; Description: "{cm:LaunchProgram,DeepTags}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\deeptags.exe"; Description: "{cm:LaunchProgram,DeepTags}"; Flags: nowait postinstall skipifsilent
 
