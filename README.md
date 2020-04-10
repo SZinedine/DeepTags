@@ -1,4 +1,4 @@
-# <img src="DeepTags.png" alt="DeepTags" width="100" align="left" > DeepTags
+# <img src="deeptags.png" alt="DeepTags" width="100" align="left" > DeepTags
 
 [![Github Releases](https://img.shields.io/github/v/release/SZinedine/DeepTags)](https://github.com/SZinedine/DeepTags/releases)
 [![Build Status](https://travis-ci.org/SZinedine/DeepTags.svg?branch=master)](https://travis-ci.org/SZinedine/DeepTags)
