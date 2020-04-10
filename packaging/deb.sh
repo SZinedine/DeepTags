@@ -3,7 +3,7 @@
 _APP_NAME=DeepTags
 _PKG_DIR=$(readlink -f $(dirname $0))
 _ROOT=$(readlink -f $_PKG_DIR/..)
-_APP_BIN=$_ROOT/build/release/$_APP_NAME
+_APP_BIN=$_ROOT/$_APP_NAME
 _RC_DIR=$_PKG_DIR/resources
 _DESKTOP_FILE=$_RC_DIR/$_APP_NAME.desktop
 _ICON_FILE=$_ROOT/$_APP_NAME.png

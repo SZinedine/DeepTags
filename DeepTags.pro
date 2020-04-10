@@ -19,11 +19,11 @@ TRANSLATIONS = locale/deeptags_fr.ts
 RC_ICONS = ./images/DeepTags.ico
 SUBDIRS = src
 PARENT_DIR = $$PWD/
+DESTDIR = $$PARENT_DIR
 SRC_DIR = $$PARENT_DIR/src
 GUI_DIR = $$SRC_DIR/gui
 ELEM_DIR = $$SRC_DIR/element/
 BUILD_DIR = $$PARENT_DIR/build
-
 ELEM_HEADERS =  $$ELEM_DIR/element.h $$ELEM_DIR/baseelement.h
 ELEM_SOURCES =  $$ELEM_DIR/element.cpp $$ELEM_DIR/baseelement.cpp
 GUI_HEADERS  =  $$GUI_DIR/fileitem.h $$GUI_DIR/filescontainer.h \
@@ -37,17 +37,19 @@ GUI_SOURCES  =  $$GUI_DIR/fileitem.cpp $$GUI_DIR/filescontainer.cpp \
 SOURCES += $$SRC_DIR/main.cpp $$ELEM_SOURCES $$GUI_SOURCES
 HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 
+
+
 # put output files in different directories depending on release || debug build
 CONFIG(debug, debug|release) {
-    DESTDIR = $$BUILD_DIR/debug
+    OUTFILES = $$BUILD_DIR/debug
 }
 CONFIG(release, debug|release) {
-    DESTDIR = $$BUILD_DIR/release
+    OUTFILES = $$BUILD_DIR/release
 }
 
-OBJECTS_DIR = $$DESTDIR/obj
-MOC_DIR = $$DESTDIR/moc
-RCC_DIR = $$DESTDIR/rc
+OBJECTS_DIR = $$OUTFILES/obj
+MOC_DIR = $$OUTFILES/moc
+RCC_DIR = $$OUTFILES/rc
 
 # make QBreeze an optional dependency
 exists(3rdParty/QBreeze/qbreeze.qrc){
