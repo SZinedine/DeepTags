@@ -6,26 +6,46 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QMouseEvent>
+#include <QShortcut>
 #include <cstdlib>
 #include "elementdialog.h"
 #include "settings.h"
 #define real(item) (static_cast<FileItem*>(item))
 
 FilesContainer::FilesContainer(QWidget* parent) : QListWidget(parent) {
+    setupSignals();
     setUniformItemSizes(true);
     setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, &FilesContainer::itemDoubleClicked, this, &FilesContainer::openFile);
-    connect(this, &FilesContainer::rightClick, this, &FilesContainer::showContextMenu);
-    connect(this, &FilesContainer::itemSelectionChanged, this, [&] {
-        FileItem* it = real(currentItem());
-        QString p    = "";
-        if (it) p = it->pathQstr();
-        emit selectionChanged_(p);
-    });
     setAcceptDrops(true);
     setDropIndicatorShown(true);
     setItemDelegate(new CustomDelegateListWidget(this));
     setIconSize(QSize(35, 20));
+}
+
+void FilesContainer::setupSignals() {
+    connect(this, &FilesContainer::itemDoubleClicked, this, &FilesContainer::openFile);
+    connect(this, &FilesContainer::rightClick, this, &FilesContainer::showContextMenu);
+    connect(this, &FilesContainer::itemPressed, this, [&] {
+        FileItem* it = real(currentItem());
+        QString p    = "";
+        if (it)
+            p = it->pathQstr();
+        else
+            return;
+        if (!it->isSelected()) return;
+        emit selectionChanged_(p);
+    });
+
+    auto press = new QShortcut(QKeySequence("Space"), this);
+    connect(press, &QShortcut::activated, this, [&] {
+        if (!hasFocus()) return;
+        if (count() == 0)
+            return;
+        else if (selectedItems().empty())
+            setCurrentItem(item(0));
+        if (!currentItem()) return;
+        emit itemPressed(currentItem());
+    });
 }
 
 FilesContainer::~FilesContainer() {

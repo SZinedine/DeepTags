@@ -24,27 +24,26 @@ EditorWidget::EditorWidget(QWidget* parent)
 
 
 void EditorWidget::open(QString path) {
+    if (path == m_currentPath) {
+        reload();
+        return;
+    }
     closeFile();
     if (path.isEmpty()) return;
-    QFile f(path);
-    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return;
-    QTextStream strm(&f);
-    m_fileContent = strm.readAll();
-    m_editor->setText(m_fileContent);
     m_currentPath = path;
+    display(path);
     emit openedFile(path);
     setVisible(true);
     m_watcher->addPath(path);
 }
 
-void EditorWidget::save() {
-    QFile f(m_currentPath);
-    if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) return;
-    QTextStream out(&f);
-    QString new_text = m_editor->toPlainText();
-    out << new_text;
-    m_fileContent = new_text;
-    emit savedFile(m_currentPath);
+
+void EditorWidget::display(QString path) {
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return;
+    QTextStream strm(&f);
+    m_fileContent = strm.readAll();
+    m_editor->setText(m_fileContent);
 }
 
 void EditorWidget::closeFile() {
@@ -59,7 +58,7 @@ void EditorWidget::closeFile() {
 void EditorWidget::reload() {
     QTextCursor cur(m_editor->textCursor());
     auto po = cur.position();
-    open(m_currentPath);
+    display(m_currentPath);
     cur.setPosition(po);
     m_editor->setTextCursor(cur);
 }

@@ -127,7 +127,7 @@ void MainWindow::setupMenu() {
     menuFile->addAction(quitAction);
 
     auto menuEdit     = menuBar()->addMenu(tr("&Edit"));
-    setMdReaderAction = new QAction(tr("&Set MarkDown Reader"), this);
+    setMdReaderAction = new QAction(tr("&MarkDown Readers"), this);
 #ifdef INCLUDE_QBREEZE   // use QBreeze if it exists
     auto setStyleMenu = new QMenu(tr("Themes"), menuEdit);
     themesActionGroup = new QActionGroup(this);

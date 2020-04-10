@@ -10,9 +10,8 @@ class EditorWidget : public QWidget {
 public:
     EditorWidget(QWidget* parent = nullptr);
 
-public slots:
     void open(QString path);
-    void save();
+    void display(QString path);
     void closeFile();
     void reload();
 
