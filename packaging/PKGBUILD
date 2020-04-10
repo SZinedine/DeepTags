@@ -1,0 +1,38 @@
+# Maintainer: Zineddine SAIBI <saibi.zineddine@yahoo.com>
+
+pkgname=deeptags
+pkgver=0.5
+pkgrel=1
+pkgdesc="A Markdown notes manager"
+arch=('x86_64')
+url="https://github.com/SZinedine/DeepTags"
+license=('GPL')
+depends=('qt5-base>=5.6' 'qt5-svg>=5.6' 'hicolor-icon-theme')
+makedepends=('qt5-tools' 'git' 'wget' 'gcc' 'make')
+source=("$pkgname::git+https://github.com/SZinedine/DeepTags.git#tag=$pkgver")
+md5sums=('SKIP')
+install=DeepTags.install
+
+preprare() {
+    cd "$pkgname"
+    git submodule update --init --recursive
+}
+
+build() {
+    cd "$pkgname"
+    qmake PREFIX=/usr
+    make -j
+}
+
+package() {
+    cd "$pkgname"
+    make INSTALL_ROOT="$pkgdir" install
+    mkdir -p "$pkgdir/usr/share/licenses/$pkgname"
+    mkdir -p "$pkgdir/usr/share/applications/$pkgname"
+    # mkdir -p "$pkgdir/usr/share/icons/hicolor/256x256/apps"
+    cd "$srcdir/$pkgname"
+    install -Dm 644 packaging/resources/$pkgname.desktop "$pkgdir/usr/share/applications/$pkgname/"
+    # install -d -Dm 644 packaging/resources/icons "$pkgdir/usr/share/"
+    cp -r packaging/resources/icons "$pkgdir/usr/share/"
+    install -Dm 644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/"
+}
