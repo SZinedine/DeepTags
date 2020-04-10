@@ -13,12 +13,12 @@ EditorWidget::EditorWidget(QWidget* parent)
     // layout->addWidget(m_toolBar);
     layout->addWidget(m_editor);
     // m_toolBar->addAction("save", [&] { save(); });
-    setVisible(false);
+    setVisible(true);
     m_editor->setReadOnly(true);
     m_watcher = new QFileSystemWatcher(this);
 
-    connect(this, &EditorWidget::openedFile, this, [=] { setVisible(true); });
-    connect(this, &EditorWidget::closedFile, this, [=] { setVisible(false); });
+    // connect(this, &EditorWidget::openedFile, this, [=] { setVisible(true); });
+    // connect(this, &EditorWidget::closedFile, this, [=] { setVisible(false); });
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, [=] { reload(); });
 }
 

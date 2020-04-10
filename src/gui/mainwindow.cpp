@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 #endif
 #ifdef INSIDE_EDITOR
     editorWidgetAction->setChecked(Settings::loadUseEditor());
+    editorWidget->setVisible(editorWidgetAction->isChecked());
 #endif
     emit started();
 }
@@ -236,13 +237,15 @@ void MainWindow::setupSignals() {
     connect(editorWidgetAction, &QAction::toggled, this, [=] {
         bool checked = editorWidgetAction->isChecked();
         Settings::saveUseEditor(checked);
-        if (checked)
+        if (checked) {
             connect(filesContainer, &FilesContainer::selectionChanged_, editorWidget,
                     &EditorWidget::open);
-        else {
+            editorWidget->setVisible(true);
+        } else {
             disconnect(filesContainer, &FilesContainer::selectionChanged_, editorWidget,
                        &EditorWidget::open);
             editorWidget->closeFile();
+            editorWidget->setVisible(false);
         }
     });
 #endif

@@ -225,7 +225,7 @@ void FilesContainer::dragMoveEvent(QDragMoveEvent* event) {
 
 
 void FilesContainer::dropEvent(QDropEvent* event) {
-    if (event->mimeData()->hasText()) {
+    if (event->mimeData()->hasText() && !event->mimeData()->text().isEmpty()) {
         if (count() == 0) return;
         QPoint pos     = event->pos();
         FileItem* item = real(itemAt(pos));
