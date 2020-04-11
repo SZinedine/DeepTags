@@ -116,7 +116,7 @@ void MainWindow::setupMenu() {
     newFileAction           = new QAction(QIcon(":images/newFile.png"), tr("&New File"), this);
     recentlyOpenedFilesMenu = new QMenu(tr("&Recently Opened Files"), this);
     Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu);
-    changeDataDirAction = new QAction(tr("&Change Data Directory"), this);
+    changeDataDirAction = new QAction(tr("&Set/Change Data Directory"), this);
     openDataDirAction   = new QAction(tr("Open Data Directory"), this);
     quitAction          = new QAction(QIcon(":images/quit.png"), tr("&Quit"), this);
     menuFile->addAction(newFileAction);
@@ -207,8 +207,12 @@ void MainWindow::setupSignals() {
     connect(setMdReaderAction, &QAction::triggered, this,
             [=] { std::make_unique<ReadersDialog>(this); });
     connect(changeDataDirAction, &QAction::triggered, this, &MainWindow::changeDataDirectory);
-    connect(openDataDirAction, &QAction::triggered, this,
-            [=] { QDesktopServices::openUrl(QUrl(Settings::dataDirectory())); });
+    connect(openDataDirAction, &QAction::triggered, this, [=] { 
+        if (Settings::dataDirectoryIsSet()) 
+            QDesktopServices::openUrl(QUrl(Settings::dataDirectory()));
+        else
+            QMessageBox::warning(this, "No data directory", "Data directory hasn't been set."); 
+    });
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(this, &MainWindow::started, this, &MainWindow::load,
             Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
