@@ -13,13 +13,9 @@ source=("$pkgname::git+https://github.com/SZinedine/DeepTags.git#tag=$pkgver")
 md5sums=('SKIP')
 install=DeepTags.install
 
-preprare() {
-    cd "$pkgname"
-    git submodule update --init --recursive
-}
-
 build() {
     cd "$pkgname"
+    git submodule update --init --recursive
     qmake PREFIX=/usr
     make -j
 }
