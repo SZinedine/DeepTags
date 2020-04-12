@@ -1,13 +1,14 @@
 deeptags
 deeptags.pro.*
+.qmake.stash
+build/
+*.h
 Makefile
 !tests/Makefile
 tests/test
 tests/*.o
-.qmake.stash
-build/
-*.h
 packaging/*.AppImage
 packaging/*.deb
 packaging/deeptags*
+!packaging/deeptags.install
 

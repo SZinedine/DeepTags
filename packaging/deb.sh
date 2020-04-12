@@ -7,6 +7,7 @@ _ROOT=$(readlink -f $_PKG_DIR/..)
 _APP_BIN=$_ROOT/$_APP_BIN_NAME
 _RC_DIR=$_PKG_DIR/resources
 _DESKTOP_FILE=$_RC_DIR/$_APP_BIN_NAME.desktop
+_APPDATA_FILE=$_RC_DIR/$_APP_BIN_NAME.appdata.xml
 _ICON_FILE=$_ROOT/$_APP_BIN_NAME.png
 _ICON_DIR=$_RC_DIR/icons
 _TRANSLATIONS=$_ROOT/locale/*.qm
@@ -33,12 +34,13 @@ echo "creating directories for packaging"
 mkdir -p $_DEB_DIR/DEBIAN
 mkdir -p $_DEB_DIR/usr/bin
 mkdir -p $_DEB_DIR/usr/share/applications
-
+mkdir -p $_APPIMAGE_DIR/usr/share/metainfo
 
 echo "copying necessary files"
 cp $_DESKTOP_FILE   $_DEB_DIR/usr/share/applications
 cp -r $_ICON_DIR    $_DEB_DIR/usr/share/
 cp $_APP_BIN        $_DEB_DIR/usr/bin
+cp $_APPDATA_FILE   $_APPIMAGE_DIR/usr/share/metainfo/
 
 
 echo "creating control file"
@@ -52,7 +54,7 @@ Section: utils
 Depends: libqt5widgets5 (>= 5.6), libqt5gui5 (>= 5.6), libqt5network5 (>= 5.6), libqt5core5a (>= 5.6), libc6, libgcc1, libstdc++6, libx11-6, libgl1-mesa-dev
 Maintainer: Zineddine SAIBI <saibi.zineddine@yahoo.com>
 Homepage: https://www.github.com/SZinedine/DeepTags
-Description: A Markdown notes manager
+Description: A markdown notes manager
 EOL
 
 
