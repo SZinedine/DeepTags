@@ -12,8 +12,8 @@ EditorWidget::EditorWidget(QWidget* parent)
     m_editor = new QMarkdownTextEdit(this);
     // layout->addWidget(m_toolBar);
     layout->addWidget(m_editor);
+    layout->setContentsMargins(0, 0, 0, 0);
     // m_toolBar->addAction("save", [&] { save(); });
-    setVisible(true);
     m_editor->setReadOnly(true);
     m_watcher = new QFileSystemWatcher(this);
 

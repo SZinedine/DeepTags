@@ -315,3 +315,11 @@ bool Settings::loadUseEditor() {
     s.endGroup();
     return res;
 }
+
+bool Settings::containsUseEditor() {
+    QSettings s;
+    s.beginGroup("main");
+    bool res = s.contains("use_integrated_editor");
+    s.endGroup();
+    return res;
+}

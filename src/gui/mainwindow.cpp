@@ -38,7 +38,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     Settings::loadTheme(themesActionGroup);
 #endif
 #ifdef INSIDE_EDITOR
-    editorWidgetAction->setChecked(Settings::loadUseEditor());
+    if (Settings::containsUseEditor())
+        editorWidgetAction->setChecked(Settings::loadUseEditor());
+    else
+        editorWidgetAction->setChecked(true);
     editorWidget->setVisible(editorWidgetAction->isChecked());
 #endif
     emit started();
@@ -151,7 +154,7 @@ void MainWindow::setupMenu() {
     menuEdit->addActions({ setMdReaderAction, clearElementsAction, reloadElementsAction });
 
 #ifdef INSIDE_EDITOR
-    editorWidgetAction = new QAction("Activate Integrated Reader (experimental)", menuEdit);
+    editorWidgetAction = new QAction("Show Integrated Reader", menuEdit);
     editorWidgetAction->setCheckable(true);
     editorWidgetAction->setChecked(false);
     menuEdit->addAction(editorWidgetAction);
@@ -207,11 +210,11 @@ void MainWindow::setupSignals() {
     connect(setMdReaderAction, &QAction::triggered, this,
             [=] { std::make_unique<ReadersDialog>(this); });
     connect(changeDataDirAction, &QAction::triggered, this, &MainWindow::changeDataDirectory);
-    connect(openDataDirAction, &QAction::triggered, this, [=] { 
-        if (Settings::dataDirectoryIsSet()) 
+    connect(openDataDirAction, &QAction::triggered, this, [=] {
+        if (Settings::dataDirectoryIsSet())
             QDesktopServices::openUrl(QUrl(Settings::dataDirectory()));
         else
-            QMessageBox::warning(this, "No data directory", "Data directory hasn't been set."); 
+            QMessageBox::warning(this, "No data directory", "Data directory hasn't been set.");
     });
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(this, &MainWindow::started, this, &MainWindow::load,
@@ -240,16 +243,15 @@ void MainWindow::setupSignals() {
     connect(filesContainer, &FilesContainer::elementChanged, editorWidget, &EditorWidget::reload);
     connect(editorWidgetAction, &QAction::toggled, this, [=] {
         bool checked = editorWidgetAction->isChecked();
+        editorWidget->setVisible(checked);
         Settings::saveUseEditor(checked);
-        if (checked) {
+        if (checked)
             connect(filesContainer, &FilesContainer::selectionChanged_, editorWidget,
                     &EditorWidget::open);
-            editorWidget->setVisible(true);
-        } else {
+        else {
             disconnect(filesContainer, &FilesContainer::selectionChanged_, editorWidget,
                        &EditorWidget::open);
             editorWidget->closeFile();
-            editorWidget->setVisible(false);
         }
     });
 #endif

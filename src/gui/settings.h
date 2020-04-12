@@ -83,6 +83,7 @@ struct Settings : public QObject {
      */
     static void saveUseEditor(bool use);
     static bool loadUseEditor();
+    static bool containsUseEditor();
 };
 
 #endif
