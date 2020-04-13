@@ -1,12 +1,17 @@
 #ifndef BaseElement_H
 #define BaseElement_H
 
-#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
 
+#ifdef USE_BOOST
+    #include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+#else
+    #include <filesystem>
 namespace fs = std::filesystem;
+#endif
 
 class Element;
 typedef std::vector<std::string> StringList;
@@ -57,7 +62,9 @@ namespace BaseElement {
      * return the items between braquets and put them in a vector of strings
      */
     StringList getUnparsedTags(const StringList& header);
-    inline auto getUnparsedTags(const fs::path& path) { return getUnparsedTags(getHeader(path)); }
+    inline StringList getUnparsedTags(const fs::path& path) {
+        return getUnparsedTags(getHeader(path));
+    }
 
     void setTitle(const fs::path& path, const std::string& title);
     void setPinned(const fs::path& path, const bool& pinned);

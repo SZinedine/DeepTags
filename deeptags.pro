@@ -8,12 +8,7 @@ DEFINES += DEEPTAGS_VERSION=\\\"0.5\\\"
 QT += core gui widgets
 TARGET = deeptags
 TEMPLATE = app
-CONFIG += c++17 -pthread
-msvc:QMAKE_CXXFLAGS += /std:c++17
-gcc:QMAKE_CXXFLAGS += -std=c++17 -lstdc++fs
-gcc:QMAKE_CXXFLAGS_GNUCXX11 = -std=c++17
-gcc:QMAKE_CXXFLAGS_GNUCXX14 = -std=c++17
-gcc:QMAKE_CXXFLAGS_GNUCXX1Z = -std=c++17
+CONFIG += -pthread
 RESOURCES += deeptags.qrc
 TRANSLATIONS = locale/deeptags_fr.ts
 RC_ICONS = ./images/deeptags.ico
@@ -38,6 +33,29 @@ SOURCES += $$SRC_DIR/main.cpp $$ELEM_SOURCES $$GUI_SOURCES
 HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 
 
+contains(DEFINES, USE_BOOST) {
+    equals(QMAKE_CXX, g++|clang) {
+        LIBS += -lboost_system -lboost_filesystem
+    }
+    CPP_STANDARD = 14
+}
+
+!contains(DEFINES, USE_BOOST) {
+    CPP_STANDARD = 17 
+    gcc:CPP_STANDARD += -lstdc++fs
+}
+
+# Prevent qmake from appending the gnu++ standard that overrides this configuration
+msvc:QMAKE_CXXFLAGS += /std:c++$$CPP_STANDARD
+gcc:QMAKE_CXXFLAGS += -std=c++$$CPP_STANDARD 
+gcc:QMAKE_CXXFLAGS_CXX11    = -std=c++$$CPP_STANDARD
+gcc:QMAKE_CXXFLAGS_CXX14    = -std=c++$$CPP_STANDARD
+gcc:QMAKE_CXXFLAGS_CXX1Z    = -std=c++17
+gcc:QMAKE_CXXFLAGS_GNUCXX11 = -std=c++$$CPP_STANDARD
+gcc:QMAKE_CXXFLAGS_GNUCXX14 = -std=c++$$CPP_STANDARD
+gcc:QMAKE_CXXFLAGS_GNUCXX1Z = -std=c++17
+
+message("DeepTags will be compiled with $$QMAKE_CXX and c++$$CPP_STANDARD")
 
 # put output files in different directories depending on release || debug build
 CONFIG(debug, debug|release) {
@@ -55,6 +73,8 @@ RCC_DIR = $$OUTFILES/rc
 exists(3rdParty/QBreeze/qbreeze.qrc){
     RESOURCES += 3rdParty/QBreeze/qbreeze.qrc
     DEFINES += INCLUDE_QBREEZE
+} else {
+    message("QBreeze not included.")
 }
 
 # if QMarkdownTextEdit is cloned
@@ -63,6 +83,8 @@ exists(3rdParty/qmarkdowntextedit/qmarkdowntextedit.pri) {
     SOURCES += $$GUI_DIR/editorwidget.cpp
     HEADERS += $$GUI_DIR/editorwidget.h
     DEFINES += INSIDE_EDITOR
+} else {
+    message("QMarkdownTextEdit not included.")
 }
 
 # if SingleApplication is cloned
@@ -70,7 +92,10 @@ exists(3rdParty/SingleApplication/singleapplication.pri) {
     include (3rdParty/SingleApplication/singleapplication.pri)
     DEFINES += INCLUDE_SINGLE_APPLICATION
     DEFINES += QAPPLICATION_CLASS=QApplication
+}else {
+    message("SingleApplication included.")
 }
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$$TARGET/bin

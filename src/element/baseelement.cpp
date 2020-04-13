@@ -195,7 +195,7 @@ PathsList BaseElement::fetch_files(const std::string& dir) {
 
 StringList BaseElement::getHeader(const fs::path& path) {
     StringList header;
-    std::ifstream myfile(path);
+    std::ifstream myfile(path.string());
     if (!myfile.is_open()) {
         std::cerr << "the following file failed to open:\n"
                   << "    " << path << "\n";
@@ -229,7 +229,7 @@ bool BaseElement::isMD(const fs::path& f) {
 
 
 int BaseElement::nbItemsInHeader(const fs::path& fi) {
-    std::ifstream myfile(fi);
+    std::ifstream myfile(fi.string());
     if (!myfile.is_open())
         std::cerr << "the following file failed to open:\n"
                   << "    " << fi << "\n";
@@ -351,7 +351,7 @@ bool BaseElement::validTagToAdd(const std::string& tag) {
 
 
 bool BaseElement::hasHeader(const fs::path& fi) {
-    std::ifstream myfile(fi);
+    std::ifstream myfile(fi.string());
     if (!myfile.is_open())
         std::cerr << "the following file failed to open:\n"
                   << "    " << fi << "\n";
@@ -522,7 +522,7 @@ bool BaseElement::replace(const std::string& old_str, const std::string& new_str
 
 
 StringList BaseElement::getFileContent(const fs::path& file) {
-    std::ifstream f(file);
+    std::ifstream f(file.string());
 
     StringList entire_file;
     std::string line;
@@ -533,7 +533,7 @@ StringList BaseElement::getFileContent(const fs::path& file) {
 }
 
 void BaseElement::writeContentToFile(const StringList& content, const fs::path& file) {
-    std::ofstream f(file);
+    std::ofstream f(file.string());
     if (!f.is_open()) return;
 
     for (const std::string& i : content) f << i << "\n";

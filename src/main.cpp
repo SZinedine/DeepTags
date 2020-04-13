@@ -8,10 +8,12 @@
 #define DEEPTAGS_WEBSITE "https://github.com/SZinedine/DeepTags"
 #define ORG_WEBSITE "https://github.com/SZinedine"
 
-#ifndef __cpp_lib_filesystem
+
+#if !defined(__cpp_lib_filesystem) && !defined(USE_BOOST)
     #error \
-        "File system library isn't supported. Please use a compiler that supports the 2017 standard of C++"
+        "Your have to set a filesystem library, either std::filesystem or boost::filesystem" 
 #endif
+
 
 #ifdef INCLUDE_SINGLE_APPLICATION
     #include <SingleApplication>
@@ -20,20 +22,14 @@
     #define _QAPP QApplication
 #endif
 
-#ifndef INCLUDE_SINGLE_APPLICATION
-    #warning "SingleApplication isn't included."
-#elif !defined(INCLUDE_QBREEZE)
-    #warning "QBreeze isn't included"
-#elif !defined(INSIDE_EDITOR)
-    #warning "QMarkdownTextEdit isn't included"
-#endif
 
 #ifndef DEEPTAGS_VERSION
     #error "The DEEPTAGS_VERSION flag isn't defined. Please define it and proceed"
 #endif
 
+
 #define HELP_MESSAGE                                                                   \
-    "DeepTags " DEEPTAGS_VERSION " (" DEEPTAGS_WEBSITE ")\n"                                    \
+    "DeepTags " DEEPTAGS_VERSION " (" DEEPTAGS_WEBSITE ")\n"                           \
     "Copyright (C) 2020 Zineddine SAIBI <saibi.zineddine@yahoo.com>.\n"                \
     "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\n" \
     "This is free software: you are free to change and redistribute it.\n"
