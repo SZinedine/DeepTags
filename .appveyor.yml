@@ -1,8 +1,20 @@
-image:
-    - Visual Studio 2017
-platform: x64
-configuration: Release
-clone_folder: c:\ci\DeepTags
+os: Visual Studio 2015
+clone_folder: c:\projects\DeepTags
+
+environment:
+  matrix:
+  - name: win32_msvc2015
+    arch: x86
+    boost_inlude: C:\Libraries\boost_1_60_0
+    boost_lib: C:\Libraries\boost_1_60_0\lib32-msvc-14.0
+    qt: C:\Qt\5.11.3\msvc2015\bin
+
+  - name: win64_msvc2015
+    arch: amd64
+    boost_inlude: C:\Libraries\boost_1_60_0
+    boost_lib: C:\Libraries\boost_1_60_0\lib64-msvc-14.0
+    qt: C:\Qt\5.11.3\msvc2015_64\bin
+
 cache:
     - C:\Program Files (x86)\Inno Setup 5
 
@@ -10,14 +22,15 @@ cache:
 install:
     - if not exist "C:\Program Files (x86)\Inno Setup 5" choco install innosetup
     - set PATH=C:\Program Files (x86)\\Inno Setup 5;%PATH%
-    - set PATH=%PATH%;C:\Qt\5.11.3\msvc2017_64\bin
-    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-    - cd c:\ci\DeepTags
-    
+    - set PATH=%PATH%;%qt%
+    - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %arch%
+
 
 before_build:
+    - cd %APPVEYOR_BUILD_FOLDER%
     - git submodule update --init --recursive
-    - qmake -r -spec win32-msvc CONFIG+=x86_64 -config release
+    - qmake -config release DEFINES+=USE_BOOST INCLUDEPATH+=%boost_inlude% LIBS+=-L%boost_lib%
+
 
 build_script:
     - set CL=/MP
@@ -27,16 +40,35 @@ build_script:
     - copy ..\..\LICENSE .
     - copy ..\..\images\DeepTags.ico .
     - mkdir translations && copy ..\..\locale\*.qm translations\
-    - windeployqt.exe . --compiler-runtime
-    - dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\"
-    - copy "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\msvcp140.dll" .
-    - copy "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\vcruntime140.dll" .
-    - iscc c:\ci\DeepTags\packaging\win_inno.iss
+    - windeployqt.exe . --no-compiler-runtime
+
+    - if %arch%==x86 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.CRT\msvcp140.dll" .
+    - if %arch%==x86 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.CRT\vcruntime140.dll" .
+    - if %arch%==x86 copy "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x86\*.dll" .
+    - if %arch%==x86 iscc %APPVEYOR_BUILD_FOLDER%\packaging\win_inno_32bit.iss
+    
+    - if %arch%==amd64 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\msvcp140.dll" .
+    - if %arch%==amd64 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\vcruntime140.dll" .
+    - if %arch%==amd64 copy "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64\*.dll" .
+    - if %arch%==amd64 iscc %APPVEYOR_BUILD_FOLDER%\packaging\win_inno_64bit.iss
+
+
+after_build:
+    - cd %APPVEYOR_BUILD_FOLDER%\packaging
+    - if %arch%==amd64 7z a DeepTags-win-64bit.zip %APPVEYOR_BUILD_FOLDER%\packaging\DeepTags
+    - if %arch%==x86   7z a DeepTags-win-32bit.zip %APPVEYOR_BUILD_FOLDER%\packaging\DeepTags
+    - dir
 
 
 artifacts:
-- path: packaging\DeepTags_setup.exe
-  name: DeepTags_setup.exe
+- path: packaging\DeepTags_setup-64bit.exe
+  name: DeepTags_setup-64bit.exe
+- path: packaging\DeepTags_setup-32bit.exe
+  name: DeepTags_setup-32bit.exe
+- path: packaging\DeepTags-win-64bit.zip
+  name: DeepTags-win-64bit.zip
+- path: packaging\DeepTags-win-32bit.zip
+  name: DeepTags-win-32bit.zip
 
 deploy:
 - provider: GitHub
@@ -44,7 +76,9 @@ deploy:
   auth_token:
     secure: 3MtVN4ezpTjkn9g64kcNASvLF8N3n5FoMd+Z5M3tLHnPgLrFu530Wa/FhuVtg1mm
   repository: SZinedine/DeepTags
-  artifact: DeepTags_setup.exe
+  artifact: 
+    DeepTags_setup-64bit.exe
+    DeepTags_setup-32bit.exe
   on:
     APPVEYOR_REPO_TAG: true
   draft: false

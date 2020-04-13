@@ -10,10 +10,10 @@ AppSupportURL=http://www.github.com/SZinedine/DeepTags
 AppUpdatesURL=http://www.github.com/SZinedine/DeepTags
 DefaultDirName={pf}\DeepTags
 DisableProgramGroupPage=yes
-LicenseFile=C:\ci\DeepTags\packaging\DeepTags\LICENSE
-OutputDir=C:\ci\DeepTags\packaging
-OutputBaseFilename=DeepTags_setup
-SetupIconFile=C:\ci\DeepTags\packaging\DeepTags\DeepTags.ico
+LicenseFile=C:\projects\DeepTags\packaging\DeepTags\LICENSE
+OutputDir=C:\projects\DeepTags\packaging
+OutputBaseFilename=DeepTags_setup-32bit
+SetupIconFile=C:\projects\DeepTags\packaging\DeepTags\DeepTags.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -26,8 +26,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-; Source: "C:\ci\DeepTags\packaging\DeepTags\deeptags.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\ci\DeepTags\packaging\DeepTags\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\projects\DeepTags\packaging\DeepTags\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 
 [Icons]
