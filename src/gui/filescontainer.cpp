@@ -121,26 +121,34 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
         connect(edac, &QAction::triggered, this, [=] { openFile_(item, i); });
     }
 
-    menu->addAction(tr("Open"), this, [=]() { openFile(item); });
+    auto open = menu->addAction(tr("Open"));
     if (editor_list.size() > 1) menu->addMenu(openWith.get());
-    menu->addAction(
-        tr("Edit"), this, [=]() { editElement(item); }, QKeySequence("Ctrl+e"));
+    auto edit = menu->addAction(tr("Edit"));  
     menu->addSeparator();
-    menu->addAction(tr("Add a new tag"), this, [=]() { appendNewTagToItem(item); });
+    auto newTag = menu->addAction(tr("Add a new tag"));
     menu->addAction(pin.get());
     menu->addAction(fav.get());
     menu->addSeparator();
 
+    edit->setShortcut(QKeySequence("Ctrl+e"));
+    connect(open, &QAction::triggered, [=]{ openFile(item); });
+    connect(edit, &QAction::triggered, [=]{ editElement(item); });
+    connect(newTag, &QAction::triggered, [=]{ appendNewTagToItem(item); });
+    
+
     // if the element is deleted, that means that we are in the Trash tag
     if (real_it->element()->deleted()) {
-        menu->addAction(tr("Restore"), this, &FilesContainer::restoreSelected,
-                        QKeySequence("Ctrl+r"));
-        menu->addAction(
-            tr("Delete Permanently"), this, [=]() { permanentlyDelete(item); },
-            QKeySequence(Qt::Key_Shift + Qt::Key_Delete));
-    } else
-        menu->addAction(tr("Move to Trash"), this, &FilesContainer::trashSelected,
-                        QKeySequence(QKeySequence::Delete));
+        auto restore = menu->addAction(tr("Restore"));
+        auto delperm = menu->addAction(tr("Delete Permanently"));
+        restore->setShortcut(QKeySequence("Ctrl+r"));
+        delperm->setShortcut(QKeySequence(Qt::Key_Shift + Qt::Key_Delete));
+        connect(restore, &QAction::triggered, [=]{ restoreSelected(); });
+        connect(delperm, &QAction::triggered, [=]{ permanentlyDelete(item); });
+    } else {
+        auto mvtrash = menu->addAction(tr("Move to Trash"));
+        connect(mvtrash, &QAction::triggered, [=] { trashSelected(); });
+        mvtrash->setShortcut(QKeySequence(QKeySequence::Delete));
+    }
 
     menu->exec(mapToGlobal(pos));
 }
@@ -257,7 +265,9 @@ void FilesContainer::dropEvent(QDropEvent* event) {
 
         // context menu
         auto menu = std::make_unique<QMenu>();
-        menu->addAction(actionText, this, [=]() { appendTagToItem(tag, item); });
+        auto addTagsAction = menu->addAction(actionText);
+        connect(addTagsAction, &QAction::triggered, [=] { appendTagToItem(tag, item); });
+        
         menu->exec(mapToGlobal(event->pos()));
 
         event->setDropAction(Qt::CopyAction);

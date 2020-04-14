@@ -10,7 +10,6 @@
 #include <QPushButton>
 #include <QShortcut>
 #include <QVBoxLayout>
-#include <filesystem>
 #include "settings.h"
 
 

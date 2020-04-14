@@ -34,9 +34,7 @@ HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 
 
 contains(DEFINES, USE_BOOST) {
-    equals(QMAKE_CXX, g++|clang) {
-        LIBS += -lboost_system -lboost_filesystem
-    }
+    !msvc:LIBS += -lboost_system -lboost_filesystem
     CPP_STANDARD = 14
 }
 

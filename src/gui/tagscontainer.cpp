@@ -361,11 +361,13 @@ void TagsContainer::showContextMenu(QPoint pos) {
                             magenta.get(), blue.get(), cyan.get() });
     menu->addMenu(colorMenu.get());
 
-    if (!it->isSpecial())
-        menu->addAction(((it->pinned()) ? "Unpin" : "Pin"), [&] {
+    if (!it->isSpecial()) {
+        auto piAction = menu->addAction(((it->pinned()) ? "Unpin" : "Pin"));
+        connect(piAction, &QAction::triggered, [&] {
             it->setPinned(!(it->pinned()));
             sort();
         });
+    }
 
     connect(def.get(), &QAction::triggered, this, [it] { it->setColor(""); });
     connect(red.get(), &QAction::triggered, this, [it] { it->setColor("red"); });
@@ -392,8 +394,9 @@ void TagsContainer::applyColors() {
 
 void TagsContainer::pinTags() {
     QStringList lst = Settings::getTagPinned();
-    // for (const QString& i : lst) {
-    for (auto i = lst.rbegin(); i != lst.rend(); i++) {
+    lst.sort(Qt::CaseInsensitive);
+    //for (auto i = lst.rbegin(); i != lst.rend(); i++) {
+    for (auto i = lst.end()-1; i >= lst.begin(); i--) {
         int row = find(*i, this);
         if (row == -1) continue;
         auto it = real(takeTopLevelItem(row));

@@ -215,7 +215,7 @@ void Settings::openFile(QString editor, const fs::path& path, QWidget* parent) {
     if (editor.isEmpty()) editor = mainMdEditor();
     if (editor.isEmpty()) {
         QString p = path.string().c_str();
-        QDesktopServices::openUrl(QUrl(p));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(p));
     } else {
         QString command = editor + QString(" \"") + QString(path.string().c_str()) + QString("\"");
         std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
