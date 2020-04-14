@@ -30,6 +30,8 @@ public:
     void appendNewTagToItem(QListWidgetItem* item);
     void editElement(QListWidgetItem* item);
     FileItem* itemFromPath(const fs::path& path);
+
+public slots:
     void pinSelected();
     void starSelected();
     inline void trashSelected() { moveToTrash(currentItem()); }

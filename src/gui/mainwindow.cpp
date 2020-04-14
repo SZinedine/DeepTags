@@ -259,12 +259,20 @@ void MainWindow::setupSignals() {
 
 
 void MainWindow::setupKeyboard() {
-    auto srch = new QShortcut(QKeySequence("Ctrl+f"), this);
-    connect(srch, &QShortcut::activated, this, [=] { searchLineEdit->setFocus(); });
+    new QShortcut(QKeySequence("Ctrl+f"), searchLineEdit, SLOT(setFocus()));
+    new QShortcut(QKeySequence("Ctrl+p"), filesContainer, SLOT(pinSelected()));
+    new QShortcut(QKeySequence("Ctrl+s"), filesContainer, SLOT(starSelected()));
+    new QShortcut(QKeySequence("Ctrl+r"), filesContainer, SLOT(restoreSelected()));
+    new QShortcut(QKeySequence(QKeySequence::Delete), filesContainer, SLOT(trashSelected()));
+    new QShortcut(QKeySequence(QKeySequence(Qt::Key_Shift + Qt::Key_Delete)), filesContainer, SLOT(permanentlyDeleteSelected()));
     newFileAction->setShortcut(QKeySequence("Ctrl+n"));
     quitAction->setShortcut(QKeySequence("Ctrl+q"));
     // clearElementsAction->setShortcut(QKeySequence("Ctrl+Shift+c"));
     // reloadElementsAction->setShortcut(QKeySequence("Ctrl+Shift+r"));
+    auto edel = new QShortcut(QKeySequence("Ctrl+e"), this);
+    connect(edel, &QShortcut::activated, this, [=] {
+        if (filesContainer->hasFocus()) filesContainer->editElement(filesContainer->currentItem());
+    });
     auto ret = new QShortcut(QKeySequence("Return"), this);
     connect(ret, &QShortcut::activated, this, [=] {
         if (tagsContainer->hasFocus())
@@ -274,21 +282,6 @@ void MainWindow::setupKeyboard() {
         else if (searchLineEdit->hasFocus())
             search();
     });
-    auto edel = new QShortcut(QKeySequence("Ctrl+e"), this);
-    connect(edel, &QShortcut::activated, this, [=] {
-        if (filesContainer->hasFocus()) filesContainer->editElement(filesContainer->currentItem());
-    });
-    auto p = new QShortcut(QKeySequence("Ctrl+p"), this);
-    connect(p, &QShortcut::activated, filesContainer, &FilesContainer::pinSelected);
-    auto s = new QShortcut(QKeySequence("Ctrl+s"), this);
-    connect(s, &QShortcut::activated, filesContainer, &FilesContainer::starSelected);
-    auto supr = new QShortcut(QKeySequence(QKeySequence::Delete), this);
-    connect(supr, &QShortcut::activated, filesContainer, &FilesContainer::trashSelected);
-    auto permDel = new QShortcut(QKeySequence(QKeySequence(Qt::Key_Shift + Qt::Key_Delete)), this);
-    connect(permDel, &QShortcut::activated, filesContainer,
-            &FilesContainer::permanentlyDeleteSelected);
-    auto r = new QShortcut(QKeySequence("Ctrl+r"), this);
-    connect(r, &QShortcut::activated, filesContainer, &FilesContainer::restoreSelected);
 }
 
 
