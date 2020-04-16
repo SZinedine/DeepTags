@@ -312,6 +312,9 @@ void MainWindow::load() {
 
 
 void MainWindow::reloadContent() {
+#ifdef INSIDE_EDITOR
+    editorWidget->clear();
+#endif
     tagsContainer->init();
     filesContainer->clearView();
     loadDataDirectoryContent();

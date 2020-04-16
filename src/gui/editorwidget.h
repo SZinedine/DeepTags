@@ -19,6 +19,7 @@ public:
     void display(QString path);
     void closeFile();
     void reload();
+    inline void clear() { m_editor->clear(); }
 
 signals:
     void openedFile(QString file);
