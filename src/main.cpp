@@ -9,12 +9,6 @@
 #define ORG_WEBSITE "https://github.com/SZinedine"
 
 
-#if !defined(__cpp_lib_filesystem) && !defined(USE_BOOST)
-    #error \
-        "Your have to set a filesystem library, either std::filesystem or boost::filesystem" 
-#endif
-
-
 #ifdef INCLUDE_SINGLE_APPLICATION
     #include <SingleApplication>
     #define _QAPP SingleApplication

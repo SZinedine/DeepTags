@@ -29,7 +29,7 @@ public:
     void overrideTags(const StringList& tags, FileItem* item);
     void appendNewTagToItem(QListWidgetItem* item);
     void editElement(QListWidgetItem* item);
-    FileItem* itemFromPath(const fs::path& path);
+    FileItem* itemFromPath(const QString& path);
 
 public slots:
     void pinSelected();
@@ -61,7 +61,7 @@ signals:
     void deletedItem(Element* item);
     void restoredElement(Element* e);
     void elementChanged(Element* element);
-    void openedFile(fs::path f);   // open in a markdown editor
+    void openedFile(QString f);   // open in a markdown editor
     void selectionChanged_(QString f);
 };
 

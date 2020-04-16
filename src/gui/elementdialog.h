@@ -33,14 +33,12 @@ public:
     /**
      * Get info
      */
-    [[nodiscard]] inline std::string title() const {
-        return m_title->text().simplified().toStdString();
-    }
+    [[nodiscard]] inline QString title() const { return m_title->text().simplified(); }
     [[nodiscard]] inline bool pinned() const { return m_pinned->isChecked(); }
     [[nodiscard]] inline bool favorited() const { return m_favorited->isChecked(); }
     [[nodiscard]] StringList tags() const;
     [[nodiscard]] inline Element* element() { return m_element; }
-    [[nodiscard]] inline std::string path() { return m_path->text().toStdString(); }
+    [[nodiscard]] inline QString path() { return m_path->text(); }
     static void formatFilename(QString& str);
 
 private:

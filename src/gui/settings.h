@@ -18,7 +18,7 @@ struct Settings : public QObject {
     static QStringList getStringList(const QString& group, const QString& label);
 
     static void openFileAction(QAction* action);
-    static void openFile(QString editor, const fs::path& path, QWidget* parent = nullptr);
+    static void openFile(QString editor, const QString& path, QWidget* parent = nullptr);
     /**
      * save the main window related settings
      */
@@ -47,7 +47,7 @@ struct Settings : public QObject {
     /**
      * save the path everytime a document is opened
      */
-    static void saveRecentlyOpenedFile(const fs::path& p);
+    static void saveRecentlyOpenedFile(const QString& p);
     /**
      * write the file paths into the filesystem (save them)
      */

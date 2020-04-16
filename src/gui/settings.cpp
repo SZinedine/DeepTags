@@ -140,13 +140,12 @@ bool Settings::expandedItems() {
 }
 
 
-void Settings::saveRecentlyOpenedFile(const fs::path& p) {
+void Settings::saveRecentlyOpenedFile(const QString& p) {
     QStringList paths = getRawRecentlyOpenedFiles();
     // remove the entry from the list if it already exists
-    QString string(p.string().c_str());
-    while (paths.contains(string)) paths.removeAt(paths.indexOf(string));
+    while (paths.contains(p)) paths.removeAt(paths.indexOf(p));
 
-    paths.prepend(string);
+    paths.prepend(p);
     saveRecentlyOpenedFiles(paths);
 }
 
@@ -168,10 +167,9 @@ QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
     if (raw.isEmpty()) return nullptr;
 
     for (const QString& path : raw) {   // qaction data = path
-        if (!fs::exists(fs::path(path.toStdString().c_str()))) continue;
-        Element e(fs::path(path.toStdString()));   // make it more efficient by using low level api
-        QString title(e.title().c_str());
-        auto action = new QAction(title, menu);
+        if (QFile::exists(path)) continue;
+        Element e(path);
+        auto action = new QAction(e.title(), menu);
         action->setToolTip(path);
         action->setData(QVariant(path));
         menu->addAction(action);
@@ -202,22 +200,21 @@ QStringList Settings::getRawRecentlyOpenedFiles() {
 void Settings::openFileAction(QAction* action) {
     QVariant data = action->data();
     if (data.isNull()) return;   // in case clear is triggered
-    fs::path p(action->data().toString().toStdString().c_str());
+    QString p(action->data().toString());
     openFile("", p, action->parentWidget());
 }
 
 
-void Settings::openFile(QString editor, const fs::path& path, QWidget* parent) {
-    if (!fs::exists(path)) {
+void Settings::openFile(QString editor, const QString& path, QWidget* parent) {
+    if (!QFile::exists(path)) {
         QMessageBox::critical(parent, tr("Error"), tr("This file doesn't exist"));
         return;
     }
     if (editor.isEmpty()) editor = mainMdEditor();
-    if (editor.isEmpty()) {
-        QString p = path.string().c_str();
-        QDesktopServices::openUrl(QUrl::fromLocalFile(p));
-    } else {
-        QString command = editor + QString(" \"") + QString(path.string().c_str()) + QString("\"");
+    if (editor.isEmpty())
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    else {
+        QString command = editor + "\"" + path + "\"";
         std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     }
     saveRecentlyOpenedFile(path);

@@ -264,7 +264,8 @@ void MainWindow::setupKeyboard() {
     new QShortcut(QKeySequence("Ctrl+s"), filesContainer, SLOT(starSelected()));
     new QShortcut(QKeySequence("Ctrl+r"), filesContainer, SLOT(restoreSelected()));
     new QShortcut(QKeySequence(QKeySequence::Delete), filesContainer, SLOT(trashSelected()));
-    new QShortcut(QKeySequence(QKeySequence(Qt::Key_Shift + Qt::Key_Delete)), filesContainer, SLOT(permanentlyDeleteSelected()));
+    new QShortcut(QKeySequence(QKeySequence(Qt::Key_Shift + Qt::Key_Delete)), filesContainer,
+                  SLOT(permanentlyDeleteSelected()));
     newFileAction->setShortcut(QKeySequence("Ctrl+n"));
     quitAction->setShortcut(QKeySequence("Ctrl+q"));
     // clearElementsAction->setShortcut(QKeySequence("Ctrl+Shift+c"));
@@ -299,7 +300,7 @@ void MainWindow::disableSomeWidgets(const bool& disable) {
 
 void MainWindow::load() {
     qApp->processEvents();
-    if (!Settings::dataDirectoryIsSet() || !fs::exists(Settings::dataDirectory().toStdString())) {
+    if (!Settings::dataDirectoryIsSet() || !QFile::exists(Settings::dataDirectory())) {
         auto ask = QMessageBox::information(this, tr("Set a Data Directory"),
                                             tr("The Data directory isn't set, Please set it."),
                                             QMessageBox::Ok | QMessageBox::Cancel);
@@ -322,7 +323,7 @@ void MainWindow::reloadContent() {
 
 
 void MainWindow::loadDataDirectoryContent() {
-    const PathsList paths       = be::fetch_files(Settings::dataDirectory().toStdString());
+    const PathsList paths       = be::fetch_files(Settings::dataDirectory());
     const ElementsList elements = Element::constructElementList(paths);
     if (!elements.empty()) openElements(elements);
 }
@@ -365,7 +366,7 @@ void MainWindow::search() {
     };
 
     for (Element* e : *lst)
-        if (contains(QString(e->title().c_str()).simplified().toLower())) res->push_back(e);
+        if (contains(e->title().simplified().toLower())) res->push_back(e);
 
     filesContainer->addFiles(res.get());
 }

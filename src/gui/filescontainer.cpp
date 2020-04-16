@@ -72,14 +72,14 @@ void FilesContainer::clearView() {
 
 void FilesContainer::openFile(QListWidgetItem* item) {
     if (!item) return;
-    fs::path path = real(item)->path();
+    QString path = real(item)->path();
     Settings::openFile("", path, parentWidget());
     emit openedFile(path);
 }
 
 void FilesContainer::openFile_(QListWidgetItem* item, const QString& editor) {
     if (!item) return;
-    fs::path path = real(item)->path();
+    QString path = real(item)->path();
     Settings::openFile(editor, path, parentWidget());
     emit openedFile(path);
 }
@@ -123,7 +123,7 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
 
     auto open = menu->addAction(tr("Open"));
     if (editor_list.size() > 1) menu->addMenu(openWith.get());
-    auto edit = menu->addAction(tr("Edit"));  
+    auto edit = menu->addAction(tr("Edit"));
     menu->addSeparator();
     auto newTag = menu->addAction(tr("Add a new tag"));
     menu->addAction(pin.get());
@@ -131,10 +131,10 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     menu->addSeparator();
 
     edit->setShortcut(QKeySequence("Ctrl+e"));
-    connect(open, &QAction::triggered, [=]{ openFile(item); });
-    connect(edit, &QAction::triggered, [=]{ editElement(item); });
-    connect(newTag, &QAction::triggered, [=]{ appendNewTagToItem(item); });
-    
+    connect(open, &QAction::triggered, [=] { openFile(item); });
+    connect(edit, &QAction::triggered, [=] { editElement(item); });
+    connect(newTag, &QAction::triggered, [=] { appendNewTagToItem(item); });
+
 
     // if the element is deleted, that means that we are in the Trash tag
     if (real_it->element()->deleted()) {
@@ -142,8 +142,8 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
         auto delperm = menu->addAction(tr("Delete Permanently"));
         restore->setShortcut(QKeySequence("Ctrl+r"));
         delperm->setShortcut(QKeySequence(Qt::Key_Shift + Qt::Key_Delete));
-        connect(restore, &QAction::triggered, [=]{ restoreSelected(); });
-        connect(delperm, &QAction::triggered, [=]{ permanentlyDelete(item); });
+        connect(restore, &QAction::triggered, [=] { restoreSelected(); });
+        connect(delperm, &QAction::triggered, [=] { permanentlyDelete(item); });
     } else {
         auto mvtrash = menu->addAction(tr("Move to Trash"));
         connect(mvtrash, &QAction::triggered, [=] { trashSelected(); });
@@ -227,7 +227,7 @@ void FilesContainer::permanentlyDelete(QListWidgetItem* item) {
                               tr("The file will permanently be deleted. Do you want to proceed?"));
     if (ok == QMessageBox::No) return;
     auto it  = real(item);
-    bool rem = fs::remove(it->element()->path());
+    bool rem = QFile::remove(it->element()->path());
     if (!rem) return;
     emit deletedItem(real(item)->element());
     delete real(takeItem(row(item)));
@@ -264,10 +264,10 @@ void FilesContainer::dropEvent(QDropEvent* event) {
         const QString actionText = QString(tr("Add the tag") + QString(" '") + tag + QString("'"));
 
         // context menu
-        auto menu = std::make_unique<QMenu>();
+        auto menu          = std::make_unique<QMenu>();
         auto addTagsAction = menu->addAction(actionText);
         connect(addTagsAction, &QAction::triggered, [=] { appendTagToItem(tag, item); });
-        
+
         menu->exec(mapToGlobal(event->pos()));
 
         event->setDropAction(Qt::CopyAction);
@@ -280,16 +280,16 @@ void FilesContainer::dropEvent(QDropEvent* event) {
 
 void FilesContainer::appendTagToItem(const QString& tag, FileItem* item) {
     if (!item) return;
-    item->element()->appendTag(tag.toStdString());
+    item->element()->appendTag(tag);
     emit elementChanged(item->element());
-    item->setText(QString::fromStdString(item->element()->title()));
+    item->setText(item->element()->title());
 }
 
 
 void FilesContainer::overrideTags(const StringList& tags, FileItem* item) {
     if (!item) return;
     item->element()->overrideTags(tags);
-    item->setText(QString::fromStdString(item->element()->title()));
+    item->setText(item->element()->title());
     item->element()->reload();
     emit elementChanged(item->element());
 }
@@ -307,11 +307,10 @@ void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
 
 void FilesContainer::editElement(QListWidgetItem* item) {
     if (!item) return;
-    FileItem* it   = real(item);
-    Element* e     = it->element();
-    auto edit      = std::make_unique<ElementDialog>(e, this);
-    const auto out = edit->exec();
-    if (out == ElementDialog::Rejected) return;
+    FileItem* it = real(item);
+    Element* e   = it->element();
+    auto edit    = std::make_unique<ElementDialog>(e, this);
+    if (edit->exec() == ElementDialog::Rejected) return;
 
     e->changeTitle(edit->title());
     e->changePinned(edit->pinned());
@@ -322,7 +321,7 @@ void FilesContainer::editElement(QListWidgetItem* item) {
 }
 
 
-FileItem* FilesContainer::itemFromPath(const fs::path& path) {
+FileItem* FilesContainer::itemFromPath(const QString& path) {
     for (int i = 0; i < count(); i++) {
         FileItem* current = real(item(i));
         if (current->path() == path) return current;

@@ -2,14 +2,6 @@
 #include <QToolBar>
 #include "./../../3rdParty/qmarkdowntextedit/qmarkdowntextedit.h"
 
-#ifdef USE_BOOST
-    #include <boost/filesystem.hpp>
-namespace fs = boost::filesystem;
-#else
-    #include <filesystem>
-namespace fs = std::filesystem;
-#endif
-
 class EditorWidget : public QWidget {
     Q_OBJECT
 public:

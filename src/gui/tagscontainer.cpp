@@ -148,7 +148,7 @@ void TagsContainer::addElement(Element* element) {
 
     for (const StringList& chain : tags) {
         for (std::string::size_type level = 0; level < chain.size(); level++) {
-            const QString particle(chain.at(level).c_str());   // item name to be treated
+            const QString particle(chain.at(level));   // item name to be treated
             int index = (level == 0) ? find(particle, this)
                                      : find(particle, prnt);   // index 0 == search fo a top level
 
@@ -249,7 +249,7 @@ void TagsContainer::toTrash(Element* element) {
 
 void TagsContainer::permatentlyDelete(Element* element) {
     pullElement(element);
-    QString file(element->path().string().c_str());
+    QString file(element->path());
     delete element;
     QFile::remove(file);
 }
@@ -300,9 +300,9 @@ void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
         strl.prepend(i->label());
         i = real(i->parent());
     }
-    std::vector<std::string> str;
-    for (const auto& i : strl) str.push_back(i.toStdString());
-    QString s = QString::fromStdString(be::combineTags(str));
+    std::vector<QString> str;
+    for (const auto& i : strl) str.push_back(i);
+    QString s = be::combineTags(str);
 
     auto* mimeData = new QMimeData;
     mimeData->setText(s);
@@ -395,8 +395,8 @@ void TagsContainer::applyColors() {
 void TagsContainer::pinTags() {
     QStringList lst = Settings::getTagPinned();
     lst.sort(Qt::CaseInsensitive);
-    //for (auto i = lst.rbegin(); i != lst.rend(); i++) {
-    for (auto i = lst.end()-1; i >= lst.begin(); i--) {
+    // for (auto i = lst.rbegin(); i != lst.rend(); i++) {
+    for (auto i = lst.end() - 1; i >= lst.begin(); i--) {
         int row = find(*i, this);
         if (row == -1) continue;
         auto it = real(takeTopLevelItem(row));

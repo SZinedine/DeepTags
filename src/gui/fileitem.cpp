@@ -5,7 +5,7 @@ FileItem::FileItem(FilesContainer* parent)
     : QListWidgetItem("", parent, 1600), m_element(nullptr) {}
 
 FileItem::FileItem(Element* element, FilesContainer* parent)
-    : QListWidgetItem(QString::fromStdString(element->title()), parent, 1600), m_element(element) {
+    : QListWidgetItem(element->title(), parent, 1600), m_element(element) {
     reload();
 }
 

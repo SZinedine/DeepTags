@@ -95,8 +95,8 @@ void ElementDialog::setupKeyboard() {
 
 void ElementDialog::setup_forEditFile() {
     setup(true);
-    m_title->setText(QString::fromStdString(m_element->title()));
-    m_path->setText(QString::fromStdString(m_element->path().string()));
+    m_title->setText(m_element->title());
+    m_path->setText(m_element->path());
     m_path->setReadOnly(true);
     m_pinned->setChecked(m_element->pinned());
     m_favorited->setChecked(m_element->favorited());
@@ -114,7 +114,7 @@ void ElementDialog::setup_forNewFile() {
 
 
 void ElementDialog::save() {
-    if (title().empty()) {
+    if (title().isEmpty()) {
         QMessageBox::warning(this, tr("Title isn't set"),
                              tr("You have to set at least the title to save the file"));
         return;
@@ -133,12 +133,11 @@ start:
 
     if (QFile::exists(filename)) goto start;
 
-    m_path = new QLineEdit(this);
+    // m_path = new QLineEdit(this);
     m_path->setText(filename);
 
-    fs::path path(filename.toStdString().c_str());
-    be::createNewFile(path, title());
-    auto* e = new Element(path);
+    be::createNewFile(filename, title());
+    auto e = new Element(filename);
     if (pinned()) e->addPinnedLine(true);
     if (favorited()) e->addFavoritedLine(true);
     const StringList t = tags();
@@ -153,14 +152,14 @@ StringList ElementDialog::tags() const {
 }
 
 void ElementDialog::formatFilename(QString& str) {
-    str                 = str.simplified();
+    str = str.simplified();
+    if (str.isEmpty()) return;
     auto hasMdExtension = [](const QString& s) -> bool {
         QStringList ex{ ".md", ".markdown", ".mdown", ".mrkdn" };
         for (auto& e : ex)
             if (s.endsWith(e, Qt::CaseInsensitive)) return true;
         return false;
     };
-    if (str.isEmpty()) return;
     str.replace(":", ";");
     str.replace("/", "-");
     str.replace("|", "-");
@@ -195,7 +194,7 @@ start:
     if (currentCompletePath == newFilePath) accept();
     QFile::rename(currentCompletePath, newFilePath);
     m_path->setText(newFilePath);
-    m_element->setPath(fs::path(newFilePath.toStdString().c_str()));
+    m_element->setPath(newFilePath);
     accept();
 }
 
@@ -231,13 +230,13 @@ StringList TagsWidget::tags() const {
     StringList s;
     for (int i = 0; i < count(); i++) {
         auto it = item(i)->text().simplified();
-        if (!it.isEmpty()) s.push_back(it.toStdString());
+        if (!it.isEmpty()) s.push_back(it);
     }
     return s;
 }
 
 void TagsWidget::setTags(StringList tags) {
-    for (auto s : tags) addItem(QString::fromStdString(s));
+    for (auto s : tags) addItem(s);
 }
 
 void TagsWidget::del() {

@@ -33,26 +33,16 @@ SOURCES += $$SRC_DIR/main.cpp $$ELEM_SOURCES $$GUI_SOURCES
 HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 
 
-contains(DEFINES, USE_BOOST) {
-    !msvc:LIBS += -lboost_system -lboost_filesystem
-    CPP_STANDARD = 14
-}
-
-!contains(DEFINES, USE_BOOST) {
-    CPP_STANDARD = 17 
-    gcc:CPP_STANDARD += -lstdc++fs
-}
-
 # Prevent qmake from appending the gnu++ standard that overrides this configuration
+CPP_STANDARD = 14
 msvc:QMAKE_CXXFLAGS += /std:c++$$CPP_STANDARD
-gcc:QMAKE_CXXFLAGS += -std=c++$$CPP_STANDARD 
+gcc:QMAKE_CXXFLAGS += -std=c++$$CPP_STANDARD
 gcc:QMAKE_CXXFLAGS_CXX11    = -std=c++$$CPP_STANDARD
 gcc:QMAKE_CXXFLAGS_CXX14    = -std=c++$$CPP_STANDARD
 gcc:QMAKE_CXXFLAGS_CXX1Z    = -std=c++17
 gcc:QMAKE_CXXFLAGS_GNUCXX11 = -std=c++$$CPP_STANDARD
 gcc:QMAKE_CXXFLAGS_GNUCXX14 = -std=c++$$CPP_STANDARD
 gcc:QMAKE_CXXFLAGS_GNUCXX1Z = -std=c++17
-
 message("DeepTags will be compiled with $$QMAKE_CXX and c++$$CPP_STANDARD")
 
 # put output files in different directories depending on release || debug build

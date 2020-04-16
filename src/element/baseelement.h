@@ -1,107 +1,105 @@
 #ifndef BaseElement_H
 #define BaseElement_H
 
+#include <QDir>
+#include <QFile>
+#include <QString>
 #include <iostream>
-#include <string>
 #include <vector>
 
-#ifdef USE_BOOST
-    #include <boost/filesystem.hpp>
-namespace fs = boost::filesystem;
-#else
-    #include <filesystem>
-namespace fs = std::filesystem;
-#endif
 
 class Element;
-typedef std::vector<std::string> StringList;
-typedef std::vector<fs::path> PathsList;
+typedef std::vector<QString> StringList;
+typedef std::vector<QString> PathsList;
 typedef std::vector<Element*> ElementsList;
-typedef std::vector<std::vector<std::string> > Tags;
+typedef std::vector<std::vector<QString> > Tags;
 
 namespace BaseElement {
 
-    void createNewFile(const fs::path& p, std::string title);
+    void createNewFile(const QString& p, QString title);
     /**
      * scans all the files inside a directory
-     * and returns the markdown files a vector of fs::path
+     * and returns the markdown files a vector of QString
      */
-    PathsList fetch_files(const std::string& dir);
+    PathsList fetch_files(const QString& dir);
+    /**
+     * verify if the file has a markdown extension
+     */
+    bool isMD(const QString& f);
     /**
      * get the header of a file, each line in a string
      * and everything in a vector of strings.
      * NOTE: a header is the lines inside two lines of "---"
      */
-    StringList getHeader(const fs::path& path);
-    /**
-     * verify if the file has a markdown extension
-     */
-    bool isMD(const fs::path& f);
+    StringList getHeader(const QString& path);
     /**
      * how many header items a file has
      */
-    int nbItemsInHeader(const fs::path& fi);
+    int nbItemsInHeader(const QString& fi);
+    /**
+     * check if a file has a header
+     * "/tag/ " -> "tag"
+     */
+    bool hasHeader(const QString& fi);
     /**
      * get The actual values from the file or the header
      */
-    std::string getTitle(const StringList& header);
+    QString getTitle(const StringList& header);
     bool isPinned(const StringList& header);
     bool isFavorited(const StringList& header);
     bool isDeleted(const StringList& header);
     Tags getParsedTags(const StringList& header);
 
-    std::string getTitle(const fs::path& p);
-    Tags getTags(const fs::path& p);
-    bool isPinned(const fs::path& p);
-    bool isFavorited(const fs::path& p);
-    bool isDeleted(const fs::path& p);
-    inline Tags getParsedTags(const fs::path& path) { return getParsedTags(getHeader(path)); }
+    QString getTitle(const QString& p);
+    Tags getTags(const QString& p);
+    bool isPinned(const QString& p);
+    bool isFavorited(const QString& p);
+    bool isDeleted(const QString& p);
+    inline Tags getParsedTags(const QString& path) { return getParsedTags(getHeader(path)); }
     /**
      * receive this:
      * "tags: [Notebooks/sheets/random, status/infinite, type/all]"
      * return the items between braquets and put them in a vector of strings
      */
     StringList getUnparsedTags(const StringList& header);
-    inline StringList getUnparsedTags(const fs::path& path) {
+    inline StringList getUnparsedTags(const QString& path) {
         return getUnparsedTags(getHeader(path));
     }
 
-    void setTitle(const fs::path& path, const std::string& title);
-    void setPinned(const fs::path& path, const bool& pinned);
-    void setFavorited(const fs::path& path, const bool& favorite);
-    void setDeleted(const fs::path& path, const bool& deleted);
+    void setTitle(const QString& path, const QString& title);
+    void setPinned(const QString& path, const bool& pinned);
+    void setFavorited(const QString& path, const bool& favorite);
+    void setDeleted(const QString& path, const bool& deleted);
     /**
      * look for a string from its key in the header
      */
-    std::string findLine(const std::string& key, const StringList& header);
-    inline std::string findTitle(const StringList& header) { return findLine("title", header); }
-    inline std::string findPinned(const StringList& header) { return findLine("pinned", header); }
-    inline std::string findFavorited(const StringList& header) {
-        return findLine("favorited", header);
-    }
-    inline std::string findDeleted(const StringList& header) { return findLine("deleted", header); }
-    inline std::string findTags(const StringList& header) { return findLine("tags", header); }
+    QString findLine(const QString& key, const StringList& header);
+    inline QString findTitle(const StringList& header) { return findLine("title", header); }
+    inline QString findPinned(const StringList& header) { return findLine("pinned", header); }
+    inline QString findFavorited(const StringList& header) { return findLine("favorited", header); }
+    inline QString findDeleted(const StringList& header) { return findLine("deleted", header); }
+    inline QString findTags(const StringList& header) { return findLine("tags", header); }
     /**
      * Check if a particular key exist in the header
      */
-    inline bool hasTitleKey(const StringList& header) { return !(findTitle(header).empty()); }
-    inline bool hasPinnedKey(const StringList& header) { return !(findPinned(header).empty()); }
+    inline bool hasTitleKey(const StringList& header) { return !(findTitle(header).isEmpty()); }
+    inline bool hasPinnedKey(const StringList& header) { return !(findPinned(header).isEmpty()); }
     inline bool hasFavoritedKey(const StringList& header) {
-        return !(findFavorited(header).empty());
+        return !(findFavorited(header).isEmpty());
     }
-    inline bool hasDeletedKey(const StringList& header) { return !(findDeleted(header).empty()); }
-    inline bool hasTagsKey(const StringList& header) { return !findTags(header).empty(); }
+    inline bool hasDeletedKey(const StringList& header) { return !(findDeleted(header).isEmpty()); }
+    inline bool hasTagsKey(const StringList& header) { return !findTags(header).isEmpty(); }
     /**
      * receive a line of a header. return the value
      * "myKey: my value" -> "my value"
      */
-    std::string getValue(std::string line);
+    QString getValue(QString line);
     /**
      * use getValue() and return the actual value with the appropriate data type
      */
-    std::string parseString(const std::string& line);
-    bool parseBool(const std::string& line);
-    StringList parseArray(const std::string& line);
+    QString parseString(const QString& line);
+    bool parseBool(const QString& line);
+    StringList parseArray(const QString& line);
 
 
     /***********************************************************************/
@@ -111,49 +109,43 @@ namespace BaseElement {
      * prepend a header to a file
      * with a title line
      */
-    void createHeader(const fs::path& file, const std::string& title = "untitled");
+    void createHeader(const QString& file, const QString& title = "untitled");
     /**
      * receive: "this is a title"
      * returns: "title: this is a title"
      */
-    std::string makeTitleLine(std::string title = "untitled");
-    std::string makePinnedLine(const bool& pinned = false);
-    std::string makeFavoritedLine(const bool& fav = false);
-    std::string makeDeletedLine(const bool& del = false);
+    QString makeTitleLine(QString title = "untitled");
+    QString makePinnedLine(const bool& pinned = false);
+    QString makeFavoritedLine(const bool& fav = false);
+    QString makeDeletedLine(const bool& del = false);
     /**
      * receives: ["shallow/deep", "something/nothing"]
      * returns : "tags: [shallow/deep, something/nothing]"
      * it returns a string writable into a file to replace its previous tag
-     * old function name: combineTagsIntoString
      */
-    std::string makeTagsLine(const StringList& lst);
+    QString makeTagsLine(const StringList& lst);
 
 
-    std::string composeStringItem(std::string key, std::string value);
-    std::string composeBoolItem(std::string key, const bool& value);
-    std::string composeArrayItem(std::string key, const StringList& value);
+    QString composeStringItem(QString key, QString value);
+    QString composeBoolItem(QString key, const bool& value);
+    QString composeArrayItem(QString key, const StringList& value);
 
     /**
      * check if the provided tags:
-     *  - aren't the basic onces
+     *  - aren't the basic ones
      *  - don't contain forbidden characters (,)
      * NOTE: it doesn't test tag particles., but complete nested tag ("one/two/three")
      */
-    bool validTagToAdd(const std::string& tag);
+    bool validTagToAdd(const QString& tag);
     /**
      * receives: {"Notebooks", "summaries", "history"}
      * returns:  "Notebooks/summaries/history"
      */
-    std::string combineTags(const StringList& chain);
+    QString combineTags(const StringList& chain);
     /**
      * remove characters that gets in the way
      */
-    std::string& processTag(std::string& tag);
-    /**
-     * check if a file has a Notable like header
-     * "/tag/ " -> "tag"
-     */
-    bool hasHeader(const fs::path& fi);
+    QString& processTag(QString& tag);
 
     /***********************************************************************/
     /************ Insert an item into the header of a file *****************/
@@ -161,47 +153,42 @@ namespace BaseElement {
     /***
      * receive a line ready to be appended to the header of a file
      */
-    void addItemToHeader(const std::string& item, const fs::path& path);
-    void addPinnedItem(std::string pinnedLine, const fs::path& path);
-    void addFavoritedItem(std::string favoritedLine, const fs::path& path);
-    void addDeletedItem(std::string deletedLine, const fs::path& path);
-    void addTagsItem(std::string tagsLine, const fs::path& path);
+    void addItemToHeader(const QString& item, const QString& path);
+    void addPinnedItem(QString pinnedLine, const QString& path);
+    void addFavoritedItem(QString favoritedLine, const QString& path);
+    void addDeletedItem(QString deletedLine, const QString& path);
+    void addTagsItem(QString tagsLine, const QString& path);
+    void addTitleItem(QString titleLine, const QString& path);
 
     /***********************************************************************/
     /****************** Remove a specific item in the header ***************/
     /***********************************************************************/
-    void removeLineFromHeader(const std::string& line, const fs::path& path);
-    void removePinnedItemFromHeader(const fs::path& path);
-    void removeFavoritedItemFromHeader(const fs::path& path);
-    void removeDeletedItemFromHeader(const fs::path& path);
-    void removeTagsItemFromHeader(const fs::path& path);
-    void removeTitleItemFromHeader(const fs::path& path);
+    void removeLineFromHeader(const QString& line, const QString& path);
+    void removePinnedItemFromHeader(const QString& path);
+    void removeFavoritedItemFromHeader(const QString& path);
+    void removeDeletedItemFromHeader(const QString& path);
+    void removeTagsItemFromHeader(const QString& path);
+    void removeTitleItemFromHeader(const QString& path);
     /**
      * open a file, return each line of it
      * as an entry in a vector<string>
      */
-    StringList getFileContent(const fs::path& file);
-    void writeContentToFile(const StringList& content, const fs::path& file);
-    /**
-     * remove trailing spaces
-     * found in: https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
-     */
-    void trim(std::string& s);
-    [[nodiscard]] std::string trim(const std::string& s);
+    StringList getFileContent(const QString& file);
+    void writeContentToFile(const StringList& content, const QString& file);
     /**
      * remove the quotations around strings
      * call this function on every title to remove them
      */
-    void remove_quotations(std::string& str);
+    void remove_quotations(QString& str);
     /**
      * find a line in a text file and replace it
      */
-    bool replace(const std::string& old_str, const std::string& new_str, const fs::path& path);
+    bool replace(const QString& old_str, const QString& new_str, const QString& path);
     /**
      * add a particle before and after the string
      */
-    void enwrap(std::string& str, const std::string& before, const std::string& after);
-    void unwrap(std::string& str, const std::string& before, const std::string& after);
+    void enwrap(QString& str, QString before, QString after);
+    void unwrap(QString& str, QString before, QString after);
 
     /**
      * split a single string into particles and return them in a vector of strings
@@ -214,24 +201,10 @@ namespace BaseElement {
      * since I have dropped the usage of yaml-cpp, this function
      * is also used to separate the tags block by passing ", " as a delimiter.
      *
-     * function found in:
+     * an earlier version of this function was found in:
           https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
     */
-    StringList split(const std::string& s, const std::string& delimiter = "/");
-
-
-    /**
-     * Delete some variations of functions to prevent errors
-     */
-    std::string makePinnedLine(const std::string& pinned)                  = delete;
-    std::string makePinnedLine(const char* pinned)                         = delete;
-    std::string makeDeletedLine(const std::string& fav)                    = delete;
-    std::string makeDeletedLine(const char* fav)                           = delete;
-    std::string makeFavoritedLine(const std::string& fav)                  = delete;
-    std::string makeFavoritedLine(const char* fav)                         = delete;
-    std::string composeBoolItem(std::string key, const std::string& value) = delete;
-    std::string composeBoolItem(std::string key, const char* value)        = delete;
-
+    StringList split(const QString& s, const QString& delimiter = "/");
 
 }   // namespace BaseElement
 

@@ -1,6 +1,7 @@
 #include "element.h"
+#include <QDebug>
 
-Element::Element(const fs::path& path) : m_path(path) {
+Element::Element(const QString& path) : m_path(QFileInfo(path).absoluteFilePath()) {
     setup();
 }
 
@@ -17,13 +18,16 @@ Element::Element(const Element& other) {
 void Element::setup() {
     m_header = be::getHeader(m_path);
     if (m_header.empty()) {
-        setTitle(m_path.stem().string());
+        setTitle(QFileInfo(m_path).baseName());
         setPinned(false);
         setFavorited(false);
         setDeleted(false);
         return;
     }
-    setTitle(be::getTitle(m_header));
+    if (!hasTitleLine())
+        setTitle(QFileInfo(m_path).baseName());
+    else
+        setTitle(be::getTitle(m_header));
     loadTags(m_header);
     setPinned(be::isPinned(m_header));
     setFavorited(be::isFavorited(m_header));
@@ -32,7 +36,7 @@ void Element::setup() {
 
 ElementsList Element::constructElementList(const PathsList& f) {
     ElementsList elems;
-    for (const fs::path& p : f) {
+    for (const QString& p : f) {
         if (!be::isMD(p)) continue;
         elems.push_back(new Element(p));
     }
@@ -41,21 +45,21 @@ ElementsList Element::constructElementList(const PathsList& f) {
 
 
 void Element::addPinnedLine(const bool& val) {
-    std::string res = be::makePinnedLine(val);
+    QString res = be::makePinnedLine(val);
     be::addPinnedItem(res, m_path);
     setPinned(val);
     reloadHeader();
 }
 
 void Element::addFavoritedLine(const bool& val) {
-    std::string res = be::makeFavoritedLine(val);
+    QString res = be::makeFavoritedLine(val);
     be::addFavoritedItem(res, m_path);
     setFavorited(val);
     reloadHeader();
 }
 
 void Element::addDeletedLine(const bool& val) {
-    std::string res = be::makeDeletedLine(val);
+    QString res = be::makeDeletedLine(val);
     be::addDeletedItem(res, m_path);
     setDeleted(val);
     reloadHeader();
@@ -63,15 +67,29 @@ void Element::addDeletedLine(const bool& val) {
 
 
 void Element::addTagsLine(const StringList& list) {
-    std::string line = be::makeTagsLine(list);
+    QString line = be::makeTagsLine(list);
     be::addTagsItem(line, m_path);
     loadTags();
 }
 
+void Element::addTitleLine(const QString& title) {
+    QString t = title.simplified();
+    if (!be::hasHeader(m_path)) be::createHeader(m_path, title);
+    QString line = be::makeTitleLine(t);
+    be::addTitleItem(line, m_path);
+    setTitle(t);
+    reloadHeader();
+}
 
-void Element::changeTitle(const std::string& title) {
-    be::setTitle(m_path, title);
-    setTitle(title);
+
+void Element::changeTitle(const QString& title) {
+    if (!hasTitleLine()) {
+        addTitleLine(title);
+        return;
+    } else {
+        be::setTitle(m_path, title);
+        setTitle(title);
+    }
     reloadHeader();
 }
 
@@ -128,23 +146,23 @@ void Element::overrideTags(const StringList& list) {
         addTagsLine(list);
         return;
     }
-    std::string old = be::findTags(m_header);
+    QString old = be::findTags(m_header);
     StringList valid;
-    for (std::string i : list) {
+    for (QString i : list) {
         be::processTag(i);
         if (be::validTagToAdd(i))
             valid.push_back(i);
         else
-            std::cerr << "'" << i << "' isn not a valid tag\n";
+            qDebug() << "'" << i << "' isn not a valid tag\n";
     }
-    const std::string newTag = be::makeTagsLine(valid);
+    const QString newTag = be::makeTagsLine(valid);
 
     be::replace(old, newTag, m_path);
     loadTags();
 }
 
 
-bool Element::appendTag(std::string tag) {
+bool Element::appendTag(QString tag) {
     be::processTag(tag);
     if (!be::validTagToAdd(tag)) return false;
     if (!hasTagsLine()) {
@@ -152,14 +170,14 @@ bool Element::appendTag(std::string tag) {
         return true;
     }
 
-    const std::string raw_tag_header = be::findTags(m_header);
-    StringList tags                  = be::getUnparsedTags(m_header);
+    const QString raw_tag_header = be::findTags(m_header);
+    StringList tags              = be::getUnparsedTags(m_header);
 
-    for (const std::string& i : tags)   // verify if the file doesn't contain the tag
+    for (const QString& i : tags)   // verify if the file doesn't contain the tag
         if (tag == i) return false;
     tags.push_back(tag);
 
-    const std::string res = be::makeTagsLine(tags);
+    const QString res = be::makeTagsLine(tags);
     bool ret = be::replace(raw_tag_header, res, m_path);   // write the changes into the file
 
     loadTags();
