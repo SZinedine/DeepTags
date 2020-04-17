@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QShortcut>
 #include <cstdlib>
+#include <memory>
 #include "elementdialog.h"
 #include "settings.h"
 #define real(item) (static_cast<FileItem*>(item))

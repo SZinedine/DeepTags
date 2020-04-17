@@ -20,6 +20,7 @@
 #include <QStatusBar>
 #include <QSystemTrayIcon>
 #include <QVBoxLayout>
+#include <memory>
 #include "../element/element.h"
 #include "elementdialog.h"
 #include "readersdialog.h"

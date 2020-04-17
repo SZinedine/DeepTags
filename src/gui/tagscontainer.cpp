@@ -6,6 +6,7 @@
 #include <QDragEnterEvent>
 #include <QMenu>
 #include <QMimeData>
+#include <memory>
 #include "settings.h"
 #include "tagitem.h"
 
