@@ -1,20 +1,22 @@
 #include "../src/element/baseelement.h"
 
 #include "catch.hpp"
+#include <QFile>
+#include <QString>
 
 namespace be = BaseElement;
 
 TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
-    const fs::path    path("./_new md file.md");
-    const std::string title = "new markdown file title";
+    const QString    path("./_new md file.md");
+    const QString title = "new markdown file title";
 
     be::createNewFile(path, title);
-    REQUIRE(fs::exists(path));
+    REQUIRE(QFile::exists(path));
 
     SECTION("reading a newly created file") {
         REQUIRE(be::hasHeader(path));
         const StringList  header  = be::getHeader(path);
-        const std::string tagline = be::findTags(header);
+        const QString tagline = be::findTags(header);
         CHECK_FALSE(be::hasTagsKey(header));
     }
 
@@ -29,7 +31,7 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
               "array: [first one/subFirst, second elem, another for fun]");
 
         CHECK(be::makeTitleLine(" random title ") == "title: 'random title'");
-        CHECK(be::makeTitleLine(" random title  '") == "title: 'random title  ''");
+        CHECK(be::makeTitleLine(" this is a title  '").toStdString() == std::string("title: 'this is a title ''"));
         CHECK(be::makePinnedLine(true) == "pinned: true");
         CHECK(be::makePinnedLine(false) == "pinned: false");
         CHECK(be::makeFavoritedLine(true) == "favorited: true");
@@ -70,7 +72,7 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         CHECK(be::parseArray(header.at(2))[2] == "fourth/fifth");
         CHECK(be::parseArray(header.at(2))[3] == "sixth");
 
-        std::string tag = " / tag / ";
+        QString tag = " / tag / ";
         REQUIRE(be::processTag(tag) == "tag");
     }
 
@@ -82,15 +84,15 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         CHECK(be::makeTitleLine("    good title") == "title: 'good title'");
         CHECK(be::makeTitleLine("    good title   ") == "title: 'good title'");
 
-        std::string n_title = "new title";
+        QString n_title = "new title";
         be::setTitle(path, n_title);
 
         INFO("verify if the title item has changed inside the file");
         StringList header = be::getHeader(path);
         CHECK(header.size() == 1);
-        std::string title_line = be::findTitle(header);
+        QString title_line = be::findTitle(header);
         CHECK(title_line == "title: 'new title'");
-        std::string title_value = be::getValue(title_line);
+        QString title_value = be::getValue(title_line);
         CHECK(title_value == "'new title'");
     }
 
@@ -108,7 +110,7 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
 
         INFO("test the tags composition");
         const StringList  tgs{"Notebooks", "summaries", "history"};
-        const std::string combined = be::combineTags(tgs);
+        const QString combined = be::combineTags(tgs);
         REQUIRE(combined == "Notebooks/summaries/history");
 
         INFO("split a nested tag into particles");
@@ -117,13 +119,13 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         CHECK(splited[1] == "summaries");
         CHECK(splited[2] == "history");
 
-        const std::string raw_tags_line = "tags: [Notebooks/summaries, status/done]";
+        const QString raw_tags_line = "tags: [Notebooks/summaries, status/done]";
         const StringList  tagsList      = be::parseArray(raw_tags_line);
         REQUIRE(tagsList[0] == "Notebooks/summaries");
         REQUIRE(tagsList[1] == "status/done");
 
         INFO("recompose a list of nested tags");
-        const std::string recomposed = be::makeTagsLine(tagsList);
+        const QString recomposed = be::makeTagsLine(tagsList);
         CHECK(recomposed == raw_tags_line);
 
 
@@ -152,5 +154,5 @@ TEST_CASE("BaseElement class", "[BaseElement][baseelement]") {
         REQUIRE_FALSE(be::hasDeletedKey(be::getHeader(path)));
     }
 
-    fs::remove(path);
+    QFile::remove(path);
 }

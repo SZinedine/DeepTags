@@ -1,11 +1,13 @@
 #include "../src/element/element.h"
 
 #include "catch.hpp"
+#include <QFile>
+#include <QString>
 
 
 SCENARIO("Element", "[element]") {
-    const fs::path    filename("./_new md file_.md");
-    const std::string title = "new markdown file title";
+    const QString filename("./_new md file_.md");
+    const QString title = "new markdown file title";
     be::createNewFile(filename, title);
     Element element(filename);
 
@@ -40,7 +42,7 @@ SCENARIO("Element", "[element]") {
             }
 
             INFO("append non existing tag");
-            const std::string toAppend = "new/tag/append";
+            const QString toAppend = "new/tag/append";
             element.appendTag(toAppend);
 
             THEN("should have 3 tags") {
@@ -156,5 +158,5 @@ SCENARIO("Element", "[element]") {
         }
     }
 
-    fs::remove(filename);
+    QFile::remove(filename);
 }

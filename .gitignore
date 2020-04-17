@@ -4,8 +4,8 @@ deeptags.pro.*
 build/
 *.h
 Makefile
-!tests/Makefile
-tests/test
+tests/Makefile
+tests/tests
 tests/*.o
 packaging/*.AppImage
 packaging/*.deb
