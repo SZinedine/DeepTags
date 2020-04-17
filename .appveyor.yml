@@ -5,14 +5,10 @@ environment:
   matrix:
   - name: win32_msvc2015
     arch: x86
-    boost_inlude: C:\Libraries\boost_1_60_0
-    boost_lib: C:\Libraries\boost_1_60_0\lib32-msvc-14.0
     qt: C:\Qt\5.11.3\msvc2015\bin
 
   - name: win64_msvc2015
     arch: amd64
-    boost_inlude: C:\Libraries\boost_1_60_0
-    boost_lib: C:\Libraries\boost_1_60_0\lib64-msvc-14.0
     qt: C:\Qt\5.11.3\msvc2015_64\bin
 
 cache:
@@ -29,11 +25,10 @@ install:
 before_build:
     - cd %APPVEYOR_BUILD_FOLDER%
     - git submodule update --init --recursive
-    - qmake -config release DEFINES+=USE_BOOST INCLUDEPATH+=%boost_inlude% LIBS+=-L%boost_lib%
+    - qmake -config release
 
 
 build_script:
-    - set CL=/MP
     - nmake
     - cd packaging && mkdir DeepTags && cd DeepTags
     - copy ..\..\deeptags.exe .
@@ -46,7 +41,7 @@ build_script:
     - if %arch%==x86 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.CRT\vcruntime140.dll" .
     - if %arch%==x86 copy "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x86\*.dll" .
     - if %arch%==x86 iscc %APPVEYOR_BUILD_FOLDER%\packaging\win_inno_32bit.iss
-    
+
     - if %arch%==amd64 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\msvcp140.dll" .
     - if %arch%==amd64 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\vcruntime140.dll" .
     - if %arch%==amd64 copy "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64\*.dll" .
@@ -76,7 +71,7 @@ deploy:
   auth_token:
     secure: 3MtVN4ezpTjkn9g64kcNASvLF8N3n5FoMd+Z5M3tLHnPgLrFu530Wa/FhuVtg1mm
   repository: SZinedine/DeepTags
-  artifact: 
+  artifact:
     DeepTags_setup-64bit.exe
     DeepTags_setup-32bit.exe
   on:

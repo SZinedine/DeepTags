@@ -34,16 +34,16 @@ HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 
 
 # Prevent qmake from appending the gnu++ standard that overrides this configuration
-CPP_STANDARD = 14
-msvc:QMAKE_CXXFLAGS += /std:c++$$CPP_STANDARD
-gcc:QMAKE_CXXFLAGS += -std=c++$$CPP_STANDARD
-gcc:QMAKE_CXXFLAGS_CXX11    = -std=c++$$CPP_STANDARD
-gcc:QMAKE_CXXFLAGS_CXX14    = -std=c++$$CPP_STANDARD
+STD = 14
+msvc:QMAKE_CXXFLAGS += /std:c++$$STD
+gcc:QMAKE_CXXFLAGS += -std=c++$$STD
+gcc:QMAKE_CXXFLAGS_CXX11    = -std=c++$$STD
+gcc:QMAKE_CXXFLAGS_CXX14    = -std=c++$$STD
 gcc:QMAKE_CXXFLAGS_CXX1Z    = -std=c++17
-gcc:QMAKE_CXXFLAGS_GNUCXX11 = -std=c++$$CPP_STANDARD
-gcc:QMAKE_CXXFLAGS_GNUCXX14 = -std=c++$$CPP_STANDARD
+gcc:QMAKE_CXXFLAGS_GNUCXX11 = -std=c++$$STD
+gcc:QMAKE_CXXFLAGS_GNUCXX14 = -std=c++$$STD
 gcc:QMAKE_CXXFLAGS_GNUCXX1Z = -std=c++17
-message("DeepTags will be compiled with $$QMAKE_CXX and c++$$CPP_STANDARD")
+message("DeepTags will be compiled with $$QMAKE_CXX and c++$$STD")
 
 # put output files in different directories depending on release || debug build
 CONFIG(debug, debug|release) {
