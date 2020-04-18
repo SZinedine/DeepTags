@@ -129,6 +129,8 @@ void MainWindow::setupMenu() {
     menuFile->addAction(openDataDirAction);
     menuFile->addSeparator();
     menuFile->addAction(quitAction);
+    changeDataDirAction->setToolTip(Settings::dataDirectory());
+    openDataDirAction->setToolTip(Settings::dataDirectory());
 
     auto menuEdit     = menuBar()->addMenu(tr("&Edit"));
     setMdReaderAction = new QAction(tr("&MarkDown Readers"), this);
@@ -149,10 +151,9 @@ void MainWindow::setupMenu() {
     nativeStyleAction->setChecked(true);
     menuEdit->addMenu(setStyleMenu);
 #endif
-    clearElementsAction  = new QAction(tr("Clear Elements"), menuEdit);
     reloadElementsAction = new QAction(tr("Reload Elements"), menuEdit);
 
-    menuEdit->addActions({ setMdReaderAction, clearElementsAction, reloadElementsAction });
+    menuEdit->addActions({ setMdReaderAction, reloadElementsAction });
 
 #ifdef INSIDE_EDITOR
     editorWidgetAction = new QAction("Show Integrated Reader", menuEdit);
@@ -191,8 +192,6 @@ void MainWindow::setupSignals() {
             &TagsContainer::reloadElement);
     connect(splitter, &QSplitter::splitterMoved, this,
             [=]() { Settings::saveSplitterState(splitter); });
-    connect(clearElementsAction, &QAction::triggered, tagsContainer, &TagsContainer::init);
-    connect(clearElementsAction, &QAction::triggered, filesContainer, &FilesContainer::clearView);
     connect(reloadElementsAction, &QAction::triggered, this, &MainWindow::reloadContent);
     connect(searchLineEdit, &QLineEdit::textEdited, this, &MainWindow::search);
     connect(eraseSearch, &QAction::triggered, [&] {
@@ -269,7 +268,6 @@ void MainWindow::setupKeyboard() {
                   SLOT(permanentlyDeleteSelected()));
     newFileAction->setShortcut(QKeySequence("Ctrl+n"));
     quitAction->setShortcut(QKeySequence("Ctrl+q"));
-    // clearElementsAction->setShortcut(QKeySequence("Ctrl+Shift+c"));
     // reloadElementsAction->setShortcut(QKeySequence("Ctrl+Shift+r"));
     auto edel = new QShortcut(QKeySequence("Ctrl+e"), this);
     connect(edel, &QShortcut::activated, this, [=] {
@@ -290,12 +288,14 @@ void MainWindow::setupKeyboard() {
 void MainWindow::changeDataDirectory() {
     bool reload = Settings::setDataDirectory();
     if (reload) reloadContent();
+    QString dd = Settings::dataDirectory();
+    changeDataDirAction->setToolTip(dd);
+    openDataDirAction->setToolTip(dd);
 }
 
 void MainWindow::disableSomeWidgets(const bool& disable) {
     changeDataDirAction->setDisabled(disable);
     reloadElementsAction->setDisabled(disable);
-    clearElementsAction->setDisabled(disable);
     searchLineEdit->setDisabled(disable);
 }
 

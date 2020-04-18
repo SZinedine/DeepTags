@@ -165,8 +165,8 @@ QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
     QStringList raw = getRawRecentlyOpenedFiles();
     if (raw.isEmpty()) return nullptr;
 
-    for (const QString& path : raw) {   // qaction data = path
-        if (QFile::exists(path)) continue;
+    for (auto path : raw) {   // qaction data = path
+        if (!QFile::exists(path)) continue;
         Element e(path);
         auto action = new QAction(e.title(), menu);
         action->setToolTip(path);

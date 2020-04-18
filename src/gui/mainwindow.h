@@ -84,7 +84,6 @@ private:
     QAction* changeDataDirAction;
     QAction* openDataDirAction;
     QAction* quitAction;
-    QAction* clearElementsAction;
     QAction* reloadElementsAction;
     QAction* setMdReaderAction;
     QAction* aboutAction;
