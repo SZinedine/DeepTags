@@ -34,13 +34,13 @@ echo "creating directories for packaging"
 mkdir -p $_DEB_DIR/DEBIAN
 mkdir -p $_DEB_DIR/usr/bin
 mkdir -p $_DEB_DIR/usr/share/applications
-mkdir -p $_APPIMAGE_DIR/usr/share/metainfo
+mkdir -p $_DEB_DIR/usr/share/metainfo
 
 echo "copying necessary files"
 cp $_DESKTOP_FILE   $_DEB_DIR/usr/share/applications
 cp -r $_ICON_DIR    $_DEB_DIR/usr/share/
 cp $_APP_BIN        $_DEB_DIR/usr/bin
-cp $_APPDATA_FILE   $_APPIMAGE_DIR/usr/share/metainfo/
+cp $_APPDATA_FILE   $_DEB_DIR/usr/share/metainfo/
 
 
 echo "creating control file"
@@ -51,7 +51,7 @@ Architecture: amd64
 Essential: no
 Priority: optional
 Section: utils
-Depends: libqt5widgets5 (>= 5.6), libqt5gui5 (>= 5.6), libqt5network5 (>= 5.6), libqt5core5a (>= 5.6), libc6, libgcc1, libstdc++6, libx11-6, libgl1-mesa-dev
+Depends: libqt5widgets5 (>= 5.5), libqt5gui5 (>= 5.5), libqt5network5 (>= 5.5), libqt5core5a (>= 5.5)
 Maintainer: Zineddine SAIBI <saibi.zineddine@yahoo.com>
 Homepage: https://www.github.com/SZinedine/DeepTags
 Description: A markdown notes manager
@@ -64,3 +64,9 @@ dpkg-deb --build $_DEB_DIR
 
 echo "deleting temporary files"
 rm -rf $_DEB_DIR
+
+if [ -n "$DIST" ]; then
+    echo "adding the distribution name into the output filename"
+    mv $_DEB_DIR.deb $_DEB_DIR-$DIST.deb
+fi
+
