@@ -42,6 +42,7 @@ void EditorWidget::display(QString path) {
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return;
     QTextStream strm(&f);
+    strm.setCodec("UTF-8");
     m_fileContent = strm.readAll();
     m_editor->setText(m_fileContent);
 }

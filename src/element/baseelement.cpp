@@ -13,12 +13,12 @@ void BaseElement::createNewFile(const QString& p, QString title) {
     const QString title_line = makeTitleLine(title);
 
     StringList content;
-    content.push_back("---");
+    content.push_back(QString::fromUtf8("---"));
     content.push_back(title_line);
-    content.push_back("---");
-    content.push_back("\n");
+    content.push_back(QString::fromUtf8("---"));
+    content.push_back(QString::fromUtf8("\n"));
     content.push_back(title);
-    content.push_back("==========");
+    content.push_back(QString::fromUtf8("=========="));
 
     writeContentToFile(content, QString(p));
 }
@@ -239,9 +239,9 @@ StringList BaseElement::split(const QString& s, const QString& delimiter) {
 void BaseElement::createHeader(const QString& file, const QString& title) {
     if (hasHeader(file)) return;
     StringList header;
-    header.push_back("---");
+    header.push_back(QString::fromUtf8("---"));
     header.push_back(makeTitleLine(title));
-    header.push_back("---\n");
+    header.push_back(QString::fromUtf8("---\n"));
 
     StringList entire_file = getFileContent(file);
     for (const QString& i : entire_file) header.push_back(i);
@@ -479,6 +479,7 @@ void BaseElement::writeContentToFile(const StringList& content, const QString& f
         return;
     }
     QTextStream f(&qf);
+    f.setCodec("UTF-8");
     for (auto& line : content) f << line << "\n";
     f.flush();
 }
