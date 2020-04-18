@@ -5,7 +5,6 @@
 #include <QKeySequence>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QRegExp>
 #include <QShortcut>
 #include "settings.h"
 

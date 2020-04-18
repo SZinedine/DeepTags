@@ -2,6 +2,7 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <cstring>
+#include <iostream>
 #include "gui/mainwindow.h"
 
 #define NAME    "DeepTags"

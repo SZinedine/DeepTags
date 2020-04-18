@@ -1,5 +1,6 @@
 #include "element.h"
 #include <QDebug>
+#include <QFileInfo>
 
 Element::Element(const QString& path) : m_path(QFileInfo(path).absoluteFilePath()) {
     setup();

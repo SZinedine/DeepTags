@@ -3,9 +3,11 @@
 #include <QDirIterator>
 #include <QStringRef>
 #include <QTextStream>
+#include <QDir>
+#include <QFile>
 #include <algorithm>
 #include <cctype>
-#include <fstream>
+#include <iostream>
 
 void BaseElement::createNewFile(const QString& p, QString title) {
     title = title.simplified();
@@ -468,6 +470,7 @@ StringList BaseElement::getFileContent(const QString& file) {
 
     StringList entire_file;
     QTextStream f(&qf);
+    f.setCodec("UTF-8");
     while (!f.atEnd()) entire_file.push_back(f.readLine());
     return entire_file;
 }

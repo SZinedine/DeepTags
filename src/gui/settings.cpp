@@ -2,7 +2,6 @@
 #include <QApplication>
 #include <QDesktopServices>
 #include <QFileDialog>
-#include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSettings>
@@ -211,8 +210,11 @@ void Settings::openFile(QString editor, const QString& path, QWidget* parent) {
         return;
     }
     if (editor.isEmpty()) editor = mainMdEditor();
-    if (editor.isEmpty())
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    if (editor.isEmpty()) {
+        QFileInfo p(path);
+        QDir::setCurrent(p.absolutePath());
+        QDesktopServices::openUrl(QUrl::fromLocalFile(p.fileName()));
+    }
     else {
         QString command = editor + "\"" + path + "\"";
         std::thread([=] { std::system(command.toStdString().c_str()); }).detach();

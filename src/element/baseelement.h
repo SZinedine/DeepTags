@@ -1,10 +1,7 @@
 #ifndef BaseElement_H
 #define BaseElement_H
 
-#include <QDir>
-#include <QFile>
 #include <QString>
-#include <iostream>
 #include <vector>
 
 
