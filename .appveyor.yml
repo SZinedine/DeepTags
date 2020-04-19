@@ -71,11 +71,8 @@ deploy:
   auth_token:
     secure: 3MtVN4ezpTjkn9g64kcNASvLF8N3n5FoMd+Z5M3tLHnPgLrFu530Wa/FhuVtg1mm
   repository: SZinedine/DeepTags
-  artifact:
-    DeepTags_setup-64bit.exe
-    DeepTags_setup-32bit.exe
+  draft: false
+  prerelease: false
+  force_update: false
   on:
     APPVEYOR_REPO_TAG: true
-  draft: false
-  prerelease: true
-  force_update: false
