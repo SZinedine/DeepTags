@@ -25,16 +25,30 @@ DeepTags supports nested tags and offers simple ways to edit them, for example b
 
 ## Dependencies
 
-- The Qt framework (>=)5.6
-- A C++17 compatible compiler
+- The Qt framework (>=)5.5
+- A C++14 compiler
 
 
-## Building on Linux
+## Downloads
+
+You can download the latest release [here](https://github.com/SZinedine/DeepTags/releases/latest).
+
+### Linux
+
+#### Building from source
 
 ```bash
 git clone --recursive https://github.com/SZinedine/DeepTags.git
 cd DeepTags
 qmake && make
+```
+
+#### Install on Arch Linux
+
+```bash
+git clone https://aur.archlinux.org/deeptags.git
+cd deeptags
+makepkg -sic
 ```
 
 ## Credit
