@@ -1,10 +1,10 @@
 #include "baseelement.h"
 #include <QDebug>
+#include <QDir>
 #include <QDirIterator>
+#include <QFile>
 #include <QStringRef>
 #include <QTextStream>
-#include <QDir>
-#include <QFile>
 #include <algorithm>
 #include <cctype>
 #include <iostream>

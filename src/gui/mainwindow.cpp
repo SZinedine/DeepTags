@@ -73,7 +73,7 @@ void MainWindow::setupCentral() {
     collapseButton->setMaximumWidth(30);
 
     QStatusBar* statusB = statusBar();
-    nbFiles             = new QLabel(tr("0 files"), this);
+    nbFiles             = new QLabel(tr("no files"), this);
     statusB->addPermanentWidget(nbFiles);
 
     systray = new QSystemTrayIcon(QIcon(":images/icon128.png"), this);
@@ -373,7 +373,17 @@ void MainWindow::search() {
 }
 
 void MainWindow::changeNumberOfFilesLabel() {
-    nbFiles->setText(QString(QString::number(filesContainer->count()) + QString(" files")));
+    int nb    = filesContainer->count();
+    QString s = QString::number(nb);
+    QString res;
+    if (nb == 0)
+        res = tr("no files");
+    else if (nb == 1)
+        res = tr("1 file");
+    else
+        res = s + tr(" files");
+
+    nbFiles->setText(res);
 }
 
 
