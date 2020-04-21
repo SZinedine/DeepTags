@@ -1,7 +1,7 @@
 # Maintainer: Zineddine SAIBI <saibi.zineddine@yahoo.com>
 
 pkgname=deeptags
-pkgver=0.5.1
+pkgver=0
 pkgrel=1
 pkgdesc="A Markdown notes manager"
 arch=('x86_64')
@@ -9,7 +9,7 @@ url="https://github.com/SZinedine/DeepTags"
 license=('GPL3')
 depends=('qt5-base' 'qt5-svg')
 makedepends=('qt5-tools' 'git' 'gcc' 'make')
-source=("$pkgname::git+https://github.com/SZinedine/DeepTags.git#tag=$pkgver")
+source=("$pkgname::git+https://github.com/SZinedine/DeepTags.git")
 md5sums=('SKIP')
 conflicts=("deeptags-git")
 install=$pkgname.install
@@ -18,7 +18,12 @@ build() {
     cd "$pkgname"
     git submodule update --init --recursive
     qmake PREFIX=/usr
-    make
+    make -j$(nproc)
+}
+
+pkgver() {
+  cd "$pkgname"
+  git describe --tags --abbrev=0
 }
 
 package() {
@@ -33,6 +38,4 @@ package() {
         install -Dm 644 packaging/resources/icons/hicolor/$icon/apps/$pkgname.png  $pkgdir/usr/share/icons/hicolor/$icon/apps/$pkgname.png
     done
     install -Dm 644 packaging/resources/icons/hicolor/scalable/apps/$pkgname.svg   $pkgdir/usr/share/icons/hicolor/scalable/apps/$pkgname.svg
-
-
 }
