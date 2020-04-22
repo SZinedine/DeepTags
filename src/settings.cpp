@@ -1,3 +1,20 @@
+/*************************************************************************
+ * DeepTags, Markdown Notes Manager
+ * Copyright (C) 2020  Zineddine Saibi
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *************************************************************************/
 #include "settings.h"
 #include <QApplication>
 #include <QDesktopServices>
@@ -10,7 +27,7 @@
 #include <QVariant>
 #include <QWidget>
 #include <thread>
-#include "../element/element.h"
+#include "element.h"
 #include "readersdialog.h"
 
 void Settings::saveString(const QString& group, const QString& label, const QString& value) {
@@ -215,7 +232,7 @@ void Settings::openFile(QString editor, const QString& path, QWidget* parent) {
         QDir::setCurrent(p.absolutePath());
         QDesktopServices::openUrl(QUrl::fromLocalFile(p.fileName()));
     } else {
-        editor = "\"" + editor + "\" ";
+        editor          = "\"" + editor + "\" ";
         QString command = editor + " \"" + path + "\"";
         std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     }

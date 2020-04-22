@@ -2,7 +2,7 @@ deeptags
 deeptags.pro.*
 .qmake.stash
 build/
-*.h
+ui_*.h
 Makefile
 tests/Makefile
 tests/tests
