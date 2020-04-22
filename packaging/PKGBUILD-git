@@ -19,7 +19,8 @@ build() {
     cd "$_name"
     git submodule update --init --recursive
     qmake PREFIX=/usr
-    make -j$(nproc)
+    # make -j$(nproc) DEFINES=-DDEEPTAGS_VERSION=\\\"$(git describe --tags)-git\\\"
+    make -j$(nproc) DEFINES=-DDEEPTAGS_VERSION=\\\"$(git describe --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g')\\\"
 }
 
 pkgver() {
