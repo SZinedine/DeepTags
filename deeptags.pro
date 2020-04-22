@@ -24,11 +24,13 @@ ELEM_SOURCES =  $$ELEM_DIR/element.cpp $$ELEM_DIR/baseelement.cpp
 GUI_HEADERS  =  $$GUI_DIR/fileitem.h $$GUI_DIR/filescontainer.h \
                 $$GUI_DIR/mainwindow.h $$GUI_DIR/settings.h \
                 $$GUI_DIR/tagitem.h $$GUI_DIR/tagscontainer.h \
-                $$GUI_DIR/elementdialog.h $$GUI_DIR/readersdialog.h
+                $$GUI_DIR/elementdialog.h $$GUI_DIR/readersdialog.h \
+                $$GUI_DIR/datadirdialog.h
 GUI_SOURCES  =  $$GUI_DIR/fileitem.cpp $$GUI_DIR/filescontainer.cpp \
                 $$GUI_DIR/mainwindow.cpp $$GUI_DIR/settings.cpp \
                 $$GUI_DIR/tagitem.cpp $$GUI_DIR/tagscontainer.cpp \
-                $$GUI_DIR/elementdialog.cpp $$GUI_DIR/readersdialog.cpp
+                $$GUI_DIR/elementdialog.cpp $$GUI_DIR/readersdialog.cpp \
+                $$GUI_DIR/datadirdialog.cpp
 SOURCES += $$SRC_DIR/main.cpp $$ELEM_SOURCES $$GUI_SOURCES
 HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 

@@ -113,14 +113,12 @@ QString Settings::mainMdEditor() {
 }
 
 
-bool Settings::setDataDirectory() {
-    QString dir = QFileDialog::getExistingDirectory(nullptr, tr("Open Directory"), dataDirectory());
-    if (dir.isEmpty()) return false;
-
+bool Settings::setDataDirectory(QString dataDirectory) {
+    if (dataDirectory.isEmpty()) return false;
     QSettings s;
     s.beginGroup("main");
-    s.setValue("data_dir", dir);
-    if (!s.contains("last_dir")) s.setValue("last_dir", dir);
+    s.setValue("data_dir", dataDirectory);
+    if (!s.contains("last_dir")) s.setValue("last_dir", dataDirectory);
     s.endGroup();
     return true;
 }

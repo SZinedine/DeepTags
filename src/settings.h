@@ -46,7 +46,7 @@ struct Settings : public QObject {
     static void loadSplitterState(QSplitter* splitter);
     static void saveSplitterState(QSplitter* splitter);
     static void loadWindowSize(MainWindow* w);
-    static bool setDataDirectory();
+    static bool setDataDirectory(QString dataDirectory);
     static QString dataDirectory();
     static bool dataDirectoryIsSet();
     /**

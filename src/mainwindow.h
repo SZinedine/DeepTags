@@ -58,7 +58,7 @@ private:
      * when the data directory is changed
      * save the new data directory, clear all, and reload
      */
-    void changeDataDirectory();
+    void setDataDirectory();
     /**
      *  get the data directory, fetch all the files in it,
      *  construct Element from each one of the files

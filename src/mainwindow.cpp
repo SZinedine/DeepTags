@@ -38,11 +38,11 @@
 #include <QSystemTrayIcon>
 #include <QVBoxLayout>
 #include <memory>
+#include "datadirdialog.h"
 #include "element.h"
 #include "elementdialog.h"
 #include "readersdialog.h"
 #include "settings.h"
-
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupCentral();
     setupLayout();
@@ -226,7 +226,7 @@ void MainWindow::setupSignals() {
     connect(quitAction, &QAction::triggered, this, &QMainWindow::close);
     connect(setMdReaderAction, &QAction::triggered, this,
             [=] { std::make_unique<ReadersDialog>(this); });
-    connect(changeDataDirAction, &QAction::triggered, this, &MainWindow::changeDataDirectory);
+    connect(changeDataDirAction, &QAction::triggered, this, &MainWindow::setDataDirectory);
     connect(openDataDirAction, &QAction::triggered, this, [=] {
         if (Settings::dataDirectoryIsSet())
             QDesktopServices::openUrl(QUrl(Settings::dataDirectory()));
@@ -302,9 +302,11 @@ void MainWindow::setupKeyboard() {
 }
 
 
-void MainWindow::changeDataDirectory() {
-    bool reload = Settings::setDataDirectory();
-    if (reload) reloadContent();
+void MainWindow::setDataDirectory() {
+    auto dialog = new DataDirDialog(this);
+    auto res    = dialog->exec();
+    if (res == DataDirDialog::Accepted) reloadContent();
+    delete dialog;
     QString dd = Settings::dataDirectory();
     changeDataDirAction->setToolTip(dd);
     openDataDirAction->setToolTip(dd);
@@ -319,11 +321,8 @@ void MainWindow::disableSomeWidgets(const bool& disable) {
 void MainWindow::load() {
     qApp->processEvents();
     if (!Settings::dataDirectoryIsSet() || !QFile::exists(Settings::dataDirectory())) {
-        auto ask = QMessageBox::information(this, tr("Set a Data Directory"),
-                                            tr("The Data directory isn't set, Please set it."),
-                                            QMessageBox::Ok | QMessageBox::Cancel);
-        if (ask == QMessageBox::Cancel) return;
-        if (!Settings::setDataDirectory()) return;
+        setDataDirectory();
+        if (!Settings::dataDirectoryIsSet()) return;
     }
     loadDataDirectoryContent();
     tagsContainer->loadCollapseOrExpand();
