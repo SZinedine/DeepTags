@@ -113,7 +113,7 @@ void ElementDialog::setup_forNewFile() {
 
 
 void ElementDialog::save() {
-    if (title().isEmpty()) {
+    if (title().simplified().isEmpty()) {
         QMessageBox::warning(this, tr("Title isn't set"),
                              tr("You have to set at least the title to save the file"));
         return;
@@ -172,7 +172,7 @@ void ElementDialog::formatFilename(QString& str) {
 
 
 void ElementDialog::accept_() {
-    if (m_title->text().isEmpty()) {
+    if (m_title->text().simplified().isEmpty()) {
         QMessageBox::warning(this, tr("Title Empty"),
                              tr("The title isn't set. It cannot be empty.") + QString("\t"));
         return;
