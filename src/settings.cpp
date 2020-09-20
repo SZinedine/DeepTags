@@ -230,7 +230,6 @@ void Settings::openFile(QString editor, const QString& path, QWidget* parent) {
         QDir::setCurrent(p.absolutePath());
         QDesktopServices::openUrl(QUrl::fromLocalFile(p.fileName()));
     } else {
-        editor          = "\"" + editor + "\" ";
         QString command = editor + " \"" + path + "\"";
         std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     }
