@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
-#include <qmarkdowntextedit.h>
+#include "markdowneditorwidget.h"
 #include <QFileSystemWatcher>
 #include <QToolBar>
 
@@ -36,7 +36,7 @@ signals:
     void closedFile(QString file);
 
 private:
-    QMarkdownTextEdit* m_editor;
+    MarkdownEditorWidget* m_editor;
     QFileSystemWatcher* m_watcher;
     // QToolBar* m_toolBar;
     QString m_currentPath;

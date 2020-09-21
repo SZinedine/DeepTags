@@ -26,7 +26,7 @@ EditorWidget::EditorWidget(QWidget* parent)
     auto layout = new QVBoxLayout;
     setLayout(layout);
     // m_toolBar = new QToolBar(this);
-    m_editor = new QMarkdownTextEdit(this);
+    m_editor = new MarkdownEditorWidget(this);
     // layout->addWidget(m_toolBar);
     layout->addWidget(m_editor);
     layout->setContentsMargins(0, 0, 0, 0);
