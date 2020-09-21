@@ -17,13 +17,12 @@
  *************************************************************************/
 #include <qmarkdowntextedit.h>
 
-class MarkdownEditorWidget : public QMarkdownTextEdit
-{
+class MarkdownEditorWidget : public QMarkdownTextEdit {
     Q_OBJECT
 public:
-    explicit MarkdownEditorWidget(QWidget* parent=nullptr);
-    ~MarkdownEditorWidget() {};
-    void contextMenuEvent(QContextMenuEvent *event) override;
+    explicit MarkdownEditorWidget(QWidget* parent = nullptr);
+    ~MarkdownEditorWidget(){};
+    void contextMenuEvent(QContextMenuEvent* event) override;
     inline void setOccupied(bool o) { m_occupied = o; }
     inline bool occupied() const { return m_occupied; }
     void clear();
@@ -36,4 +35,3 @@ private:
     /* is there a file displayed or not */
     bool m_occupied;
 };
-

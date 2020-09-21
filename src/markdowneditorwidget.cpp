@@ -20,19 +20,18 @@
 #include <QMenu>
 
 MarkdownEditorWidget::MarkdownEditorWidget(QWidget* parent)
-    : QMarkdownTextEdit(parent), m_occupied(false)
-{
+    : QMarkdownTextEdit(parent), m_occupied(false) {
     setReadOnly(true);
 }
 
-void MarkdownEditorWidget::contextMenuEvent(QContextMenuEvent *event) {
-    QMenu *menu = createStandardContextMenu();
+void MarkdownEditorWidget::contextMenuEvent(QContextMenuEvent* event) {
+    QMenu* menu              = createStandardContextMenu();
     QAction* closeFileAction = new QAction(tr("Close File"), this);
     menu->addSeparator();
     menu->addAction(closeFileAction);
     closeFileAction->setEnabled(m_occupied);
 
-    connect(closeFileAction, &QAction::triggered, [this]{ emit this->toClose(); });
+    connect(closeFileAction, &QAction::triggered, [this] { emit this->toClose(); });
     menu->exec(event->globalPos());
 
     delete menu;
@@ -48,5 +47,3 @@ void MarkdownEditorWidget::setText(const QString& text) {
     QMarkdownTextEdit::setText(text);
     setOccupied(true);
 }
-
-
