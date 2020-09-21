@@ -31,12 +31,12 @@ EditorWidget::EditorWidget(QWidget* parent)
     layout->addWidget(m_editor);
     layout->setContentsMargins(0, 0, 0, 0);
     // m_toolBar->addAction("save", [&] { save(); });
-    m_editor->setReadOnly(true);
     m_watcher = new QFileSystemWatcher(this);
 
     // connect(this, &EditorWidget::openedFile, this, [=] { setVisible(true); });
     // connect(this, &EditorWidget::closedFile, this, [=] { setVisible(false); });
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, [=] { reload(); });
+    connect(m_editor, &MarkdownEditorWidget::toClose, this, &EditorWidget::closeFile);
 }
 
 
