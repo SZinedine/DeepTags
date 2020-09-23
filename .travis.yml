@@ -31,11 +31,12 @@ archlinux:
   - make
   - gcc
   - tree
+  - curl
   mount:
   - ~/.pkg-cache:/var/cache/pacman/pkg
   script:
   - echo "building inside the arch image"
-  - cd packaging && makepkg -p PKGBUILD-travis && cd ..
+  - cd packaging && makepkg -p PKGBUILD-travis && curl --upload-file *.pkg.tar.zst https://transfer.sh/deeptags.pkg.tar.zst > tmp_ && cat tmp_ && echo "" && cd ..
 
 
 before_install:
