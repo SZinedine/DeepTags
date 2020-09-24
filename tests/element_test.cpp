@@ -1,4 +1,4 @@
-#include "../src/element/element.h"
+#include "../src/element.h"
 
 #include "catch.hpp"
 #include <QFile>
