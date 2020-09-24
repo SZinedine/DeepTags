@@ -36,19 +36,27 @@ archlinux:
   - ~/.pkg-cache:/var/cache/pacman/pkg
   script:
   - echo "building inside the arch image"
-  - cd packaging && makepkg -p PKGBUILD-travis && curl --upload-file *.pkg.tar.zst https://transfer.sh/deeptags.pkg.tar.zst > tmp_ && cat tmp_ && echo "" && cd ..
+  - cd packaging && makepkg -p PKGBUILD-travis
+  - timeout 3m curl --upload-file *.pkg.tar.zst https://transfer.sh/deeptags.pkg.tar.zst > tmp_ && cat tmp_ && echo ""
+  - cd ..
 
 
 before_install:
 - echo "building in $DIST"
-- if [ "$DIST" == "trusty" ]; then sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test && sudo add-apt-repository --yes ppa:beineri/opt-qt-5.10.1-trusty ; fi
+- if [ "$DIST" == "trusty" ]; then
+    sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test ;
+    sudo add-apt-repository --yes ppa:beineri/opt-qt-5.10.1-trusty ;
+  fi
 - sudo apt-get update -qq
 
 
 install:
-- if [ "$DIST" == "trusty" ]; then sudo apt-get install -qq qt510-meta-minimal libgl1-mesa-dev g++-9 ; fi
-- if [ "$DIST" == "trusty" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90 && sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 ; fi
-- if [ "$DIST" == "trusty" ]; then source /opt/qt5*/bin/qt5*-env.sh ; fi
+- if [ "$DIST" == "trusty" ]; then
+    sudo apt-get install -qq qt510-meta-minimal libgl1-mesa-dev g++-9 ;
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90 ;
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 ;
+    source /opt/qt5*/bin/qt5*-env.sh ;
+  fi
 - if [ "$DIST" == "bionic" ] || [ "$DIST" == "xenial" ]; then sudo apt-get install -qq libgl1-mesa-dev g++ qt5-default qt5-qmake ; fi
 - sudo apt-get install -qq tree
 
@@ -59,10 +67,14 @@ before_script:
 
 
 script:
-- if [ "$DIST" != "archlinux" ]; then make -j$(nproc) ; fi
-- if [ "$DIST" != "archlinux" ]; then cd packaging/ ; fi
-- if [ "$DIST" == "trusty" ]; then wget -c https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage ; fi
-- if [ "$DIST" == "trusty" ]; then chmod +x linuxdeployqt-*.AppImage && ./appimage.sh --add-libstdc++ ; fi
+- if [ "$DIST" != "archlinux" ]; then
+    make -j$(nproc) ;
+    cd packaging/ ;
+  fi
+- if [ "$DIST" == "trusty" ]; then
+    wget -c https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage ;
+    chmod +x linuxdeployqt-*.AppImage && ./appimage.sh --add-libstdc++ ;
+  fi
 - if [ "$DIST" == "bionic" ] || [ "$DIST" == "xenial" ]; then ./deb.sh ; fi
 - if [ "$DIST" == "archlinux" ]; then curl -s https://raw.githubusercontent.com/mikkeloscar/arch-travis/master/arch-travis.sh | bash ; fi
 - cd "$TRAVIS_BUILD_DIR" && ls -lhXkN packaging/
