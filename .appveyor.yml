@@ -1,6 +1,10 @@
 os: Visual Studio 2015
 clone_folder: c:\projects\DeepTags
 
+branches:
+  only:
+    - master
+
 environment:
   matrix:
   - name: win32_msvc2015

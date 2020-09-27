@@ -37,7 +37,7 @@ archlinux:
   script:
   - echo "building inside the arch image"
   - cd packaging && makepkg -p PKGBUILD-travis
-  - timeout 3m curl --upload-file *.pkg.tar.zst https://transfer.sh/deeptags.pkg.tar.zst > tmp_ && cat tmp_ && echo ""
+  - timeout 90s curl --upload-file *.pkg.tar.zst https://transfer.sh/deeptags.pkg.tar.zst > tmp_ && cat tmp_ && echo ""
   - cd ..
 
 
