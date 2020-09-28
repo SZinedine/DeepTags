@@ -96,6 +96,12 @@ void TagsContainer::selected() {
     emit itemSelected(&res);
 }
 
+void TagsContainer::selectedExclusive() {
+    auto it = real(currentItem());
+    if (!it) return;
+    emit itemSelected(it->elements());
+}
+
 
 int TagsContainer::find(const QString& label, QTreeWidgetItem* parent) {
     for (int i = 0; i < parent->childCount(); i++)
