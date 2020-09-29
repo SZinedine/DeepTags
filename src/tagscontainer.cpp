@@ -179,7 +179,8 @@ void TagsContainer::addElement(Element* element) {
             switch (index) {
             case -1: {   // create the tag
                 auto* newItem = new TagItem(particle);
-                newItem->addFile(element);
+                if (level == chain.size()-1)
+                    newItem->addFile(element);
                 if (level == 0)
                     addTopLevelItem(newItem);
                 else
@@ -193,7 +194,8 @@ void TagsContainer::addElement(Element* element) {
                 QTreeWidgetItem* foundItem =
                     (level == 0) ? topLevelItem(index) : prnt->child(index);
                 TagItem* castedItem = real(foundItem);
-                if (!castedItem->contains(element)) castedItem->addFile(element);
+                if (!castedItem->contains(element) && level == chain.size()-1)
+                    castedItem->addFile(element);
                 prnt = foundItem;
                 break;
             }

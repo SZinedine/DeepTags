@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 #include "filescontainer.h"
+#include <QApplication>
+#include <QClipboard>
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QInputDialog>
@@ -139,6 +141,10 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
         connect(edac, &QAction::triggered, this, [=] { openFile_(item, i); });
     }
 
+    auto copyPath = std::make_unique<QAction>(tr("Copy path"), this);
+    connect(copyPath.get(), &QAction::triggered, this,
+            [=] { QApplication::clipboard()->setText(real_it->pathQstr()); });
+
     auto open = menu->addAction(tr("Open"));
     open->setToolTip(Settings::mainMdEditor());
     if (editor_list.size() > 1) menu->addMenu(openWith.get());
@@ -148,6 +154,7 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     menu->addAction(pin.get());
     menu->addAction(fav.get());
     menu->addSeparator();
+    menu->addAction(copyPath.get());
 
     edit->setShortcut(QKeySequence("Ctrl+e"));
     connect(open, &QAction::triggered, [=] { openFile(item); });
