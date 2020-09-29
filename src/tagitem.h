@@ -40,14 +40,17 @@ public:
     inline void remove(Element* e) { m_elements->removeAll(e); }
     inline bool empty() const { return m_elements->isEmpty(); }
     inline bool isSpecial() const { return m_special; }
+    inline bool hasChildren() const { return (childCount() > 0); }
     bool contains(Element* e);
     void removeElement(Element* element);
     void setColor(const QString& color);
     bool pinned() const { return m_pinned; }
     void setPinned(bool pinned);
+    QVector<Element*>* allElements() const;
+    QVector<Element*> allElements_() const;
+    QVector<TagItem*> children() const;
 
 private:
-    char prevent_padding_warning[4];
     QVector<Element*>* m_elements;
     bool m_special;
     bool m_pinned;

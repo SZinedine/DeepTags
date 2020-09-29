@@ -67,3 +67,30 @@ void TagItem::setPinned(bool pinned) {
     else
         Settings::setTagUnpinned(label());
 }
+
+QVector<Element*>* TagItem::allElements() const {
+    return new QVector<Element*>(allElements_());
+}
+
+QVector<Element*> TagItem::allElements_() const {
+    QVector<Element*>  res;
+    res += *m_elements;
+    auto f = [](TagItem* ti) -> QVector<Element*> {
+        QVector<Element*> qv;
+        qv += *ti->elements();
+        if (ti->hasChildren())
+            qv += ti->allElements_();
+        return qv;
+    };
+    for (auto& c : children()) res += f(c);
+    auto lst = res.toList();
+    lst = QSet<Element*>(lst.begin(), lst.end()).values();
+    return lst.toVector();
+}
+
+QVector<TagItem*> TagItem::children() const {
+    QVector<TagItem*> v;
+    for (int i = 0 ; i < childCount() ; i++)
+        v.push_back(static_cast<TagItem*>( child(i)) );
+    return v;
+}

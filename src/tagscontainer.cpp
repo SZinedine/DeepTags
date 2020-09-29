@@ -77,7 +77,8 @@ void TagsContainer::selected() {
     QList<QTreeWidgetItem*> lst = selectedItems();
     if (lst.isEmpty()) return;
     if (lst.size() == 1) {
-        emit itemSelected(real(lst.at(0))->elements());
+        // emit itemSelected(real(lst.at(0))->elements());
+        emit itemSelected(real(lst.at(0))->allElements());
         return;
     }
 
