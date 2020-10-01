@@ -40,7 +40,7 @@ void TagItem::removeElement(Element* element) {
 }
 
 bool TagItem::contains(Element* e) {
-    for (Element* i : *m_elements)
+    for (Element* i : allElements_())
         if (*i == *e) return true;
     return false;
 }
@@ -73,24 +73,22 @@ QVector<Element*>* TagItem::allElements() const {
 }
 
 QVector<Element*> TagItem::allElements_() const {
-    QVector<Element*>  res;
+    QVector<Element*> res;
     res += *m_elements;
     auto f = [](TagItem* ti) -> QVector<Element*> {
         QVector<Element*> qv;
         qv += *ti->elements();
-        if (ti->hasChildren())
-            qv += ti->allElements_();
+        if (ti->hasChildren()) qv += ti->allElements_();
         return qv;
     };
     for (auto& c : children()) res += f(c);
     auto lst = res.toList();
-    lst = QSet<Element*>(lst.begin(), lst.end()).values();
+    lst      = QSet<Element*>(lst.begin(), lst.end()).values();
     return lst.toVector();
 }
 
 QVector<TagItem*> TagItem::children() const {
     QVector<TagItem*> v;
-    for (int i = 0 ; i < childCount() ; i++)
-        v.push_back(static_cast<TagItem*>( child(i)) );
+    for (int i = 0; i < childCount(); i++) v.push_back(static_cast<TagItem*>(child(i)));
     return v;
 }

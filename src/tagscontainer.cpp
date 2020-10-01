@@ -23,6 +23,7 @@
 #include <QDragEnterEvent>
 #include <QMenu>
 #include <QMimeData>
+#include <QSet>
 #include <memory>
 #include "settings.h"
 #include "tagitem.h"
@@ -45,7 +46,7 @@ TagsContainer::~TagsContainer() {
 }
 
 void TagsContainer::deleteAllItems() {
-    auto lst = real(topLevelItem(find(cnv_allNotes, this)))->elements();
+    auto lst = real(topLevelItem(find(cnv_allNotes, this)))->allElements();
     if (lst->isEmpty()) return;
     for (Element* i : *lst)
         if (i) delete i;
@@ -74,27 +75,28 @@ void TagsContainer::init() {
 
 
 void TagsContainer::selected() {
-    QList<QTreeWidgetItem*> lst = selectedItems();
+    QList<TagItem*> lst;
+    for (auto& i : selectedItems()) lst.push_back(real(i));
+
     if (lst.isEmpty()) return;
     if (lst.size() == 1) {
-        // emit itemSelected(real(lst.at(0))->elements());
-        emit itemSelected(real(lst.at(0))->allElements());
+        emit itemSelected(lst.at(0)->allElements());
         return;
     }
 
     // check if the different TagItems contain a specific element
-    auto shared = [lst](Element* el) -> bool {
-        for (QTreeWidgetItem* i : lst)
-            if (!real(i)->contains(el)) return false;
+    auto sharedElement = [&](Element* e) -> bool {
+        for (auto& i : lst)
+            if (!i->contains(e)) return false;
         return true;
     };
 
-    QVector<Element*> res;
-    QVector<Element*>* first = real(lst.at(0))->elements();
-    for (Element* e : *first)
-        if (shared(e)) res.push_back(e);
-
-    emit itemSelected(&res);
+    QSet<Element*> set;   // use a QSet because it includes only one instance of each Element
+    for (auto& l : lst)
+        for (auto e : *l->allElements())
+            if (sharedElement(e)) set += e;
+    auto res = set.values().toVector();
+    itemSelected(&res);
 }
 
 void TagsContainer::selectedExclusive() {
@@ -180,8 +182,7 @@ void TagsContainer::addElement(Element* element) {
             switch (index) {
             case -1: {   // create the tag
                 auto* newItem = new TagItem(particle);
-                if (level == chain.size()-1)
-                    newItem->addFile(element);
+                if (level == chain.size() - 1) newItem->addFile(element);
                 if (level == 0)
                     addTopLevelItem(newItem);
                 else
@@ -195,7 +196,7 @@ void TagsContainer::addElement(Element* element) {
                 QTreeWidgetItem* foundItem =
                     (level == 0) ? topLevelItem(index) : prnt->child(index);
                 TagItem* castedItem = real(foundItem);
-                if (!castedItem->contains(element) && level == chain.size()-1)
+                if (!castedItem->contains(element) && level == chain.size() - 1)
                     castedItem->addFile(element);
                 prnt = foundItem;
                 break;
