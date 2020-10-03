@@ -28,6 +28,8 @@ class QWidget;
 class QActionGroup;
 
 struct Settings : public QObject {
+    Q_OBJECT
+public:
     static void saveString(const QString& group, const QString& label, const QString& value);
     static QString getString(const QString& group, const QString& label);
     static void saveStringList(const QString& group, const QString& label,

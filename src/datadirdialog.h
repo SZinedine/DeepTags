@@ -21,6 +21,7 @@ class QLineEdit;
 class QDialogButtonBox;
 
 class DataDirDialog : public QDialog {
+    Q_OBJECT
 public:
     explicit DataDirDialog(QWidget* parent = nullptr);
     void accept() override;
