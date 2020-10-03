@@ -233,7 +233,6 @@ void Settings::openFile(QString editor, const QString& path, QWidget* parent) {
         QString p       = path;
         p               = p.replace("\"", "\\\"");
         QString command = editor + " \"" + p + "\"";
-        qDebug() << p;
         std::thread([=] { std::system(command.toStdString().c_str()); }).detach();
     }
     saveRecentlyOpenedFile(path);

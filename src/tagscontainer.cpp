@@ -372,10 +372,13 @@ void TagsContainer::mousePressEvent(QMouseEvent* event) {
 void TagsContainer::showContextMenu(QPoint pos) {
     QTreeWidgetItem* item = itemAt(pos);
     if (!item) return;
-    if (item->parent()) return;   // only topLevel items
     TagItem* it = real(item);
 
-    auto menu      = std::make_unique<QMenu>();
+    auto menu          = std::make_unique<QMenu>();
+    auto displayAction = std::make_unique<QAction>(tr("Display"), this);
+    auto displayExclusiveAction =
+        std::make_unique<QAction>(tr("Display without children's elements"), this);
+
     auto colorMenu = std::make_unique<QMenu>(tr("Change the color"), this);
     auto def       = std::make_unique<QAction>(tr("default color"), this);
     auto green     = std::make_unique<QAction>(QIcon(":images/color_green"), tr("green"), this);
@@ -387,9 +390,11 @@ void TagsContainer::showContextMenu(QPoint pos) {
     auto cyan      = std::make_unique<QAction>(QIcon(":images/color_cyan"), tr("cyan"), this);
     colorMenu->addActions({ def.get(), green.get(), yellow.get(), orange.get(), red.get(),
                             magenta.get(), blue.get(), cyan.get() });
-    menu->addMenu(colorMenu.get());
 
-    if (!it->isSpecial()) {
+    menu->addAction(displayAction.get());
+    if (item->childCount()) menu->addAction(displayExclusiveAction.get());
+    if (!item->parent()) menu->addMenu(colorMenu.get());
+    if (!it->isSpecial() && !it->parent()) {
         auto piAction = menu->addAction(((it->pinned()) ? "Unpin" : "Pin"));
         connect(piAction, &QAction::triggered, [&] {
             it->setPinned(!(it->pinned()));
@@ -405,6 +410,8 @@ void TagsContainer::showContextMenu(QPoint pos) {
     connect(magenta.get(), &QAction::triggered, this, [it] { it->setColor("magenta"); });
     connect(cyan.get(), &QAction::triggered, this, [it] { it->setColor("cyan"); });
     connect(orange.get(), &QAction::triggered, this, [it] { it->setColor("orange"); });
+    connect(displayAction.get(), &QAction::triggered, this, [=] { selected(); });
+    connect(displayExclusiveAction.get(), &QAction::triggered, this, [=] { selectedExclusive(); });
 
     menu->exec(mapToGlobal(pos));
 }
