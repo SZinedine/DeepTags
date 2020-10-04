@@ -24,6 +24,7 @@
 #include <QSettings>
 #include <QSplitter>
 #include <QStringList>
+#include <QTextStream>
 #include <QVariant>
 #include <QWidget>
 #include <thread>

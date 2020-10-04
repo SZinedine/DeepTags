@@ -20,7 +20,6 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopServices>
-#include <QFileDialog>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QInputDialog>
@@ -39,10 +38,13 @@
 #include <QVBoxLayout>
 #include <memory>
 #include "datadirdialog.h"
-#include "element.h"
 #include "elementdialog.h"
+#include "filescontainer.h"
 #include "readersdialog.h"
 #include "settings.h"
+#include "tagscontainer.h"
+
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupCentral();
     setupLayout();
@@ -360,6 +362,11 @@ void MainWindow::newFile() {
     if (!e) return;
     ElementsList lst{ e };
     openElements(lst);
+}
+
+
+void MainWindow::openElements(const ElementsList& els) {
+    tagsContainer->addElements(els);
 }
 
 

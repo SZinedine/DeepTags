@@ -18,9 +18,9 @@
 #include "filescontainer.h"
 #include <QApplication>
 #include <QClipboard>
-#include <QDebug>
 #include <QDragEnterEvent>
 #include <QInputDialog>
+#include <QListWidget>
 #include <QMenu>
 #include <QMessageBox>
 #include <QMimeData>

@@ -18,10 +18,10 @@
 #ifndef TAGSCONTAINER_H
 #define TAGSCONTAINER_H
 
-#include <QTreeWidget>
-#include <QWidget>
 #include "tagitem.h"
 
+class QTreeWidget;
+class QWidget;
 // convinient variables
 static const std::vector<QString> basicTags = { "All Notes", "Notebooks", "Favorite", "Untagged" };
 static const QString& cnv_allNotes          = basicTags[0];

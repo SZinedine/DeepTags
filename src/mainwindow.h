@@ -19,11 +19,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "filescontainer.h"
-#include "tagscontainer.h"
 #ifdef INSIDE_EDITOR
     #include "editorwidget.h"
 #endif
+#include "element.h"
 
 class QAction;
 class QCloseEvent;
@@ -34,6 +33,8 @@ class QPushButton;
 class QSplitter;
 class QActionGroup;
 class QSystemTrayIcon;
+class TagsContainer;
+class FilesContainer;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -75,8 +76,8 @@ private:
      *  it searches in titles of loaded files and displays them
      */
     void search();
+    void openElements(const ElementsList& els);
     void changeNumberOfFilesLabel();
-    inline void openElements(const ElementsList& els) { tagsContainer->addElements(els); }
     void about();
     void closeEvent(QCloseEvent* event) override;
     void disableSomeWidgets(const bool& disable);

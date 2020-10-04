@@ -15,9 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
-#include <QFileSystemWatcher>
-#include <QToolBar>
 #include "markdowneditorwidget.h"
+
+
+class QFileSystemWatcher;
+// class QToolBar;
 
 class EditorWidget : public QWidget {
     Q_OBJECT
@@ -28,7 +30,7 @@ public:
     void display(QString path);
     void closeFile();
     void reload();
-    inline void clear() { m_editor->clear(); }
+    void clear();
 
 signals:
     void openedFile(QString file);

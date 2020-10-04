@@ -28,6 +28,7 @@ class TagsWidget;
 class QCheckBox;
 class QDialogButtonBox;
 class QPushButton;
+class QDialog;
 
 /**
  * Dialog box that serves 2 purposes

@@ -17,8 +17,10 @@
  *************************************************************************/
 #include "editorwidget.h"
 #include <QFile>
+#include <QFileSystemWatcher>
 #include <QTextStream>
 #include <QVBoxLayout>
+// #include <QToolBar>
 #include <iostream>
 
 EditorWidget::EditorWidget(QWidget* parent)
@@ -79,4 +81,8 @@ void EditorWidget::reload() {
     display(m_currentPath);
     cur.setPosition(po);
     m_editor->setTextCursor(cur);
+}
+
+void EditorWidget::clear() {
+    m_editor->clear();
 }

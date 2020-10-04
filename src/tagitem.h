@@ -18,7 +18,6 @@
 #ifndef TAGITEM_H
 #define TAGITEM_H
 
-#include <QDebug>
 #include <QTreeWidgetItem>
 #include <QVector>
 #include "element.h"

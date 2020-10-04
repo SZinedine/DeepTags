@@ -18,12 +18,12 @@
 #include "tagscontainer.h"
 #include <QAbstractItemView>
 #include <QApplication>
-#include <QDebug>
 #include <QDrag>
 #include <QDragEnterEvent>
 #include <QMenu>
 #include <QMimeData>
 #include <QSet>
+#include <QTreeWidget>
 #include <memory>
 #include "settings.h"
 #include "tagitem.h"
