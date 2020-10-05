@@ -39,6 +39,13 @@ void TagItem::removeElement(Element* element) {
         if (*m_elements->at(i) == *element) m_elements->remove(i);
 }
 
+
+bool TagItem::empty() const {
+    if (!m_elements->empty()) return false;
+    return allElements_().empty();
+}
+
+
 bool TagItem::contains(Element* e) {
     for (Element* i : allElements_())
         if (*i == *e) return true;

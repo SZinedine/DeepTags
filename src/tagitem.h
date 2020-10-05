@@ -37,9 +37,9 @@ public:
     inline QString label() const { return text(0); }
     inline int number() const { return m_elements->size(); }
     inline void remove(Element* e) { m_elements->removeAll(e); }
-    inline bool empty() const { return m_elements->isEmpty(); }
     inline bool isSpecial() const { return m_special; }
     inline bool hasChildren() const { return (childCount() > 0); }
+    bool empty() const;
     bool contains(Element* e);
     void removeElement(Element* element);
     void setColor(const QString& color);
