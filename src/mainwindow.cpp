@@ -371,19 +371,18 @@ void MainWindow::openElements(const ElementsList& els) {
 
 
 void MainWindow::search() {
-    QString line = searchLineEdit->text().simplified().toLower();
+    const QString line = searchLineEdit->text().simplified().toLower();
     filesContainer->clearView();
     tagsContainer->clearSelection();
     changeNumberOfFilesLabel();
     if (line.isEmpty()) return;
 
     QStringList keywords{ line.split(' ') };
-    for (auto& s : keywords) s = s.simplified().toLower();
 
-    auto* lst = TagsContainer::real(tagsContainer->topLevelItem(0))->elements();
+    const auto* lst = TagsContainer::real(tagsContainer->topLevelItem(0))->elements();
     auto res  = std::make_unique<QVector<Element*>>();
 
-    auto contains = [&](const QString& title) {
+    auto contains = [&keywords](const QString& title) {
         for (const QString& s : keywords)
             if (!(title.contains(s))) return false;
         return true;
