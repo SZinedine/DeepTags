@@ -175,7 +175,7 @@ void MainWindow::setupMenu() {
     menuEdit->addActions({ setMdReaderAction, reloadElementsAction });
 
 #ifdef INSIDE_EDITOR
-    editorWidgetAction = new QAction("Show Integrated Reader", menuEdit);
+    editorWidgetAction = new QAction(tr("Show Integrated Reader"), menuEdit);
     editorWidgetAction->setCheckable(true);
     editorWidgetAction->setChecked(false);
     menuEdit->addAction(editorWidgetAction);
@@ -194,7 +194,7 @@ void MainWindow::setupMenu() {
     menuBar()->setCornerWidget(w);
 
     // systray menu
-    systrayExitAction = new QAction("Exit", this);
+    systrayExitAction = new QAction(tr("Exit"), this);
     auto systrayMenu  = new QMenu(this);
     systrayMenu->addAction(systrayExitAction);
     systray->setContextMenu(systrayMenu);
@@ -233,7 +233,7 @@ void MainWindow::setupSignals() {
         if (Settings::dataDirectoryIsSet())
             QDesktopServices::openUrl(QUrl(Settings::dataDirectory()));
         else
-            QMessageBox::warning(this, "No data directory", "Data directory hasn't been set.");
+            QMessageBox::warning(this, tr("No data directory"), tr("Data directory hasn't been set."));
     });
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(this, &MainWindow::started, this, &MainWindow::load,

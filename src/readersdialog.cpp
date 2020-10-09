@@ -34,7 +34,7 @@ ReadersDialog::ReadersDialog(QWidget* parent) : QDialog(parent) {
     setup();
     setFixedSize(400, 300);
     setModal(true);
-    setWindowTitle("Markdown Readers Dialog");
+    setWindowTitle(tr("Markdown Readers Dialog"));
     exec();
 }
 
@@ -120,7 +120,7 @@ bool ReadersDialog::added(const QString& ed) {
 void ReadersDialog::delItem() {
     QListWidgetItem* item = listWidget->currentItem();
     if (!item) return;
-    auto answer = QMessageBox::question(this, "confirmation", "Do you really want to delete it?");
+    auto answer = QMessageBox::question(this, tr("confirmation"), tr("Do you really want to delete it?"));
     if (answer == QMessageBox::No) return;
     delete item;
 }
@@ -143,7 +143,7 @@ void ReadersDialog::itemDown() {
 }
 
 void ReadersDialog::browse() {
-    auto f = QFileDialog::getOpenFileName(this, "Markdown Editor", QDir::homePath());
+    auto f = QFileDialog::getOpenFileName(this, tr("Markdown Editor"), QDir::homePath());
     f      = f.simplified();
     if (f.isEmpty()) return;
     editorLine->setText(f);

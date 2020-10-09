@@ -65,7 +65,7 @@ void DataDirDialog::setup() {
 }
 
 void DataDirDialog::browse() {
-    auto dir = QFileDialog::getExistingDirectory(this, "Data Directory", path(true));
+    auto dir = QFileDialog::getExistingDirectory(this, tr("Data Directory"), path(true));
     if (!dir.isEmpty()) m_directory->setText(dir);
 }
 
@@ -84,8 +84,8 @@ void DataDirDialog::accept() {
     if (!QDir().exists(dir)) {
         bool ok = QDir().mkdir(dir);
         if (!ok) {
-            QMessageBox::warning(this, "error",
-                                 "Error occured when trying to create the specified folder");
+            QMessageBox::warning(this, tr("error"),
+                                 tr("Error occured when trying to create the specified folder"));
             return;
         }
     }

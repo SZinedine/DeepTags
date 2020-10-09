@@ -28,7 +28,7 @@
 
 void BaseElement::createNewFile(const QString& p, QString title) {
     title = title.simplified();
-    if (title.isEmpty()) title = "untitled";
+    if (title.isEmpty()) title = QObject::tr("untitled");
     const QString title_line = makeTitleLine(title);
 
     StringList content;

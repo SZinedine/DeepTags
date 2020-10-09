@@ -23,7 +23,7 @@
 class QTreeWidget;
 class QWidget;
 // convinient variables
-static const std::vector<QString> basicTags = { "All Notes", "Notebooks", "Favorite", "Untagged" };
+static const std::vector<QString> basicTags = { QObject::tr("All Notes"), QObject::tr("Notebooks"), QObject::tr("Favorite"), QObject::tr("Untagged") };
 static const QString& cnv_allNotes          = basicTags[0];
 static const QString& cnv_notebooks         = basicTags[1];
 static const QString& cnv_favorite          = basicTags[2];

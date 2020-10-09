@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/datadirdialog.cpp" line="34"/>
         <source>Set Data Directory</source>
-        <translation>Définir un Répertoir de Données</translation>
+        <translation>Définir un Répertoire de Données</translation>
     </message>
     <message>
         <location filename="../src/datadirdialog.cpp" line="40"/>
@@ -22,6 +22,21 @@
         <location filename="../src/datadirdialog.cpp" line="47"/>
         <source>Browse</source>
         <translation>Naviguer</translation>
+    </message>
+    <message>
+        <location filename="../src/datadirdialog.cpp" line="68"/>
+        <source>Data Directory</source>
+        <translation>Répertoire de données</translation>
+    </message>
+    <message>
+        <location filename="../src/datadirdialog.cpp" line="87"/>
+        <source>error</source>
+        <translation>erreur</translation>
+    </message>
+    <message>
+        <location filename="../src/datadirdialog.cpp" line="88"/>
+        <source>Error occured when trying to create the specified folder</source>
+        <translation>Erreur survenue lors de la création du répertoire</translation>
     </message>
 </context>
 <context>
@@ -217,17 +232,17 @@
         <translation type="vanished">Recharger le fichier courant</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="79"/>
+        <location filename="../src/mainwindow.cpp" line="81"/>
         <source>Search</source>
         <translation>Recherche</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="86"/>
+        <location filename="../src/mainwindow.cpp" line="88"/>
         <source>Expand All</source>
         <translation>Étendre</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="88"/>
+        <location filename="../src/mainwindow.cpp" line="90"/>
         <source>Collapse All</source>
         <translation>Plier</translation>
     </message>
@@ -236,17 +251,17 @@
         <translation type="vanished">0 fichiers</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="136"/>
+        <location filename="../src/mainwindow.cpp" line="138"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="137"/>
+        <location filename="../src/mainwindow.cpp" line="139"/>
         <source>&amp;New File</source>
         <translation>&amp;Nouveau Fichier</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="138"/>
+        <location filename="../src/mainwindow.cpp" line="140"/>
         <source>&amp;Recently Opened Files</source>
         <translation>Fichiers &amp;Récents</translation>
     </message>
@@ -255,7 +270,7 @@
         <translation type="vanished">&amp;Changer le Répertoire des Données</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="152"/>
+        <location filename="../src/mainwindow.cpp" line="154"/>
         <source>&amp;Edit</source>
         <translation>&amp;Édition</translation>
     </message>
@@ -264,53 +279,73 @@
         <translation type="vanished">&amp;Définir une Liseuse MarkDown</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="93"/>
-        <location filename="../src/mainwindow.cpp" line="396"/>
+        <location filename="../src/mainwindow.cpp" line="95"/>
+        <location filename="../src/mainwindow.cpp" line="402"/>
         <source>no files</source>
         <translation>Pas de fichier</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="140"/>
+        <location filename="../src/mainwindow.cpp" line="142"/>
         <source>&amp;Set/Change Data Directory</source>
-        <translation>Définir/Changer le répertoir de données</translation>
+        <translation>&amp;Définir/Changer le répertoir de données</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="141"/>
+        <location filename="../src/mainwindow.cpp" line="143"/>
         <source>Open Data Directory</source>
         <translation>Ouvrir le répertoir des données</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="153"/>
+        <location filename="../src/mainwindow.cpp" line="155"/>
         <source>&amp;MarkDown Readers</source>
         <translation>Liseuses &amp;Markdown</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="155"/>
+        <location filename="../src/mainwindow.cpp" line="157"/>
         <source>Themes</source>
         <translation>Thèmes</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="158"/>
+        <location filename="../src/mainwindow.cpp" line="160"/>
         <source>Native Style</source>
         <translation>Style Natif</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="159"/>
+        <location filename="../src/mainwindow.cpp" line="161"/>
         <source>Dark Style</source>
         <translation>Style Sombre</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="160"/>
+        <location filename="../src/mainwindow.cpp" line="162"/>
         <source>Light Style</source>
         <translation>Style Clair</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="398"/>
+        <location filename="../src/mainwindow.cpp" line="178"/>
+        <source>Show Integrated Reader</source>
+        <translation>Afficher la liseuse intégrée</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="197"/>
+        <source>Exit</source>
+        <translation>Quitter</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="236"/>
+        <source>No data directory</source>
+        <translation>Répertoire de données inexistant</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="236"/>
+        <source>Data directory hasn&apos;t been set.</source>
+        <translation>Répertoire de données non défini.</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="404"/>
         <source>1 file</source>
         <translation>1 fichier</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="400"/>
+        <location filename="../src/mainwindow.cpp" line="406"/>
         <source> files</source>
         <translation> fichiers</translation>
     </message>
@@ -319,22 +354,22 @@
         <translation type="vanished">Purger les Éléments</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="171"/>
+        <location filename="../src/mainwindow.cpp" line="173"/>
         <source>Reload Elements</source>
         <translation>Recharger les Éléments</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="184"/>
+        <location filename="../src/mainwindow.cpp" line="186"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="351"/>
+        <location filename="../src/mainwindow.cpp" line="353"/>
         <source>Data Directory is not set</source>
         <translation>Répertoire des données non défini</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="352"/>
+        <location filename="../src/mainwindow.cpp" line="354"/>
         <source>You have to set a Data Directory before creating a file</source>
         <translation>Vous devez définir un répertoire de données avant de créer des fichiers</translation>
     </message>
@@ -347,7 +382,7 @@
         <translation type="vanished">Importer un fichier</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="142"/>
+        <location filename="../src/mainwindow.cpp" line="144"/>
         <source>&amp;Quit</source>
         <translation>&amp;Quitter</translation>
     </message>
@@ -360,7 +395,7 @@
         <translation type="vanished">Édition</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="183"/>
+        <location filename="../src/mainwindow.cpp" line="185"/>
         <source>&amp;About</source>
         <translation>&amp;À propos</translation>
     </message>
@@ -421,7 +456,7 @@
         <translation type="vanished">Ouvrir répertoire</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="415"/>
+        <location filename="../src/mainwindow.cpp" line="421"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>
@@ -435,7 +470,128 @@
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="../src/tagscontainer.h" line="26"/>
+        <source>All Notes</source>
+        <translation>Toutes les Notes</translation>
+    </message>
+    <message>
+        <location filename="../src/tagscontainer.h" line="26"/>
+        <source>Notebooks</source>
+        <translation>Notebooks</translation>
+    </message>
+    <message>
+        <location filename="../src/tagscontainer.h" line="26"/>
+        <source>Favorite</source>
+        <translation>Favoris</translation>
+    </message>
+    <message>
+        <location filename="../src/tagscontainer.h" line="26"/>
+        <source>Untagged</source>
+        <translation>Non étiqueté</translation>
+    </message>
+    <message>
+        <location filename="../src/baseelement.cpp" line="31"/>
+        <source>untitled</source>
+        <translation>sans titre</translation>
+    </message>
+</context>
+<context>
+    <name>QPlainTextEditSearchWidget</name>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="32"/>
+        <source>Find in text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="39"/>
+        <source>Replace with</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="53"/>
+        <source>Find:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="63"/>
+        <source>Search backward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="80"/>
+        <source>Replace:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="90"/>
+        <source>Close search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="107"/>
+        <source>Advanced search / replace text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="127"/>
+        <source>Search forward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="144"/>
+        <source>Match case sensitive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="164"/>
+        <source>Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="193"/>
+        <source>Plain text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="198"/>
+        <source>Whole words</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="203"/>
+        <source>Regular expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="224"/>
+        <source>Replace one text occurrence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="227"/>
+        <source>Replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="237"/>
+        <source>Replace all text occurrences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../3rdParty/qmarkdowntextedit/qplaintexteditsearchwidget.ui" line="240"/>
+        <source>Replace all</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ReadersDialog</name>
+    <message>
+        <location filename="../src/readersdialog.cpp" line="37"/>
+        <source>Markdown Readers Dialog</source>
+        <translation>Liseuses Markdown</translation>
+    </message>
     <message>
         <location filename="../src/readersdialog.cpp" line="71"/>
         <source>Name of a Markdown editor/reader:</source>
@@ -446,6 +602,21 @@
         <source>List of Markdown readers:</source>
         <translation>Liste des liseuses markdown:</translation>
     </message>
+    <message>
+        <location filename="../src/readersdialog.cpp" line="123"/>
+        <source>confirmation</source>
+        <translation>confirmation</translation>
+    </message>
+    <message>
+        <location filename="../src/readersdialog.cpp" line="123"/>
+        <source>Do you really want to delete it?</source>
+        <translation>Voulez-vous vraiment le supprimer ?</translation>
+    </message>
+    <message>
+        <location filename="../src/readersdialog.cpp" line="146"/>
+        <source>Markdown Editor</source>
+        <translation>Éditeur Markdown</translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
@@ -454,17 +625,17 @@
         <translation type="vanished">Ouvrir répertoire</translation>
     </message>
     <message>
-        <location filename="../src/settings.cpp" line="193"/>
+        <location filename="../src/settings.cpp" line="194"/>
         <source>Clear</source>
         <translation>Éffacer tout</translation>
     </message>
     <message>
-        <location filename="../src/settings.cpp" line="224"/>
+        <location filename="../src/settings.cpp" line="225"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../src/settings.cpp" line="224"/>
+        <location filename="../src/settings.cpp" line="225"/>
         <source>This file doesn&apos;t exist</source>
         <translation>Ce fichier n&apos;existe pas</translation>
     </message>
