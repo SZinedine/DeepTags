@@ -82,16 +82,16 @@ QVector<Element*>* TagItem::allElements() const {
 QVector<Element*> TagItem::allElements_() const {
     QVector<Element*> res;
     res += *m_elements;
-    auto f = [](TagItem* ti) -> QVector<Element*> {
+    auto f = [](TagItem* ti) -> QVector<Element*> { //return the elements of children
         QVector<Element*> qv;
         qv += *ti->elements();
         if (ti->hasChildren()) qv += ti->allElements_();
         return qv;
     };
-    for (auto& c : children()) res += f(c);
-    auto lst = res.toList();
-    lst      = QSet<Element*>(lst.begin(), lst.end()).values();
-    return lst.toVector();
+    for (auto& c : children())
+        for (auto& e : f(c))
+            if (!res.contains(e)) res.push_back(e);
+    return res;
 }
 
 QVector<TagItem*> TagItem::children() const {
