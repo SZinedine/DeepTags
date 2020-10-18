@@ -33,6 +33,39 @@ Element::Element(const Element& other) {
     m_header    = other.m_header;
 }
 
+Element::Element(Element&& other) noexcept {
+    m_path      = std::move(other.m_path);
+    m_title     = std::move(other.m_title);
+    m_tags      = std::move(other.m_tags);
+    m_pinned    = std::move(other.m_pinned);
+    m_favorited = std::move(other.m_favorited);
+    m_deleted   = std::move(other.m_deleted);
+    m_header    = std::move(other.m_header);
+}
+
+
+Element& Element::operator=(Element&& other) {
+    m_path      = std::move(other.m_path);
+    m_title     = std::move(other.m_title);
+    m_tags      = std::move(other.m_tags);
+    m_pinned    = std::move(other.m_pinned);
+    m_favorited = std::move(other.m_favorited);
+    m_deleted   = std::move(other.m_deleted);
+    m_header    = std::move(other.m_header);
+    return *this;
+}
+
+Element& Element::operator=(const Element& other) {
+    m_path      = other.m_path;
+    m_title     = other.m_title;
+    m_tags      = other.m_tags;
+    m_pinned    = other.m_pinned;
+    m_favorited = other.m_favorited;
+    m_deleted   = other.m_deleted;
+    m_header    = other.m_header;
+    return *this;
+}
+
 void Element::setup() {
     m_header = be::getHeader(m_path);
     if (m_header.empty()) {

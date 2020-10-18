@@ -26,7 +26,9 @@ class Element {
 public:
     explicit Element(const QString& path);
     Element(const Element& other);
-    Element(Element&& other) = default;
+    Element(Element&& other) noexcept;
+    Element& operator=(Element&& other);
+    Element& operator=(const Element& other);
     inline bool operator==(const Element& other) { return (m_path == other.m_path); }
     inline bool operator!=(const Element& other) { return !(m_path == other.m_path); }
 
