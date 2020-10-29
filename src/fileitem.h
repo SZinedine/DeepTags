@@ -39,6 +39,7 @@ public:
     inline Tags tags() const { return m_element->tags(); }
     inline bool pinned() const { return m_element->pinned(); }
     inline bool favorited() const { return m_element->favorited(); }
+    inline bool deleted() const { return m_element->deleted(); }
     inline Element* element() const { return m_element; }
     void reload();
     void setupIcons();

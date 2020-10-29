@@ -233,7 +233,8 @@ void MainWindow::setupSignals() {
         if (Settings::dataDirectoryIsSet())
             QDesktopServices::openUrl(QUrl(Settings::dataDirectory()));
         else
-            QMessageBox::warning(this, tr("No data directory"), tr("Data directory hasn't been set."));
+            QMessageBox::warning(this, tr("No data directory"),
+                                 tr("Data directory hasn't been set."));
     });
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
     connect(this, &MainWindow::started, this, &MainWindow::load,
@@ -380,7 +381,7 @@ void MainWindow::search() {
     QStringList keywords{ line.split(' ') };
 
     const auto* lst = TagsContainer::real(tagsContainer->topLevelItem(0))->elements();
-    auto res  = std::make_unique<QVector<Element*>>();
+    auto res        = std::make_unique<QVector<Element*>>();
 
     auto contains = [&keywords](const QString& title) {
         for (const QString& s : keywords)

@@ -130,62 +130,62 @@
         <translation type="vanished">Vous n&apos;avez pas défini la liseuse Markdown.</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="123"/>
+        <location filename="../src/filescontainer.cpp" line="125"/>
         <source>Pin to Top</source>
         <translation>Épingler</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="124"/>
+        <location filename="../src/filescontainer.cpp" line="126"/>
         <source>Favorite</source>
         <translation>Favoris</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="137"/>
+        <location filename="../src/filescontainer.cpp" line="134"/>
         <source>Open with</source>
         <translation>Ouvrir avec</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="144"/>
+        <location filename="../src/filescontainer.cpp" line="127"/>
         <source>Copy path</source>
         <translation>Copier l&apos;adresse</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="148"/>
+        <location filename="../src/filescontainer.cpp" line="122"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="151"/>
+        <location filename="../src/filescontainer.cpp" line="123"/>
         <source>Edit</source>
         <translation>Modifier</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="153"/>
+        <location filename="../src/filescontainer.cpp" line="124"/>
         <source>Add a new tag</source>
         <translation>Ajouter un nouveau tag</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="167"/>
+        <location filename="../src/filescontainer.cpp" line="129"/>
         <source>Restore</source>
         <translation>Restaurer</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="168"/>
+        <location filename="../src/filescontainer.cpp" line="130"/>
         <source>Delete Permanently</source>
         <translation>Supprimer définitivement</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="174"/>
+        <location filename="../src/filescontainer.cpp" line="128"/>
         <source>Move to Trash</source>
         <translation>Mettre à la corbeille</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="252"/>
+        <location filename="../src/filescontainer.cpp" line="259"/>
         <source>Permanently delete a file</source>
         <translation>Supprimer définitivement le fichier</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="253"/>
+        <location filename="../src/filescontainer.cpp" line="260"/>
         <source>The file will permanently be deleted. Do you want to proceed?</source>
         <translation>Le fichier sera définitivement supprimé. Voulez vous continuer ?</translation>
     </message>
@@ -198,17 +198,17 @@
         <translation type="vanished">Erreur. La suppréssion du fichier a échoué</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="290"/>
+        <location filename="../src/filescontainer.cpp" line="297"/>
         <source>Add the tag</source>
         <translation>Ajouter un tag</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="325"/>
+        <location filename="../src/filescontainer.cpp" line="332"/>
         <source>Write the new Tag to append</source>
         <translation>Écrire le tag à ajouter</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="326"/>
+        <location filename="../src/filescontainer.cpp" line="333"/>
         <source>Append New Tag</source>
         <translation>Ajouter un nouveau tag</translation>
     </message>

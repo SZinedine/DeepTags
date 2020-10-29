@@ -120,7 +120,8 @@ bool ReadersDialog::added(const QString& ed) {
 void ReadersDialog::delItem() {
     QListWidgetItem* item = listWidget->currentItem();
     if (!item) return;
-    auto answer = QMessageBox::question(this, tr("confirmation"), tr("Do you really want to delete it?"));
+    auto answer =
+        QMessageBox::question(this, tr("confirmation"), tr("Do you really want to delete it?"));
     if (answer == QMessageBox::No) return;
     delete item;
 }

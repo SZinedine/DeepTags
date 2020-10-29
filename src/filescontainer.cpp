@@ -119,63 +119,68 @@ void FilesContainer::showContextMenu(const QPoint& pos) {
     if (!item) return;
     FileItem* real_it = real(item);
 
-    auto menu = std::make_unique<QMenu>();
-    auto pin  = std::make_unique<QAction>(tr("Pin to Top"), this);
-    auto fav  = std::make_unique<QAction>(tr("Favorite"), this);
-    pin->setShortcut(QKeySequence("Ctrl+p"));
-    fav->setShortcut(QKeySequence("Ctrl+s"));
-    pin->setCheckable(true);
-    fav->setCheckable(true);
-    pin->setChecked(real_it->pinned());
-    fav->setChecked(real_it->favorited());
-
-    connect(pin.get(), &QAction::triggered, this, &FilesContainer::pinSelected);
-    connect(fav.get(), &QAction::triggered, this, &FilesContainer::starSelected);
+    auto menu     = std::make_unique<QMenu>();
+    auto open     = std::make_unique<QAction>(tr("Open"), menu.get());
+    auto edit     = std::make_unique<QAction>(tr("Edit"), menu.get());
+    auto newTag   = std::make_unique<QAction>(tr("Add a new tag"), menu.get());
+    auto pin      = std::make_unique<QAction>(tr("Pin to Top"), menu.get());
+    auto fav      = std::make_unique<QAction>(tr("Favorite"), menu.get());
+    auto copyPath = std::make_unique<QAction>(tr("Copy path"), menu.get());
+    auto mvtrash  = std::make_unique<QAction>(tr("Move to Trash"), menu.get());
+    auto restore  = std::make_unique<QAction>(tr("Restore"), menu.get());
+    auto delperm  = std::make_unique<QAction>(tr("Delete Permanently"), menu.get());
 
     // list of editors in a sub menu "open with..."
     QStringList editor_list = Settings::mdEditors();
-    auto openWith           = std::make_unique<QMenu>(tr("Open with"), this);
+    auto openWith           = std::make_unique<QMenu>(tr("Open with"), menu.get());
     for (auto& i : editor_list) {
         auto edac = new QAction(i, openWith.get());
         openWith->addAction(edac);
         connect(edac, &QAction::triggered, this, [=] { openFile_(item, i); });
     }
 
-    auto copyPath = std::make_unique<QAction>(tr("Copy path"), this);
+    open->setToolTip(Settings::mainMdEditor());
+    pin->setShortcut(QKeySequence("Ctrl+p"));
+    fav->setShortcut(QKeySequence("Ctrl+s"));
+    edit->setShortcut(QKeySequence("Ctrl+e"));
+    restore->setShortcut(QKeySequence("Ctrl+r"));
+    pin->setCheckable(true);
+    fav->setCheckable(true);
+    pin->setChecked(real_it->pinned());
+    fav->setChecked(real_it->favorited());
+    delperm->setShortcut(QKeySequence(Qt::Key_Shift + Qt::Key_Delete));
+    mvtrash->setShortcut(QKeySequence(QKeySequence::Delete));
+
+    connect(open.get(), &QAction::triggered, [=] { openFile(item); });
+    connect(edit.get(), &QAction::triggered, [=] { editElement(item); });
+    connect(newTag.get(), &QAction::triggered, [=] { appendNewTagToItem(item); });
+    connect(pin.get(), &QAction::triggered, this, &FilesContainer::pinSelected);
+    connect(fav.get(), &QAction::triggered, this, &FilesContainer::starSelected);
     connect(copyPath.get(), &QAction::triggered, this,
             [=] { QApplication::clipboard()->setText(real_it->pathQstr()); });
+    connect(restore.get(), &QAction::triggered, [=] { restoreSelected(); });
+    connect(delperm.get(), &QAction::triggered, [=] { permanentlyDelete(item); });
+    connect(mvtrash.get(), &QAction::triggered, [=] { trashSelected(); });
 
-    auto open = menu->addAction(tr("Open"));
-    open->setToolTip(Settings::mainMdEditor());
-    if (editor_list.size() > 1) menu->addMenu(openWith.get());
-    auto edit = menu->addAction(tr("Edit"));
-    menu->addSeparator();
-    auto newTag = menu->addAction(tr("Add a new tag"));
-    menu->addAction(pin.get());
-    menu->addAction(fav.get());
-    menu->addSeparator();
-    menu->addAction(copyPath.get());
-
-    edit->setShortcut(QKeySequence("Ctrl+e"));
-    connect(open, &QAction::triggered, [=] { openFile(item); });
-    connect(edit, &QAction::triggered, [=] { editElement(item); });
-    connect(newTag, &QAction::triggered, [=] { appendNewTagToItem(item); });
-
-
-    // if the element is deleted, that means that we are in the Trash tag
-    if (real_it->element()->deleted()) {
-        auto restore = menu->addAction(tr("Restore"));
-        auto delperm = menu->addAction(tr("Delete Permanently"));
-        restore->setShortcut(QKeySequence("Ctrl+r"));
-        delperm->setShortcut(QKeySequence(Qt::Key_Shift + Qt::Key_Delete));
-        connect(restore, &QAction::triggered, [=] { restoreSelected(); });
-        connect(delperm, &QAction::triggered, [=] { permanentlyDelete(item); });
-    } else {
-        auto mvtrash = menu->addAction(tr("Move to Trash"));
-        connect(mvtrash, &QAction::triggered, [=] { trashSelected(); });
-        mvtrash->setShortcut(QKeySequence(QKeySequence::Delete));
+    // we are in the trash TagItem if the element is deleted
+    if (real_it->deleted()) {
+        menu->addAction(open.get());
+        menu->addAction(copyPath.get());
+        menu->addSeparator();
+        menu->addAction(restore.get());
+        menu->addAction(delperm.get());
+    } else {   // all other TagItems
+        menu->addAction(open.get());
+        if (editor_list.size() > 1) menu->addMenu(openWith.get());
+        menu->addAction(edit.get());
+        menu->addSeparator();
+        menu->addAction(newTag.get());
+        menu->addAction(pin.get());
+        menu->addAction(fav.get());
+        menu->addSeparator();
+        menu->addAction(copyPath.get());
+        menu->addAction(mvtrash.get());
     }
-
     menu->exec(mapToGlobal(pos));
 }
 

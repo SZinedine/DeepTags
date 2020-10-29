@@ -82,7 +82,7 @@ QVector<Element*>* TagItem::allElements() const {
 QVector<Element*> TagItem::allElements_() const {
     QVector<Element*> res;
     res += *m_elements;
-    auto f = [](TagItem* ti) -> QVector<Element*> { //return the elements of children
+    auto f = [](TagItem* ti) -> QVector<Element*> {   // return the elements of children
         QVector<Element*> qv;
         qv += *ti->elements();
         if (ti->hasChildren()) qv += ti->allElements_();
