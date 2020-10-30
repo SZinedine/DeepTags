@@ -92,7 +92,7 @@ void MainWindow::setupCentral() {
     collapseButton->setMaximumWidth(30);
 
     QStatusBar* statusB = statusBar();
-    nbFiles             = new QLabel(tr("no files"), this);
+    nbFiles             = new QLabel(tr("no files"), statusBar());
     statusB->addPermanentWidget(nbFiles);
 
     systray = new QSystemTrayIcon(QIcon(":images/icon128.png"), this);
@@ -111,8 +111,8 @@ void MainWindow::setupCentral() {
 }
 
 void MainWindow::setupLayout() {
-    auto layout = new QGridLayout;
-    centralWidget()->setLayout(layout);
+    auto layout = new QGridLayout(centralWidget());
+    // centralWidget()->setLayout(layout);
 
     // containers
     splitter->addWidget(tagsContainer);
@@ -136,12 +136,12 @@ void MainWindow::setupLayout() {
 
 void MainWindow::setupMenu() {
     auto menuFile           = menuBar()->addMenu(tr("&File"));
-    newFileAction           = new QAction(QIcon(":images/newFile.png"), tr("&New File"), this);
-    recentlyOpenedFilesMenu = new QMenu(tr("&Recently Opened Files"), this);
+    newFileAction           = new QAction(QIcon(":images/newFile.png"), tr("&New File"), menuBar());
+    recentlyOpenedFilesMenu = new QMenu(tr("&Recently Opened Files"), menuBar());
     Settings::getActionsRecentlyOpenedFiles(recentlyOpenedFilesMenu);
-    changeDataDirAction = new QAction(tr("&Set/Change Data Directory"), this);
-    openDataDirAction   = new QAction(tr("Open Data Directory"), this);
-    quitAction          = new QAction(QIcon(":images/quit.png"), tr("&Quit"), this);
+    changeDataDirAction = new QAction(tr("&Set/Change Data Directory"), menuBar());
+    openDataDirAction   = new QAction(tr("Open Data Directory"), menuBar());
+    quitAction          = new QAction(QIcon(":images/quit.png"), tr("&Quit"), menuBar());
     menuFile->addAction(newFileAction);
     menuFile->addMenu(recentlyOpenedFilesMenu);
     menuFile->addAction(changeDataDirAction);
@@ -152,10 +152,10 @@ void MainWindow::setupMenu() {
     openDataDirAction->setToolTip(Settings::dataDirectory());
 
     auto menuEdit     = menuBar()->addMenu(tr("&Edit"));
-    setMdReaderAction = new QAction(tr("&MarkDown Readers"), this);
+    setMdReaderAction = new QAction(tr("&MarkDown Readers"), menuEdit);
 #ifdef INCLUDE_QBREEZE   // use QBreeze if it exists
     auto setStyleMenu = new QMenu(tr("Themes"), menuEdit);
-    themesActionGroup = new QActionGroup(this);
+    themesActionGroup = new QActionGroup(menuEdit);
     themesActionGroup->setExclusive(true);
     auto nativeStyleAction      = new QAction(tr("Native Style"), setStyleMenu);
     auto breezeDarkStyleAction  = new QAction(tr("Dark Style"), setStyleMenu);
@@ -181,21 +181,20 @@ void MainWindow::setupMenu() {
     menuEdit->addAction(editorWidgetAction);
 #endif
 
-    auto menuHelp = new QMenu(this);
-    aboutAction   = new QAction(tr("&About"), this);
-    menuHelp      = menuBar()->addMenu(tr("&Help"));
+    auto menuHelp = menuBar()->addMenu(tr("&Help"));
+    aboutAction   = new QAction(tr("&About"), menuHelp);
     menuHelp->addAction(aboutAction);
 
     // append the search bar into the right of the menu bar
     auto w = new QWidget(this);
-    w->setLayout(new QHBoxLayout);
+    new QHBoxLayout(w);
     w->layout()->addWidget(searchLineEdit);
     w->setContentsMargins(0, 0, 5, 0);
     menuBar()->setCornerWidget(w);
 
     // systray menu
-    systrayExitAction = new QAction(tr("Exit"), this);
     auto systrayMenu  = new QMenu(this);
+    systrayExitAction = new QAction(tr("Exit"), systrayMenu);
     systrayMenu->addAction(systrayExitAction);
     systray->setContextMenu(systrayMenu);
 }
@@ -360,7 +359,6 @@ void MainWindow::newFile() {
     if (out == ElementDialog::Rejected) return;
 
     auto e = new Element(dialog->path());
-    if (!e) return;
     ElementsList lst{ e };
     openElements(lst);
 }

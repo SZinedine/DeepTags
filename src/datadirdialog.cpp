@@ -40,10 +40,10 @@ void DataDirDialog::setup() {
     s_head.append(tr("Please choose a Data Directory where you want your notes to be saved. "));
     s_head.append(tr("If you already have notes in a folder, point it out to import them."));
 
-    auto header = new QLabel(s_head);
+    auto header = new QLabel(s_head, this);
     header->setWordWrap(true);
     header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-    m_directory = new QLineEdit(path(false));
+    m_directory = new QLineEdit(path(false), this);
     m_browse    = new QPushButton(tr("Browse"), this);
     m_buttons   = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
 
@@ -52,7 +52,7 @@ void DataDirDialog::setup() {
     connect(m_browse, &QPushButton::clicked, this, &DataDirDialog::browse);
 
     // layout
-    auto layout = new QVBoxLayout;
+    auto layout = new QVBoxLayout(this);
     layout->addWidget(header);
     auto directoryLayout = new QHBoxLayout;
     directoryLayout->setContentsMargins(0, 0, 0, 0);
@@ -61,7 +61,6 @@ void DataDirDialog::setup() {
     layout->addWidget(header);
     layout->addLayout(directoryLayout);
     layout->addWidget(m_buttons, Qt::AlignRight);
-    setLayout(layout);
 }
 
 void DataDirDialog::browse() {
