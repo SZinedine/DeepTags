@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-DEFINES += DEEPTAGS_VERSION=\\\"0.5.4\\\"
+DEFINES += DEEPTAGS_VERSION=\\\"0.6\\\"
 QT += core gui widgets
 TARGET = deeptags
 TEMPLATE = app
