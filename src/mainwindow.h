@@ -19,42 +19,39 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "element.h"
 #ifdef INSIDE_EDITOR
     #include "editorwidget.h"
 #endif
-#include "element.h"
 
-class QAction;
+QT_BEGIN_NAMESPACE
+namespace Ui {
+    class MainWindow;
+}
+QT_END_NAMESPACE
+
 class QCloseEvent;
-class QLabel;
-class QLineEdit;
-class QMenu;
-class QPushButton;
-class QSplitter;
 class QActionGroup;
 class QSystemTrayIcon;
-class TagsContainer;
-class FilesContainer;
+class QLineEdit;
+class QLabel;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     MainWindow(QWidget* parent = nullptr);
-
-private:
+    ~MainWindow();
+    /**
+     * constructor helper functions
+     */
     void setupCentral();
-    void setupLayout();
     void setupMenu();
+    void setupShortcuts();
     void setupSignals();
-    void setupKeyboard();
     /**
      *  open saved files and always openning dirs at startup
      */
     void load();
-    /**
-     *  reload the displayed content
-     */
-    void reloadContent();
     /**
      * when the data directory is changed
      * save the new data directory, clear all, and reload
@@ -67,6 +64,10 @@ private:
      */
     void loadDataDirectoryContent();
     /**
+     *  reload the displayed content
+     */
+    void reloadContent();
+    /**
      *  open ElementDialog to create a new file
      *  by asking the user for information about the file
      */
@@ -76,37 +77,43 @@ private:
      *  it searches in titles of loaded files and displays them
      */
     void search();
+    /**
+     * convinient function to TagsContainer::addElement()
+     */
     void openElements(const ElementsList& els);
-    void changeNumberOfFilesLabel();
-    void about();
-    void closeEvent(QCloseEvent* event) override;
+    /**
+     * disable some widgets when the UI is loading elements
+     * this prevents any errors from occuring
+     */
     void disableSomeWidgets(const bool& disable);
-    void setTheme(QAction* action);
-    void loadTheme();
+    /**
+     * change the number of the files displayed in the status bar
+     */
+    void changeNumberOfFilesLabel();
+    /**
+     * display a dialog with some info
+     */
+    void about();
+    /**
+     * save the state of the splitter before quitting
+     */
+    void closeEvent(QCloseEvent* event) override;
 
 signals:
+    /**
+     * emitted when the widgets are finished loading
+     * after this signal is emitted, the Elements will begin loading
+     */
     void started();
 
 private:
-    TagsContainer* tagsContainer;
-    FilesContainer* filesContainer;
-    QSplitter* splitter;
+    Ui::MainWindow* ui;
     QLineEdit* searchLineEdit;
     QAction* eraseSearch;
-    QPushButton* expandButton;
-    QPushButton* collapseButton;
     QLabel* nbFiles;
     QLabel* spinnerLabel;
-    QAction* newFileAction;
-    QMenu* recentlyOpenedFilesMenu;
-    QAction* changeDataDirAction;
-    QAction* openDataDirAction;
-    QAction* quitAction;
-    QAction* reloadElementsAction;
-    QAction* setMdReaderAction;
-    QAction* aboutAction;
-    QAction* systrayExitAction;
     QSystemTrayIcon* systray;
+    QAction* systrayExitAction;
 #ifdef INCLUDE_QBREEZE
     QActionGroup* themesActionGroup;
 #endif
@@ -115,6 +122,5 @@ private:
     QAction* editorWidgetAction;
 #endif
 };
-
 
 #endif   // MAINWINDOW_H

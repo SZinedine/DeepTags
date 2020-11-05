@@ -34,6 +34,8 @@ GUI_SOURCES  =  $$GUI_DIR/fileitem.cpp $$GUI_DIR/filescontainer.cpp \
 SOURCES += $$SRC_DIR/main.cpp $$ELEM_SOURCES $$GUI_SOURCES
 HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 
+FORMS += \
+    $$SRC_DIR/mainwindow.ui
 
 # Prevent qmake from appending the gnu++ standard that overrides this configuration
 STD = 14
@@ -58,6 +60,7 @@ CONFIG(release, debug|release) {
 OBJECTS_DIR = $$OUTFILES/obj
 MOC_DIR = $$OUTFILES/moc
 RCC_DIR = $$OUTFILES/rc
+UI_DIR = $$SRC_DIR
 
 # make QBreeze an optional dependency
 exists(3rdParty/QBreeze/qbreeze.qrc){

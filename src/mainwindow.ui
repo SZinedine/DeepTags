@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>910</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetFixedSize</enum>
+      </property>
+      <item>
+       <widget class="QPushButton" name="collapseButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../deeptags.qrc">
+          <normaloff>:/images/collapse.png</normaloff>:/images/collapse.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="expandButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../deeptags.qrc">
+          <normaloff>:/images/arrowdown.png</normaloff>:/images/arrowdown.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="TagsContainer" name="tagsContainer">
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="FilesContainer" name="filesContainer"/>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>910</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="recentlyOpenedFilesMenu">
+     <property name="title">
+      <string>Recently Opened Files</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="newFileAction"/>
+    <addaction name="recentlyOpenedFilesMenu"/>
+    <addaction name="changeDataDirAction"/>
+    <addaction name="openDataDirAction"/>
+    <addaction name="separator"/>
+    <addaction name="quitAction"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="setMdReaderAction"/>
+    <addaction name="reloadElementsAction"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="aboutAction"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="newFileAction">
+   <property name="icon">
+    <iconset resource="../deeptags.qrc">
+     <normaloff>:/images/addFile.png</normaloff>:/images/addFile.png</iconset>
+   </property>
+   <property name="text">
+    <string>New File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="changeDataDirAction">
+   <property name="text">
+    <string>Set/Change The Data Directory</string>
+   </property>
+  </action>
+  <action name="openDataDirAction">
+   <property name="text">
+    <string>Open the Data Directory</string>
+   </property>
+  </action>
+  <action name="quitAction">
+   <property name="icon">
+    <iconset resource="../deeptags.qrc">
+     <normaloff>:/images/quit.png</normaloff>:/images/quit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionNative_Style">
+   <property name="text">
+    <string>Native Style</string>
+   </property>
+  </action>
+  <action name="actionBreeze_Dark">
+   <property name="text">
+    <string>Dark Style</string>
+   </property>
+  </action>
+  <action name="actionBreeze_Light">
+   <property name="text">
+    <string>Light Style</string>
+   </property>
+  </action>
+  <action name="setMdReaderAction">
+   <property name="text">
+    <string>Markdown Readers</string>
+   </property>
+  </action>
+  <action name="reloadElementsAction">
+   <property name="text">
+    <string>Reload Elements</string>
+   </property>
+  </action>
+  <action name="actionDisplay_Integrated_Reader">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Display Integrated Reader</string>
+   </property>
+  </action>
+  <action name="aboutAction">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TagsContainer</class>
+   <extends>QTreeWidget</extends>
+   <header>tagscontainer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FilesContainer</class>
+   <extends>QListWidget</extends>
+   <header>filescontainer.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>tagsContainer</tabstop>
+  <tabstop>filescontainer_2</tabstop>
+  <tabstop>expandButton</tabstop>
+  <tabstop>collapseButton</tabstop>
+  <tabstop>filesContainer</tabstop>
+  <tabstop>tagscontainer_2</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../deeptags.qrc"/>
+ </resources>
+ <connections/>
+</ui>
