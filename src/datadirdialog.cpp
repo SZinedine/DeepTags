@@ -16,62 +16,37 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 #include "datadirdialog.h"
-#include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QLabel>
-#include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QStandardPaths>
-#include <QVBoxLayout>
 #include "settings.h"
+#include "ui_datadirdialog.h"
 
 
-DataDirDialog::DataDirDialog(QWidget* parent)
-    : QDialog(parent), m_directory(nullptr), m_browse(nullptr), m_buttons(nullptr) {
-    setFixedSize(QSize(450, 170));
-    setup();
-    setWindowTitle(tr("Set Data Directory"));
+DataDirDialog::DataDirDialog(QWidget* parent) : QDialog(parent), ui(new Ui::DataDirDialog) {
+    ui->setupUi(this);
+    ui->m_directory->setText(path(false));
+    connect(ui->m_browse, &QPushButton::clicked, this, &DataDirDialog::browse);
 }
 
-
-void DataDirDialog::setup() {
-    QString s_head;
-    s_head.append(tr("Please choose a Data Directory where you want your notes to be saved. "));
-    s_head.append(tr("If you already have notes in a folder, point it out to import them."));
-
-    auto header = new QLabel(s_head, this);
-    header->setWordWrap(true);
-    header->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-    m_directory = new QLineEdit(path(false), this);
-    m_browse    = new QPushButton(tr("Browse"), this);
-    m_buttons   = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-
-    connect(m_buttons, &QDialogButtonBox::accepted, this, &DataDirDialog::accept);
-    connect(m_buttons, &QDialogButtonBox::rejected, this, &DataDirDialog::reject);
-    connect(m_browse, &QPushButton::clicked, this, &DataDirDialog::browse);
-
-    // layout
-    auto layout = new QVBoxLayout(this);
-    layout->addWidget(header);
-    auto directoryLayout = new QHBoxLayout;
-    directoryLayout->setContentsMargins(0, 0, 0, 0);
-    directoryLayout->addWidget(m_directory);
-    directoryLayout->addWidget(m_browse);
-    layout->addWidget(header);
-    layout->addLayout(directoryLayout);
-    layout->addWidget(m_buttons, Qt::AlignRight);
+DataDirDialog::~DataDirDialog() {
+    delete ui;
 }
 
 void DataDirDialog::browse() {
     auto dir = QFileDialog::getExistingDirectory(this, tr("Data Directory"), path(true));
-    if (!dir.isEmpty()) m_directory->setText(dir);
+    if (!dir.isEmpty()) ui->m_directory->setText(dir);
 }
 
 QString DataDirDialog::path(bool substitute) {
-    auto current = (Settings::dataDirectoryIsSet())
-                       ? Settings::dataDirectory()
-                       : QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QString current;
+    if (Settings::dataDirectoryIsSet())
+        current = Settings::dataDirectory();
+    else
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
     if (substitute)
         return (current.isEmpty()) ? QDir::homePath() : current;
     else
@@ -79,7 +54,7 @@ QString DataDirDialog::path(bool substitute) {
 }
 
 void DataDirDialog::accept() {
-    QString dir = m_directory->text();
+    QString dir = ui->m_directory->text();
     if (!QDir().exists(dir)) {
         bool ok = QDir().mkdir(dir);
         if (!ok) {

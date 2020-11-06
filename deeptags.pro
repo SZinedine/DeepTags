@@ -35,7 +35,7 @@ SOURCES += $$SRC_DIR/main.cpp $$ELEM_SOURCES $$GUI_SOURCES
 HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 
 FORMS += \
-    $$SRC_DIR/mainwindow.ui
+    $$SRC_DIR/mainwindow.ui  $$SRC_DIR/datadirdialog.ui 
 
 # Prevent qmake from appending the gnu++ standard that overrides this configuration
 STD = 14

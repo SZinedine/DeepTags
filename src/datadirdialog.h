@@ -17,22 +17,23 @@
  *************************************************************************/
 #include <QDialog>
 
-class QLineEdit;
-class QDialogButtonBox;
+QT_BEGIN_NAMESPACE
+namespace Ui {
+    class DataDirDialog;
+}
+QT_END_NAMESPACE
 
 class DataDirDialog : public QDialog {
     Q_OBJECT
 public:
     explicit DataDirDialog(QWidget* parent = nullptr);
+    ~DataDirDialog();
     void accept() override;
 
 private:
-    void setup();
     void browse();
     QString path(bool substitute);
 
 private:
-    QLineEdit* m_directory;
-    QPushButton* m_browse;
-    QDialogButtonBox* m_buttons;
+    Ui::DataDirDialog* ui;
 };
