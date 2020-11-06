@@ -28,7 +28,7 @@
 #include <memory>
 #include "datadirdialog.h"
 #include "elementdialog.h"
-#include "readersdialog.h"
+#include "externalreadersdialog.h"
 #include "settings.h"
 #include "ui_mainwindow.h"
 
@@ -182,7 +182,7 @@ void MainWindow::setupSignals() {
             [=]() { Settings::getActionsRecentlyOpenedFiles(ui->recentlyOpenedFilesMenu); });
     connect(ui->quitAction, &QAction::triggered, this, &QMainWindow::close);
     connect(ui->setMdReaderAction, &QAction::triggered, this,
-            [=] { std::make_unique<ReadersDialog>(this); });
+            [=] { std::make_unique<ExternalReadersDialog>(this); });
     connect(ui->changeDataDirAction, &QAction::triggered, this, &MainWindow::setDataDirectory);
     connect(ui->openDataDirAction, &QAction::triggered, this, [=] {
         if (Settings::dataDirectoryIsSet())

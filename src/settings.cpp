@@ -29,7 +29,6 @@
 #include <QWidget>
 #include <thread>
 #include "element.h"
-#include "readersdialog.h"
 
 void Settings::saveString(const QString& group, const QString& label, const QString& value) {
     QSettings s;

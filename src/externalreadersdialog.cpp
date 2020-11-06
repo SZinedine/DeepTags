@@ -15,32 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
-#ifndef READERSDIALOG_H
-#define READERSDIALOG_H
+#include "externalreadersdialog.h"
+#include "ui_externalreadersdialog.h"
+#include "externalreaderslistsettingswidget.h"
+#include <QDialogButtonBox>
 
-#include <QDialog>
+ExternalReadersDialog::ExternalReadersDialog(QWidget *parent)
+    : QDialog(parent) , ui(new Ui::ExternalReadersDialog) {
+    ui->setupUi(this);
+    exec();
+}
 
-class QLineEdit;
-class QDialogButtonBox;
-class QListWidget;
+ExternalReadersDialog::~ExternalReadersDialog() { delete ui; }
 
-class ReadersDialog : public QDialog {
-    Q_OBJECT
-public:
-    ReadersDialog(QWidget* parent = nullptr);
-    void setup();
-    void accept_();
-    void addItem();
-    void delItem();
-    void itemUp();
-    void itemDown();
-    void browse();
-    bool added(const QString& ed);
+void ExternalReadersDialog::accept() {
+    ui->externalReadersListSettingsWidget->accept();
+    QDialog::accept();
+}
 
-private:
-    QListWidget* listWidget;
-    QLineEdit* editorLine;
-    QDialogButtonBox* validateDialog;
-};
 
-#endif
+
