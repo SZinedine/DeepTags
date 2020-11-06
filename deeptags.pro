@@ -40,7 +40,9 @@ FORMS += \
     $$SRC_DIR/mainwindow.ui \
     $$SRC_DIR/datadirdialog.ui \
     $$SRC_DIR/externalreaderslistsettingswidget.ui \
-    $$SRC_DIR/externalreadersdialog.ui
+    $$SRC_DIR/externalreadersdialog.ui \
+    $$SRC_DIR/elementdialog.ui
+
 
 # Prevent qmake from appending the gnu++ standard that overrides this configuration
 STD = 14

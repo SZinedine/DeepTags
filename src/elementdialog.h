@@ -18,17 +18,13 @@
 #ifndef ElementDialog_H
 #define ElementDialog_H
 
-#include <QCheckBox>
 #include <QDialog>
-#include <QLineEdit>
 #include <QListWidget>
 #include "element.h"
 
-class TagsWidget;
-class QCheckBox;
-class QDialogButtonBox;
-class QPushButton;
-class QDialog;
+QT_BEGIN_NAMESPACE
+namespace Ui { class ElementDialog; }
+QT_END_NAMESPACE
 
 /**
  * Dialog box that serves 2 purposes
@@ -39,30 +35,25 @@ class ElementDialog : public QDialog {
     Q_OBJECT
 public:
     /**
-     * @brief constructor for new file creation
+     * constructor for new file creation
      */
     ElementDialog(QWidget* parent = nullptr);
     /**
-     * @brief constructor to edit existing Elements
+     * constructor to edit existing Elements
      */
     ElementDialog(Element* element, QWidget* parent = nullptr);
     ~ElementDialog() override;
     void setupKeyboard();
-    /**
-     * Get info
-     */
-    [[nodiscard]] inline QString title() const { return m_title->text().simplified(); }
-    [[nodiscard]] inline bool pinned() const { return m_pinned->isChecked(); }
-    [[nodiscard]] inline bool favorited() const { return m_favorited->isChecked(); }
+    [[nodiscard]] QString title() const;
+    [[nodiscard]] bool pinned() const;
+    [[nodiscard]] bool favorited() const;
     [[nodiscard]] StringList tags() const;
-    [[nodiscard]] inline Element* element() { return m_element; }
-    [[nodiscard]] inline QString path() { return m_path->text(); }
+    [[nodiscard]] Element* element();
+    [[nodiscard]] QString path();
     static void formatFilename(QString& str);
 
 private:
     void setup(bool visiblePath);
-    void setup_forEditFile();
-    void setup_forNewFile();
     /**
      * replaces accept() for the new file dialog
      * saves the necessary info beforehand
@@ -75,15 +66,9 @@ private:
      */
     void accept_();
 
+private:
+    Ui::ElementDialog *ui;
     Element* m_element;
-    QDialogButtonBox* buttons;
-    QLineEdit* m_title;
-    QLineEdit* m_path;
-    QCheckBox* m_pinned;
-    QCheckBox* m_favorited;
-    TagsWidget* m_tags;
-    QPushButton* m_addTag;
-    QPushButton* m_delTag;
 };
 
 /**

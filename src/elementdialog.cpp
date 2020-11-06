@@ -16,82 +16,53 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 #include "elementdialog.h"
+#include "ui_elementdialog.h"
 #include <QDialogButtonBox>
 #include <QFileDialog>
-#include <QFormLayout>
 #include <QKeySequence>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QShortcut>
 #include "settings.h"
 
-ElementDialog::ElementDialog(QWidget* parent) : QDialog(parent), m_element(nullptr) {
-    setup_forNewFile();
+ElementDialog::ElementDialog(QWidget* parent) : QDialog(parent), ui(new Ui::ElementDialog), m_element(nullptr) {
+    ui->setupUi(this);
+    setup(false);
 }
 
 
 ElementDialog::ElementDialog(Element* element, QWidget* parent)
-    : QDialog(parent), m_element(element) {
-    setup_forEditFile();
+    : QDialog(parent), ui(new Ui::ElementDialog), m_element(element) {
+    ui->setupUi(this);
+    setup(true);
 }
 
 ElementDialog::~ElementDialog() {
-    delete m_title;
-    delete m_path;
-    delete m_pinned;
-    delete m_favorited;
-    delete m_tags;
-    delete buttons;
+    delete ui;
 }
 
 void ElementDialog::setup(bool visiblePath) {
-    setFixedSize(450, 350);
-    setModal(true);
-    setWindowTitle(tr("Element Dialog"));
-
-    auto* layout = new QFormLayout(this);
-    setLayout(layout);
-    layout->setRowWrapPolicy(QFormLayout::DontWrapRows);
-    layout->setFormAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    layout->setLabelAlignment(Qt::AlignLeft);
-
-    m_path = new QLineEdit(this);
-    m_path->setVisible(visiblePath);
-    m_title     = new QLineEdit(this);
-    m_pinned    = new QCheckBox(this);
-    m_favorited = new QCheckBox(this);
-    m_tags      = new TagsWidget(this);
-    m_addTag    = new QPushButton(QIcon(":images/add.png"), "", this);
-    m_delTag    = new QPushButton(QIcon(":images/delete.png"), "", this);
-    m_addTag->setToolTip(tr("Add a tag"));
-    m_delTag->setToolTip(tr("Delete a tag"));
-    connect(m_addTag, &QPushButton::clicked, m_tags, [=] {
-        m_tags->setFocus();
-        m_tags->add();
+    if (visiblePath) {  // editing and existing file
+        ui->m_title->setText(m_element->title());
+        ui->m_path->setText(m_element->path());
+        ui->m_pinned->setChecked(m_element->pinned());
+        ui->m_favorited->setChecked(m_element->favorited());
+        ui->m_tags->setTags(be::getUnparsedTags(m_element->getHeader()));
+        connect(ui->buttons, &QDialogButtonBox::accepted, this, [=]() { accept_(); });
+    }
+    else {  // hide the path LineEdit when we want to create a file
+        ui->m_path->setVisible(false);
+        ui->filePathLabel->setVisible(false);
+        ui->m_title->setText(tr("Untitled"));
+        ui->m_path->setVisible(false);
+        connect(ui->buttons, &QDialogButtonBox::accepted, this, [=]() { save(); });
+    }
+    connect(ui->m_addTag, &QPushButton::clicked, ui->m_tags, [=] {
+        ui->m_tags->setFocus();
+        ui->m_tags->add();
     });
-    connect(m_delTag, &QPushButton::clicked, m_tags, [=] { m_tags->del(); });
-    m_addTag->setMaximumWidth(35);
-    m_delTag->setMaximumWidth(35);
-    auto addDelButtonsLayout = new QVBoxLayout;
-    addDelButtonsLayout->addWidget(m_addTag, 0, Qt::AlignTop);
-    addDelButtonsLayout->addWidget(m_delTag, 0, Qt::AlignTop);
-    addDelButtonsLayout->addStretch();
-    addDelButtonsLayout->setContentsMargins(0, 0, 0, 0);
-
-    auto tagsLayout = new QHBoxLayout;
-    tagsLayout->addWidget(m_tags);
-    tagsLayout->addLayout(addDelButtonsLayout);
-    tagsLayout->setContentsMargins(0, 0, 0, 0);
-
-    buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    connect(buttons, &QDialogButtonBox::rejected, this, &ElementDialog::reject);
-
-    if (visiblePath) layout->addRow(tr("File Path: "), m_path);
-    layout->addRow(tr("Title: "), m_title);
-    layout->addRow(tr("Pinned: "), m_pinned);
-    layout->addRow(tr("Favorite: "), m_favorited);
-    layout->addRow(tr("Tags: "), tagsLayout);
-    layout->addRow(buttons);
+    connect(ui->m_delTag, &QPushButton::clicked, ui->m_tags, [=] { ui->m_tags->del(); });
+    connect(ui->buttons, &QDialogButtonBox::rejected, this, &ElementDialog::reject);
 
     setupKeyboard();
 }
@@ -102,32 +73,11 @@ void ElementDialog::setupKeyboard() {
     auto g = new QShortcut(QKeySequence("Ctrl+g"), this);
     auto p = new QShortcut(QKeySequence("Ctrl+p"), this);
     auto f = new QShortcut(QKeySequence("Ctrl+f"), this);
-    connect(t, &QShortcut::activated, this, [=] { m_title->setFocus(); });
-    connect(g, &QShortcut::activated, this, [=] { m_tags->setFocus(); });
-    connect(p, &QShortcut::activated, this, [=] { m_pinned->setChecked(!pinned()); });
-    connect(f, &QShortcut::activated, this, [=] { m_favorited->setChecked(!favorited()); });
+    connect(t, &QShortcut::activated, this, [=] { ui->m_title->setFocus(); });
+    connect(g, &QShortcut::activated, this, [=] { ui->m_tags->setFocus(); });
+    connect(p, &QShortcut::activated, this, [=] { ui->m_pinned->setChecked(!pinned()); });
+    connect(f, &QShortcut::activated, this, [=] { ui->m_favorited->setChecked(!favorited()); });
 }
-
-
-void ElementDialog::setup_forEditFile() {
-    setup(true);
-    m_title->setText(m_element->title());
-    m_path->setText(m_element->path());
-    m_path->setReadOnly(true);
-    m_pinned->setChecked(m_element->pinned());
-    m_favorited->setChecked(m_element->favorited());
-    m_tags->setTags(be::getUnparsedTags(m_element->getHeader()));
-    connect(buttons, &QDialogButtonBox::accepted, this, [=]() { accept_(); });
-}
-
-
-void ElementDialog::setup_forNewFile() {
-    setup(false);
-    m_title->setText(tr("Untitled"));
-    m_path->setVisible(false);
-    connect(buttons, &QDialogButtonBox::accepted, this, [=]() { save(); });
-}
-
 
 void ElementDialog::save() {
     if (title().simplified().isEmpty()) {
@@ -140,17 +90,15 @@ void ElementDialog::save() {
     QString filename;
     int n = 0;
 
-start:
-    filename = m_title->text();
-    if (n != 0) filename += " (" + QString::number(n) + ")";
-    formatFilename(filename);
-    filename = dataDir + "/" + filename;
-    n++;
+    do {
+        filename = ui->m_title->text();
+        if (n != 0) filename += " (" + QString::number(n) + ")";
+        formatFilename(filename);
+        filename = dataDir + "/" + filename;
+        n++;
+    } while (QFile::exists(filename));
 
-    if (QFile::exists(filename)) goto start;
-
-    // m_path = new QLineEdit(this);
-    m_path->setText(filename);
+    ui->m_path->setText(filename);
 
     be::createNewFile(filename, title());
     auto e = new Element(filename);
@@ -164,7 +112,7 @@ start:
 
 
 StringList ElementDialog::tags() const {
-    return m_tags->tags();
+    return ui->m_tags->tags();
 }
 
 void ElementDialog::formatFilename(QString& str) {
@@ -189,30 +137,53 @@ void ElementDialog::formatFilename(QString& str) {
 
 
 void ElementDialog::accept_() {
-    if (m_title->text().simplified().isEmpty()) {
+    if (ui->m_title->text().simplified().isEmpty()) {
         QMessageBox::warning(this, tr("Title Empty"),
                              tr("The title isn't set. It cannot be empty.") + QString("\t"));
         return;
     }
-    QString currentCompletePath = m_path->text();
+    QString currentCompletePath = ui->m_path->text();
     QString newFilePath;
-    int n = 0;
+    int n = 0;   // a number to place at the end of a filename in case it already exists
 
-start:
-    newFilePath = m_title->text();
-    if (n != 0) newFilePath += " (" + QString::number(n) + ")";
-    formatFilename(newFilePath);
-    newFilePath = QFileInfo(currentCompletePath).absolutePath() + "/" + newFilePath;
-    n++;
-
-    if (QFile::exists(newFilePath) && currentCompletePath != newFilePath) goto start;
+    do {
+        newFilePath = ui->m_title->text();
+        if (n != 0) newFilePath += " (" + QString::number(n) + ")";
+        formatFilename(newFilePath);
+        newFilePath = QFileInfo(currentCompletePath).absolutePath() + "/" + newFilePath;
+        n++;
+    } while (QFile::exists(newFilePath) && currentCompletePath != newFilePath);
 
     if (currentCompletePath == newFilePath) accept();
     QFile::rename(currentCompletePath, newFilePath);
-    m_path->setText(newFilePath);
+    ui->m_path->setText(newFilePath);
     m_element->setPath(newFilePath);
     accept();
 }
+
+
+QString ElementDialog::title() const {
+    return ui->m_title->text().simplified();
+}
+
+bool ElementDialog::pinned() const {
+    return ui->m_pinned->isChecked();
+}
+
+bool ElementDialog::favorited() const {
+    return
+        ui->m_favorited->isChecked();
+}
+
+Element* ElementDialog::element() {
+    return m_element;
+}
+
+QString ElementDialog::path() {
+    return ui->m_path->text();
+}
+
+
 
 
 /*********** TagsWidget **************/
