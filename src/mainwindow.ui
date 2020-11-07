@@ -169,6 +169,8 @@
     </property>
     <addaction name="setMdReaderAction"/>
     <addaction name="reloadElementsAction"/>
+    <addaction name="separator"/>
+    <addaction name="settingsAction"/>
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
@@ -256,6 +258,11 @@
     <string>About</string>
    </property>
   </action>
+  <action name="settingsAction">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -271,11 +278,9 @@
  </customwidgets>
  <tabstops>
   <tabstop>tagsContainer</tabstop>
-  <tabstop>filescontainer_2</tabstop>
   <tabstop>expandButton</tabstop>
   <tabstop>collapseButton</tabstop>
   <tabstop>filesContainer</tabstop>
-  <tabstop>tagscontainer_2</tabstop>
  </tabstops>
  <resources>
   <include location="../deeptags.qrc"/>

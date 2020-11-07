@@ -30,6 +30,7 @@
 #include "elementdialog.h"
 #include "externalreadersdialog.h"
 #include "settings.h"
+#include "settingsdialog.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -215,6 +216,8 @@ void MainWindow::setupSignals() {
         systray->hide();
         close();
     });
+    connect(ui->settingsAction, &QAction::triggered, this,
+            [=] { std::make_unique<SettingsDialog>(this); });
 #ifdef INCLUDE_QBREEZE
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
 #endif

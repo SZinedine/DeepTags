@@ -26,13 +26,15 @@ GUI_HEADERS  =  $$GUI_DIR/fileitem.h $$GUI_DIR/filescontainer.h \
                 $$GUI_DIR/tagitem.h $$GUI_DIR/tagscontainer.h \
                 $$GUI_DIR/elementdialog.h $$GUI_DIR/datadirwidget.h \
                 $$GUI_DIR/datadirdialog.h $$GUI_DIR/markdowneditorwidget.h \
-                $$GUI_DIR/externalreaderslistsettingswidget.h $$GUI_DIR/externalreadersdialog.h
+                $$GUI_DIR/externalreaderslistsettingswidget.h $$GUI_DIR/externalreadersdialog.h \
+                $$GUI_DIR/settingsdialog.h
 GUI_SOURCES  =  $$GUI_DIR/fileitem.cpp $$GUI_DIR/filescontainer.cpp \
                 $$GUI_DIR/mainwindow.cpp $$GUI_DIR/settings.cpp \
                 $$GUI_DIR/tagitem.cpp $$GUI_DIR/tagscontainer.cpp \
                 $$GUI_DIR/elementdialog.cpp $$GUI_DIR/datadirwidget.cpp \
                 $$GUI_DIR/datadirdialog.cpp $$GUI_DIR/markdowneditorwidget.cpp \
-                $$GUI_DIR/externalreaderslistsettingswidget.cpp $$GUI_DIR/externalreadersdialog.cpp
+                $$GUI_DIR/externalreaderslistsettingswidget.cpp $$GUI_DIR/externalreadersdialog.cpp \
+                $$GUI_DIR/settingsdialog.cpp
 SOURCES += $$SRC_DIR/main.cpp $$ELEM_SOURCES $$GUI_SOURCES
 HEADERS += $$ELEM_HEADERS $$GUI_HEADERS
 
@@ -42,7 +44,8 @@ FORMS += \
     $$SRC_DIR/externalreaderslistsettingswidget.ui \
     $$SRC_DIR/externalreadersdialog.ui \
     $$SRC_DIR/elementdialog.ui \
-    $$SRC_DIR/datadirwidget.ui
+    $$SRC_DIR/datadirwidget.ui \
+    $$SRC_DIR/settingsdialog.ui
 
 
 # Prevent qmake from appending the gnu++ standard that overrides this configuration
