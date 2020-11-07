@@ -21,19 +21,20 @@
 #include <QDialog>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class ExternalReadersDialog; }
+namespace Ui {
+    class ExternalReadersDialog;
+}
 QT_END_NAMESPACE
 
-class ExternalReadersDialog : public QDialog
-{
+class ExternalReadersDialog : public QDialog {
     Q_OBJECT
 
 public:
-    ExternalReadersDialog(QWidget *parent = nullptr);
+    ExternalReadersDialog(QWidget* parent = nullptr);
     ~ExternalReadersDialog();
     void accept() override;
 
 private:
-    Ui::ExternalReadersDialog *ui;
+    Ui::ExternalReadersDialog* ui;
 };
-#endif // EXTERNALREADERSDIALOG_H
+#endif   // EXTERNALREADERSDIALOG_H

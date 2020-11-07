@@ -16,7 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 #include "elementdialog.h"
-#include "ui_elementdialog.h"
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QKeySequence>
@@ -24,8 +23,10 @@
 #include <QPushButton>
 #include <QShortcut>
 #include "settings.h"
+#include "ui_elementdialog.h"
 
-ElementDialog::ElementDialog(QWidget* parent) : QDialog(parent), ui(new Ui::ElementDialog), m_element(nullptr) {
+ElementDialog::ElementDialog(QWidget* parent)
+    : QDialog(parent), ui(new Ui::ElementDialog), m_element(nullptr) {
     ui->setupUi(this);
     setup(false);
 }
@@ -42,15 +43,14 @@ ElementDialog::~ElementDialog() {
 }
 
 void ElementDialog::setup(bool visiblePath) {
-    if (visiblePath) {  // editing and existing file
+    if (visiblePath) {   // editing and existing file
         ui->m_title->setText(m_element->title());
         ui->m_path->setText(m_element->path());
         ui->m_pinned->setChecked(m_element->pinned());
         ui->m_favorited->setChecked(m_element->favorited());
         ui->m_tags->setTags(be::getUnparsedTags(m_element->getHeader()));
         connect(ui->buttons, &QDialogButtonBox::accepted, this, [=]() { accept_(); });
-    }
-    else {  // hide the path LineEdit when we want to create a file
+    } else {   // hide the path LineEdit when we want to create a file
         ui->m_path->setVisible(false);
         ui->filePathLabel->setVisible(false);
         ui->m_title->setText(tr("Untitled"));
@@ -171,8 +171,7 @@ bool ElementDialog::pinned() const {
 }
 
 bool ElementDialog::favorited() const {
-    return
-        ui->m_favorited->isChecked();
+    return ui->m_favorited->isChecked();
 }
 
 Element* ElementDialog::element() {
@@ -182,8 +181,6 @@ Element* ElementDialog::element() {
 QString ElementDialog::path() {
     return ui->m_path->text();
 }
-
-
 
 
 /*********** TagsWidget **************/

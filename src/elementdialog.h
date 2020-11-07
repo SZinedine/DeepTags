@@ -23,7 +23,9 @@
 #include "element.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class ElementDialog; }
+namespace Ui {
+    class ElementDialog;
+}
 QT_END_NAMESPACE
 
 /**
@@ -67,7 +69,7 @@ private:
     void accept_();
 
 private:
-    Ui::ElementDialog *ui;
+    Ui::ElementDialog* ui;
     Element* m_element;
 };
 

@@ -16,22 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 #include "externalreadersdialog.h"
-#include "ui_externalreadersdialog.h"
-#include "externalreaderslistsettingswidget.h"
 #include <QDialogButtonBox>
+#include "externalreaderslistsettingswidget.h"
+#include "ui_externalreadersdialog.h"
 
-ExternalReadersDialog::ExternalReadersDialog(QWidget *parent)
-    : QDialog(parent) , ui(new Ui::ExternalReadersDialog) {
+ExternalReadersDialog::ExternalReadersDialog(QWidget* parent)
+    : QDialog(parent), ui(new Ui::ExternalReadersDialog) {
     ui->setupUi(this);
     exec();
 }
 
-ExternalReadersDialog::~ExternalReadersDialog() { delete ui; }
+ExternalReadersDialog::~ExternalReadersDialog() {
+    delete ui;
+}
 
 void ExternalReadersDialog::accept() {
     ui->externalReadersListSettingsWidget->accept();
     QDialog::accept();
 }
-
-
-

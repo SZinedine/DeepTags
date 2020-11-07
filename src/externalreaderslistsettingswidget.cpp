@@ -16,35 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 #include "externalreaderslistsettingswidget.h"
-#include "ui_externalreaderslistsettingswidget.h"
-#include "settings.h"
-#include <QShortcut>
 #include <QDialogButtonBox>
-#include <QPushButton>
+#include <QDir>
+#include <QFileDialog>
 #include <QListWidgetItem>
 #include <QMessageBox>
-#include <QFileDialog>
-#include <QDir>
+#include <QPushButton>
+#include <QShortcut>
+#include "settings.h"
+#include "ui_externalreaderslistsettingswidget.h"
 
-ExternalReadersListSettingsWidget::ExternalReadersListSettingsWidget(QWidget *parent)
+ExternalReadersListSettingsWidget::ExternalReadersListSettingsWidget(QWidget* parent)
     : QWidget(parent), ui(new Ui::ExternalReadersListSettingsWidget) {
     ui->setupUi(this);
     ui->listWidget->addItems(Settings::mdEditors());
 
-    // connect(ui->validateDialog, &QDialogButtonBox::accepted, this, &ExternalReadersListSettingsWidget::accept);
-    // connect(ui->validateDialog, &QDialogButtonBox::rejected, this, &ExternalReadersListSettingsWidget::reject);
+    // connect(ui->validateDialog, &QDialogButtonBox::accepted, this,
+    // &ExternalReadersListSettingsWidget::accept); connect(ui->validateDialog,
+    // &QDialogButtonBox::rejected, this, &ExternalReadersListSettingsWidget::reject);
     connect(ui->addLine, &QPushButton::clicked, this, &ExternalReadersListSettingsWidget::addItem);
     connect(ui->rmButton, &QPushButton::clicked, this, &ExternalReadersListSettingsWidget::delItem);
     connect(ui->upButton, &QPushButton::clicked, this, &ExternalReadersListSettingsWidget::itemUp);
-    connect(ui->downButton, &QPushButton::clicked, this, &ExternalReadersListSettingsWidget::itemDown);
-    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this, &ExternalReadersListSettingsWidget::addItem);
+    connect(ui->downButton, &QPushButton::clicked, this,
+            &ExternalReadersListSettingsWidget::itemDown);
+    connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this,
+            &ExternalReadersListSettingsWidget::addItem);
 }
 
-ExternalReadersListSettingsWidget::~ExternalReadersListSettingsWidget() { delete ui; }
+ExternalReadersListSettingsWidget::~ExternalReadersListSettingsWidget() {
+    delete ui;
+}
 
 void ExternalReadersListSettingsWidget::accept() {
     QStringList lst;
-    for (int i = 0; i < ui->listWidget->count(); i++) lst.push_back(ui->listWidget->item(i)->text());
+    for (int i = 0; i < ui->listWidget->count(); i++)
+        lst.push_back(ui->listWidget->item(i)->text());
     Settings::saveEditors(lst);
     emit accepted();
 }
@@ -99,4 +105,3 @@ void ExternalReadersListSettingsWidget::browse() {
     if (f.isEmpty()) return;
     ui->editorLine->setText(f);
 }
-

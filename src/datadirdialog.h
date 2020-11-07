@@ -31,9 +31,5 @@ public:
     void accept() override;
 
 private:
-    void browse();
-    QString path(bool substitute);
-
-private:
     Ui::DataDirDialog* ui;
 };

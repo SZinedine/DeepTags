@@ -15,36 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
-#ifndef EXTERNALREADERSLISTSETTINGSWIDGET_H
-#define EXTERNALREADERSLISTSETTINGSWIDGET_H
+#ifndef DATADIRWIDGET_H
+#define DATADIRWIDGET_H
 
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-    class ExternalReadersListSettingsWidget;
+    class DataDirWidget;
 }
 QT_END_NAMESPACE
 
-class ExternalReadersListSettingsWidget : public QWidget {
+class DataDirWidget : public QWidget {
     Q_OBJECT
+
 public:
-    ExternalReadersListSettingsWidget(QWidget* parent = nullptr);
-    ~ExternalReadersListSettingsWidget();
-    void itemUp();
-    void itemDown();
+    DataDirWidget(QWidget* parent = nullptr);
+    ~DataDirWidget();
     void browse();
-    bool added(const QString& ed);
-
-public slots:
+    QString path(bool substitute);
     void accept();
-    void addItem();
-    void delItem();
-
-signals:
-    void accepted();
 
 private:
-    Ui::ExternalReadersListSettingsWidget* ui;
+    Ui::DataDirWidget* ui;
 };
-#endif   // EXTERNALREADERSLISTSETTINGSWIDGET_H
+#endif   // DATADIRWIDGET_H
