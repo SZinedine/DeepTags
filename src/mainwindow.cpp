@@ -113,7 +113,8 @@ void MainWindow::setupMenu() {
     for (auto* ac : themesActionGroup->actions()) ac->setCheckable(true);
     nativeStyleAction->setChecked(true);
 #else
-    ui->setStyleMenu->setVisible(false);
+    ui->setStyleMenu->setHidden(true);
+    ui->setStyleMenu->setDisabled(true);
 #endif
 
 #ifndef INSIDE_EDITOR   // Hide the menu action
@@ -182,7 +183,7 @@ void MainWindow::setupSignals() {
     connect(ui->quitAction, &QAction::triggered, this, &QMainWindow::close);
     connect(ui->setMdReaderAction, &QAction::triggered, this,
             [=] { std::make_unique<ExternalReadersDialog>(this); });
-    connect(ui->changeDataDirAction, &QAction::triggered, this, &MainWindow::setDataDirectory);
+    connect(ui->changeDataDirAction, &QAction::triggered, this, &MainWindow::dataDirectoryDialog);
     connect(ui->openDataDirAction, &QAction::triggered, this, [=] {
         if (Settings::dataDirectoryIsSet())
             QDesktopServices::openUrl(QUrl(Settings::dataDirectory()));
@@ -191,7 +192,7 @@ void MainWindow::setupSignals() {
                                  tr("Data directory hasn't been set."));
     });
     connect(ui->aboutAction, &QAction::triggered, this, &MainWindow::about);
-    connect(this, &MainWindow::started, this, &MainWindow::load,
+    connect(this, &MainWindow::started, this, &MainWindow::startup,
             Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
     connect(ui->expandButton, &QPushButton::clicked, ui->tagsContainer,
             &TagsContainer::expandItems);
@@ -214,8 +215,7 @@ void MainWindow::setupSignals() {
         systray->hide();
         close();
     });
-    connect(ui->settingsAction, &QAction::triggered, this,
-            [=] { std::make_unique<SettingsDialog>(this); });
+    connect(ui->settingsAction, &QAction::triggered, this, &MainWindow::settingsDialog);
 #ifdef INCLUDE_QBREEZE
     connect(themesActionGroup, &QActionGroup::triggered, &Settings::saveTheme);
 #endif
@@ -239,21 +239,29 @@ void MainWindow::setupSignals() {
 #endif
 }
 
-void MainWindow::load() {
+void MainWindow::startup() {
     qApp->processEvents();
     if (!Settings::dataDirectoryIsSet() || !QFile::exists(Settings::dataDirectory())) {
-        setDataDirectory();
+        dataDirectoryDialog();
         if (!Settings::dataDirectoryIsSet()) return;
     }
     loadDataDirectoryContent();
     ui->tagsContainer->loadCollapseOrExpand();
 }
 
-void MainWindow::setDataDirectory() {
-    auto dialog = new DataDirDialog(this);
-    auto res    = dialog->exec();
-    if (res == DataDirDialog::Accepted) reloadContent();
-    delete dialog;
+void MainWindow::settingsDialog() {
+    auto dialog = std::make_unique<SettingsDialog>(this);
+    connect(dialog.get(), &SettingsDialog::dataDirectoryChanged, this, &MainWindow::reloadContent, Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
+    dialog->exec();
+    disconnect(dialog.get(), nullptr, nullptr, nullptr);
+}
+
+void MainWindow::dataDirectoryDialog() {
+    auto dialog = std::make_unique<DataDirDialog>(this);
+    connect(dialog.get(), &DataDirDialog::dataDirectoryChanged, this, &MainWindow::reloadContent, Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
+    dialog->exec();
+    disconnect(dialog.get(), nullptr, nullptr, nullptr);
+
     QString dd = Settings::dataDirectory();
     ui->changeDataDirAction->setToolTip(dd);
     ui->openDataDirAction->setToolTip(dd);

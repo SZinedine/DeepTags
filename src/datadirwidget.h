@@ -35,8 +35,10 @@ public:
     void browse();
     QString path(bool substitute);
     void accept();
-
+signals:
+    void dataDirectoryChanged();
 private:
     Ui::DataDirWidget* ui;
+    QString dataDirectoryStr;   // the data directory at the moment the widget is created
 };
 #endif   // DATADIRWIDGET_H

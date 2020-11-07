@@ -29,7 +29,8 @@ public:
     explicit DataDirDialog(QWidget* parent = nullptr);
     ~DataDirDialog();
     void accept() override;
-
+signals:
+    void dataDirectoryChanged();
 private:
     Ui::DataDirDialog* ui;
 };

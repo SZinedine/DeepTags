@@ -51,12 +51,16 @@ public:
     /**
      *  open saved files and always openning dirs at startup
      */
-    void load();
+    void startup();
+    /**
+     * launch the Settings Dialog and make the necessary changes if it is accepted
+     */
+    void settingsDialog();
     /**
      * when the data directory is changed
      * save the new data directory, clear all, and reload
      */
-    void setDataDirectory();
+    void dataDirectoryDialog();
     /**
      *  get the data directory, fetch all the files in it,
      *  construct Element from each one of the files

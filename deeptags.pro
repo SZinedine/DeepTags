@@ -25,14 +25,14 @@ GUI_HEADERS  =  $$GUI_DIR/fileitem.h $$GUI_DIR/filescontainer.h \
                 $$GUI_DIR/mainwindow.h $$GUI_DIR/settings.h \
                 $$GUI_DIR/tagitem.h $$GUI_DIR/tagscontainer.h \
                 $$GUI_DIR/elementdialog.h $$GUI_DIR/datadirwidget.h \
-                $$GUI_DIR/datadirdialog.h $$GUI_DIR/markdowneditorwidget.h \
+                $$GUI_DIR/datadirdialog.h \
                 $$GUI_DIR/externalreaderslistsettingswidget.h $$GUI_DIR/externalreadersdialog.h \
                 $$GUI_DIR/settingsdialog.h
 GUI_SOURCES  =  $$GUI_DIR/fileitem.cpp $$GUI_DIR/filescontainer.cpp \
                 $$GUI_DIR/mainwindow.cpp $$GUI_DIR/settings.cpp \
                 $$GUI_DIR/tagitem.cpp $$GUI_DIR/tagscontainer.cpp \
                 $$GUI_DIR/elementdialog.cpp $$GUI_DIR/datadirwidget.cpp \
-                $$GUI_DIR/datadirdialog.cpp $$GUI_DIR/markdowneditorwidget.cpp \
+                $$GUI_DIR/datadirdialog.cpp \
                 $$GUI_DIR/externalreaderslistsettingswidget.cpp $$GUI_DIR/externalreadersdialog.cpp \
                 $$GUI_DIR/settingsdialog.cpp
 SOURCES += $$SRC_DIR/main.cpp $$ELEM_SOURCES $$GUI_SOURCES
@@ -84,8 +84,8 @@ exists(3rdParty/QBreeze/qbreeze.qrc){
 # if QMarkdownTextEdit is cloned
 exists(3rdParty/qmarkdowntextedit/qmarkdowntextedit.pri) {
     include (3rdParty/qmarkdowntextedit/qmarkdowntextedit.pri)
-    SOURCES += $$GUI_DIR/editorwidget.cpp
-    HEADERS += $$GUI_DIR/editorwidget.h
+    SOURCES += $$GUI_DIR/editorwidget.cpp $$GUI_DIR/markdowneditorwidget.cpp 
+    HEADERS += $$GUI_DIR/editorwidget.h $$GUI_DIR/markdowneditorwidget.h
     DEFINES += INSIDE_EDITOR
 } else {
     message("QMarkdownTextEdit not included.")
