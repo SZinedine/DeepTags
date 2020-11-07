@@ -119,7 +119,6 @@ private:
 #endif
 #ifdef INSIDE_EDITOR
     EditorWidget* editorWidget;
-    QAction* editorWidgetAction;
 #endif
 };
 

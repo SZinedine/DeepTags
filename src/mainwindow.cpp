@@ -49,10 +49,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 #endif
 #ifdef INSIDE_EDITOR
     if (Settings::containsUseEditor())
-        editorWidgetAction->setChecked(Settings::loadUseEditor());
+        ui->editorWidgetAction->setChecked(Settings::loadUseEditor());
     else
-        editorWidgetAction->setChecked(true);
-    editorWidget->setVisible(editorWidgetAction->isChecked());
+        ui->editorWidgetAction->setChecked(true);
+    editorWidget->setVisible(ui->editorWidgetAction->isChecked());
 #endif
     emit started();
 }
@@ -99,13 +99,12 @@ void MainWindow::setupMenu() {
     Settings::getActionsRecentlyOpenedFiles(ui->recentlyOpenedFilesMenu);
 
 #ifdef INCLUDE_QBREEZE   // use QBreeze if it exists
-    auto setStyleMenu = new QMenu(tr("Themes"), ui->menuEdit);
     themesActionGroup = new QActionGroup(ui->menuEdit);
     themesActionGroup->setExclusive(true);
-    auto nativeStyleAction      = new QAction(tr("Native Style"), setStyleMenu);
-    auto breezeDarkStyleAction  = new QAction(tr("Dark Style"), setStyleMenu);
-    auto breezeLightStyleAction = new QAction(tr("Light Style"), setStyleMenu);
-    setStyleMenu->addActions({ nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction });
+    auto nativeStyleAction      = new QAction(tr("Native Style"), ui->setStyleMenu);
+    auto breezeDarkStyleAction  = new QAction(tr("Dark Style"), ui->setStyleMenu);
+    auto breezeLightStyleAction = new QAction(tr("Light Style"), ui->setStyleMenu);
+    ui->setStyleMenu->addActions({ nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction });
     for (auto& ac : { nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction })
         themesActionGroup->addAction(ac);
     nativeStyleAction->setData(QString("native"));
@@ -113,13 +112,12 @@ void MainWindow::setupMenu() {
     breezeLightStyleAction->setData(QString(":qbreeze/light.qss"));
     for (auto* ac : themesActionGroup->actions()) ac->setCheckable(true);
     nativeStyleAction->setChecked(true);
-    ui->menuEdit->addMenu(setStyleMenu);
+#else
+    ui->setStyleMenu->setVisible(false);
 #endif
-#ifdef INSIDE_EDITOR
-    editorWidgetAction = new QAction(tr("Show Integrated Reader"), ui->menuEdit);
-    editorWidgetAction->setCheckable(true);
-    editorWidgetAction->setChecked(false);
-    ui->menuEdit->addAction(editorWidgetAction);
+
+#ifndef INSIDE_EDITOR   // Hide the menu action
+    ui->editorWidgetAction->setVisible(false);
 #endif
 
     ui->changeDataDirAction->setToolTip(Settings::dataDirectory());
@@ -225,8 +223,8 @@ void MainWindow::setupSignals() {
     // connect(filesContainer, &FilesContainer::openedFile, editorWidget, &EditorWidget::closeFile);
     connect(ui->filesContainer, &FilesContainer::elementChanged, editorWidget,
             &EditorWidget::reload);
-    connect(editorWidgetAction, &QAction::toggled, this, [=] {
-        bool checked = editorWidgetAction->isChecked();
+    connect(ui->editorWidgetAction, &QAction::toggled, this, [=] {
+        bool checked = ui->editorWidgetAction->isChecked();
         editorWidget->setVisible(checked);
         Settings::saveUseEditor(checked);
         if (checked)

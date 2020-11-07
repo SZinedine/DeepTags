@@ -167,8 +167,16 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <widget class="QMenu" name="setStyleMenu">
+     <property name="title">
+      <string>Themes</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
     <addaction name="setMdReaderAction"/>
     <addaction name="reloadElementsAction"/>
+    <addaction name="setStyleMenu"/>
+    <addaction name="editorWidgetAction"/>
     <addaction name="separator"/>
     <addaction name="settingsAction"/>
    </widget>
@@ -261,6 +269,17 @@
   <action name="settingsAction">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="editorWidgetAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Integrated Reader</string>
    </property>
   </action>
  </widget>
