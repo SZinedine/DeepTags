@@ -31,6 +31,7 @@ public:
     void accept() override;
 signals:
     void dataDirectoryChanged();
+
 private:
     Ui::DataDirDialog* ui;
 };

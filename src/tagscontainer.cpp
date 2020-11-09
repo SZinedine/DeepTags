@@ -182,8 +182,10 @@ void TagsContainer::addElement(Element* element) {
             switch (index) {
             case -1: {   // create the tag
                 TagItem* newItem;
-                if (level == 0) newItem = new TagItem(particle, this);
-                else newItem = new TagItem(particle, prnt);
+                if (level == 0)
+                    newItem = new TagItem(particle, this);
+                else
+                    newItem = new TagItem(particle, prnt);
                 if (level == chain.size() - 1) newItem->addFile(element);
                 prnt = newItem;
                 break;

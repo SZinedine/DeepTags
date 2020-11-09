@@ -17,12 +17,12 @@
  *************************************************************************/
 #include "settingsdialog.h"
 #include <QButtonGroup>
-#include "ui_settingsdialog.h"
 #include <QDialogButtonBox>
+#include "ui_settingsdialog.h"
 
 SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent), ui(new Ui::SettingsDialog) {
     ui->setupUi(this);
-    connect(ui->buttonBox, &QDialogButtonBox::accepted, [=]{ accept(); });
+    connect(ui->buttonBox, &QDialogButtonBox::accepted, [=] { accept(); });
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -30,7 +30,8 @@ SettingsDialog::~SettingsDialog() {
 }
 
 void SettingsDialog::accept() {
-    connect(ui->dataDirWidget, &DataDirWidget::dataDirectoryChanged, [=]{ emit dataDirectoryChanged(); });
+    connect(ui->dataDirWidget, &DataDirWidget::dataDirectoryChanged,
+            [=] { emit dataDirectoryChanged(); });
     ui->dataDirWidget->accept();
     ui->mdReaders->accept();
     disconnect(ui->dataDirWidget, nullptr, nullptr, nullptr);

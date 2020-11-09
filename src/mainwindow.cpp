@@ -104,7 +104,8 @@ void MainWindow::setupMenu() {
     auto nativeStyleAction      = new QAction(tr("Native Style"), ui->setStyleMenu);
     auto breezeDarkStyleAction  = new QAction(tr("Dark Style"), ui->setStyleMenu);
     auto breezeLightStyleAction = new QAction(tr("Light Style"), ui->setStyleMenu);
-    ui->setStyleMenu->addActions({ nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction });
+    ui->setStyleMenu->addActions(
+        { nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction });
     for (auto& ac : { nativeStyleAction, breezeDarkStyleAction, breezeLightStyleAction })
         themesActionGroup->addAction(ac);
     nativeStyleAction->setData(QString("native"));
@@ -251,14 +252,16 @@ void MainWindow::startup() {
 
 void MainWindow::settingsDialog() {
     auto dialog = std::make_unique<SettingsDialog>(this);
-    connect(dialog.get(), &SettingsDialog::dataDirectoryChanged, this, &MainWindow::reloadContent, Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
+    connect(dialog.get(), &SettingsDialog::dataDirectoryChanged, this, &MainWindow::reloadContent,
+            Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
     dialog->exec();
     disconnect(dialog.get(), nullptr, nullptr, nullptr);
 }
 
 void MainWindow::dataDirectoryDialog() {
     auto dialog = std::make_unique<DataDirDialog>(this);
-    connect(dialog.get(), &DataDirDialog::dataDirectoryChanged, this, &MainWindow::reloadContent, Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
+    connect(dialog.get(), &DataDirDialog::dataDirectoryChanged, this, &MainWindow::reloadContent,
+            Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
     dialog->exec();
     disconnect(dialog.get(), nullptr, nullptr, nullptr);
 

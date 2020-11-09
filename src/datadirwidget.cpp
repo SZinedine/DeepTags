@@ -24,7 +24,8 @@
 #include "settings.h"
 #include "ui_datadirwidget.h"
 
-DataDirWidget::DataDirWidget(QWidget* parent) : QWidget(parent), ui(new Ui::DataDirWidget), dataDirectoryStr("") {
+DataDirWidget::DataDirWidget(QWidget* parent)
+    : QWidget(parent), ui(new Ui::DataDirWidget), dataDirectoryStr("") {
     ui->setupUi(this);
     ui->m_directory->setText(path(false));
     connect(ui->m_browse, &QPushButton::clicked, this, &DataDirWidget::browse);
@@ -42,10 +43,9 @@ void DataDirWidget::browse() {
 QString DataDirWidget::path(bool substitute) {
     QString current;
     if (Settings::dataDirectoryIsSet()) {
-        current = Settings::dataDirectory();
+        current          = Settings::dataDirectory();
         dataDirectoryStr = current;
-    }
-    else {
+    } else {
         QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     }
 
@@ -57,7 +57,7 @@ QString DataDirWidget::path(bool substitute) {
 
 void DataDirWidget::accept() {
     QString dir = ui->m_directory->text();
-    if (dir == dataDirectoryStr) return;    // if it hadn't changed
+    if (dir == dataDirectoryStr) return;   // if it hadn't changed
     if (!QDir().exists(dir)) {
         bool ok = QDir().mkdir(dir);
         if (!ok) {

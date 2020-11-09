@@ -22,7 +22,8 @@
 
 DataDirDialog::DataDirDialog(QWidget* parent) : QDialog(parent), ui(new Ui::DataDirDialog) {
     ui->setupUi(this);
-    connect(ui->dataDirWidget, &DataDirWidget::dataDirectoryChanged, [=]{ emit dataDirectoryChanged(); });
+    connect(ui->dataDirWidget, &DataDirWidget::dataDirectoryChanged,
+            [=] { emit dataDirectoryChanged(); });
 }
 
 DataDirDialog::~DataDirDialog() {
