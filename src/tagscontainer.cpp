@@ -63,7 +63,7 @@ void TagsContainer::createBasicTags() {
     QStringList basicIcons{ ":images/all_notes.png", ":images/notebook.png", ":images/star.png",
                             ":images/untagged.png" };
     for (std::vector<QString>::size_type i = 0; i < basicTags.size(); i++)
-        addTopLevelItem(new TagItem(basicTags[i], basicIcons[i], true));
+        new TagItem(basicTags[i], basicIcons[i], true, this);
     applyColors();
 }
 
@@ -181,12 +181,10 @@ void TagsContainer::addElement(Element* element) {
 
             switch (index) {
             case -1: {   // create the tag
-                auto* newItem = new TagItem(particle);
+                TagItem* newItem;
+                if (level == 0) newItem = new TagItem(particle, this);
+                else newItem = new TagItem(particle, prnt);
                 if (level == chain.size() - 1) newItem->addFile(element);
-                if (level == 0)
-                    addTopLevelItem(newItem);
-                else
-                    prnt->addChild(newItem);
                 prnt = newItem;
                 break;
             }
@@ -266,7 +264,7 @@ void TagsContainer::toTrash(Element* element) {
     TagItem* trash;
 
     if (index == -1) {
-        trash = new TagItem(tr("Trash"), ":images/trash.png", true);
+        trash = new TagItem(tr("Trash"), ":images/trash.png", true, this);
         addTopLevelItem(trash);
     } else
         trash = real(topLevelItem(index));

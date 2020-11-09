@@ -24,9 +24,16 @@
 
 class TagItem : public QTreeWidgetItem {
 public:
-    TagItem(const QString& label, bool special = false, TagItem* parent = nullptr);
-    TagItem(const QString& label, const QString& icon, bool special = false);
+    TagItem(const QString& label, QTreeWidgetItem* parent = nullptr);
+    TagItem(const QString& label, QTreeWidget* parent = nullptr);
+    TagItem(const QString& label, const QString& icon, bool special = false,
+            QTreeWidget* parent = nullptr);
+    TagItem(const TagItem& other);
+    TagItem(TagItem&& other);
     ~TagItem() override;
+    TagItem& operator=(const TagItem& other);
+    TagItem& operator=(TagItem& other);
+    TagItem& operator=(TagItem&& other);
 
     inline void addFiles(const QVector<Element*>& els) {
         for (const auto& i : els) addFile(i);
@@ -38,7 +45,8 @@ public:
     inline int number() const { return m_elements->size(); }
     inline void remove(Element* e) { m_elements->removeAll(e); }
     inline bool isSpecial() const { return m_special; }
-    inline bool hasChildren() const { return (childCount() > 0); }
+    inline void setSpecial(const bool& special) { m_special = special; }
+    inline bool hasChildren() const { return childCount() > 0; }
     bool empty() const;
     bool contains(Element* e);
     void removeElement(Element* element);

@@ -19,14 +19,55 @@
 #include <QApplication>
 #include "settings.h"
 
+#define USER_TYPE_NUM 1500
 
-TagItem::TagItem(const QString& label, bool special, TagItem* parent)
-    : QTreeWidgetItem(parent, QStringList(label), 1500), m_elements(new QVector<Element*>()),
-      m_special(special), m_pinned(false) {}
+TagItem::TagItem(const QString& label, QTreeWidgetItem* parent)
+    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM),
+      m_elements(new QVector<Element*>()), m_special(false), m_pinned(false) {}
 
-TagItem::TagItem(const QString& label, const QString& icon, bool special)
-    : TagItem(label, special, nullptr) {
+TagItem::TagItem(const QString& label, QTreeWidget* parent)
+    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM),
+      m_elements(new QVector<Element*>()), m_special(false), m_pinned(false) {}
+
+TagItem::TagItem(const QString& label, const QString& icon, bool special, QTreeWidget* parent)
+    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM),
+      m_elements(new QVector<Element*>()), m_special(special), m_pinned(false) {
     if (!icon.isEmpty()) setIcon(0, QIcon(icon));
+}
+
+TagItem::TagItem(const TagItem& other) : QTreeWidgetItem(other) {
+    m_special  = other.m_special;
+    m_pinned   = other.m_pinned;
+    m_elements = new QVector<Element*>(*other.m_elements);
+}
+
+TagItem::TagItem(TagItem&& other) : QTreeWidgetItem(other) {
+    m_special        = other.m_special;
+    m_pinned         = other.m_pinned;
+    m_elements       = other.m_elements;
+    other.m_elements = nullptr;
+}
+
+TagItem& TagItem::operator=(TagItem& other) {
+    m_special  = other.m_special;
+    m_pinned   = other.m_pinned;
+    m_elements = other.m_elements;
+    return *this;
+}
+
+TagItem& TagItem::operator=(const TagItem& other) {
+    m_special  = other.m_special;
+    m_pinned   = other.m_pinned;
+    m_elements = other.m_elements;
+    return *this;
+}
+
+TagItem& TagItem::operator=(TagItem&& other) {
+    m_special        = other.m_special;
+    m_pinned         = other.m_pinned;
+    m_elements       = other.m_elements;
+    other.m_elements = nullptr;
+    return *this;
 }
 
 TagItem::~TagItem() {

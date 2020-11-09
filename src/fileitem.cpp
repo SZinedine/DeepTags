@@ -26,11 +26,32 @@ FileItem::FileItem(Element* element, FilesContainer* parent)
     reload();
 }
 
+FileItem::FileItem(const FileItem& other) : QListWidgetItem(other), m_element(other.m_element) {}
+
+FileItem::FileItem(FileItem&& other) : QListWidgetItem(other), m_element(other.m_element) {
+    other.m_element = nullptr;
+}
+
+FileItem& FileItem::operator=(const FileItem& other) {
+    m_element = other.m_element;
+    return *this;
+}
+
+FileItem& FileItem::operator=(FileItem& other) {
+    m_element = other.m_element;
+    return *this;
+}
+
+FileItem& FileItem::operator=(FileItem&& other) {
+    m_element       = other.m_element;
+    other.m_element = nullptr;
+    return *this;
+}
+
 void FileItem::setElement(Element* element) {
     m_element = element;
     reload();
 }
-
 
 void FileItem::reload() {
     if (!m_element) return;

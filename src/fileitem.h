@@ -30,6 +30,11 @@ class FileItem : public QListWidgetItem {
 public:
     FileItem(FilesContainer* parent = nullptr);
     FileItem(Element* element, FilesContainer* parent = nullptr);
+    FileItem(const FileItem& other);
+    FileItem(FileItem&& other);
+    FileItem& operator=(const FileItem& other);
+    FileItem& operator=(FileItem& other);
+    FileItem& operator=(FileItem&& other);
 
     void setElement(Element* element);
     inline void setLabel(const QString& label) { setText(label); }
@@ -45,7 +50,6 @@ public:
     void setupIcons();
 
 private:
-    char prevent_padding_warning[4];
     Element* m_element;
 };
 
