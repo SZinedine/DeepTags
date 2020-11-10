@@ -223,7 +223,6 @@ void TagsContainer::pinBasicItems() {
 void TagsContainer::sort() {
     sortByColumn(0, Qt::AscendingOrder);
     pinTags();
-    // pinBasicItems();
 }
 
 bool TagsContainer::alreadyAdded(Element* element) {
@@ -236,6 +235,7 @@ void TagsContainer::restoreElement(Element* element) {
     pullElement(element);
     addElements({ element });
     removeEmptyItems();
+    removeEmptyItems();
 }
 
 void TagsContainer::reloadElement(Element* element) {
@@ -246,8 +246,7 @@ void TagsContainer::reloadElement(Element* element) {
     addElements(es);
 }
 
-
-void TagsContainer::removeEmptyItems() {
+void TagsContainer::removeEmptyItems() {    // sometimes, this should be called 2 times in order to remove all the empty items
     QTreeWidgetItemIterator it(this);
     while (*it) {
         TagItem* current = real(*it);
@@ -288,6 +287,7 @@ void TagsContainer::pullElement(Element* element) {
         (real(*it))->removeElement(element);
         it++;
     }
+    removeEmptyItems();
     removeEmptyItems();
 }
 
