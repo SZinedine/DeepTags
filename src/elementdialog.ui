@@ -55,7 +55,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="pinnedLabel">
      <property name="text">
-      <string>Pinned</string>
+      <string>Pinned:</string>
      </property>
     </widget>
    </item>
