@@ -18,17 +18,18 @@
 #include "settings.h"
 #include <QApplication>
 #include <QDesktopServices>
-#include <QFileDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <QDir>
+#include <QUrl>
 #include <QSettings>
 #include <QSplitter>
 #include <QStringList>
 #include <QTextStream>
 #include <QVariant>
-#include <QWidget>
 #include <thread>
 #include "element.h"
+#include "mainwindow.h"
 
 void Settings::saveString(const QString& group, const QString& label, const QString& value) {
     QSettings s;
@@ -190,8 +191,8 @@ QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
     }
     menu->addSeparator();
 
-    auto clearAct = new QAction(tr("Clear"), menu);
-    connect(clearAct, &QAction::triggered, [=] {
+    auto clearAct = new QAction(QObject::tr("Clear"), menu);
+    QObject::connect(clearAct, &QAction::triggered, [=] {
         menu->clear();
         eraseRecentlyOpenedFiles();
     });
@@ -221,7 +222,7 @@ void Settings::openFileAction(QAction* action) {
 
 void Settings::openFile(QString editor, const QString& path, QWidget* parent) {
     if (!QFile::exists(path)) {
-        QMessageBox::critical(parent, tr("Error"), tr("This file doesn't exist"));
+        QMessageBox::critical(parent, QObject::tr("Error"), QObject::tr("This file doesn't exist"));
         return;
     }
     if (editor.isEmpty()) editor = mainMdEditor();

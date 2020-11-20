@@ -18,91 +18,94 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "mainwindow.h"
+#include <QHash>
 
 class QSplitter;
 class QMenu;
 class QVariant;
+class QString;
 class QStringList;
 class QWidget;
 class QActionGroup;
+class MainWindow;
+class QSize;
+class QByteArray;
+class QAction;
 
-struct Settings : public QObject {
-    Q_OBJECT
-public:
-    static void saveString(const QString& group, const QString& label, const QString& value);
-    static QString getString(const QString& group, const QString& label);
-    static void saveStringList(const QString& group, const QString& label,
+namespace Settings {
+    void saveString(const QString& group, const QString& label, const QString& value);
+    QString getString(const QString& group, const QString& label);
+    void saveStringList(const QString& group, const QString& label,
                                const QStringList& value);
-    static QStringList getStringList(const QString& group, const QString& label);
+    QStringList getStringList(const QString& group, const QString& label);
 
-    static void openFileAction(QAction* action);
-    static void openFile(QString editor, const QString& path, QWidget* parent = nullptr);
+    void openFileAction(QAction* action);
+    void openFile(QString editor, const QString& path, QWidget* parent = nullptr);
     /**
      * save the main window related settings
      */
-    static void saveUiSettings(const QSize& windowSize, const QByteArray& splitterState);
+    void saveUiSettings(const QSize& windowSize, const QByteArray& splitterState);
     /**
      * load the saved settings directely into the splitter
      */
-    static void loadSplitterState(QSplitter* splitter);
-    static void saveSplitterState(QSplitter* splitter);
-    static void loadWindowSize(MainWindow* w);
-    static bool setDataDirectory(QString dataDirectory);
-    static QString dataDirectory();
-    static bool dataDirectoryIsSet();
+    void loadSplitterState(QSplitter* splitter);
+    void saveSplitterState(QSplitter* splitter);
+    void loadWindowSize(MainWindow* w);
+    bool setDataDirectory(QString dataDirectory);
+    QString dataDirectory();
+    bool dataDirectoryIsSet();
     /**
      * Expand TagItems or not
      */
-    static void expand(const bool& expanded);
-    static bool expandedItems();
+    void expand(const bool& expanded);
+    bool expandedItems();
     /**
      * the stored markdown editor
      */
-    static QStringList mdEditors();
-    static void saveEditors(const QStringList& lst);
-    static void saveMainEditor(const QString& editor);
-    static QString mainMdEditor();
+    QStringList mdEditors();
+    void saveEditors(const QStringList& lst);
+    void saveMainEditor(const QString& editor);
+    QString mainMdEditor();
     /**
      * save the path everytime a document is opened
      */
-    static void saveRecentlyOpenedFile(const QString& p);
+    void saveRecentlyOpenedFile(const QString& p);
     /**
      * write the file paths into the filesystem (save them)
      */
-    static void saveRecentlyOpenedFiles(QStringList& paths);
+    void saveRecentlyOpenedFiles(QStringList& paths);
     /**
      * get the saved paths in a list of strings
      */
-    static QStringList getRawRecentlyOpenedFiles();
+    QStringList getRawRecentlyOpenedFiles();
     /**
      * construct a QAction from each stored path and add them
      * into a provided menu after it is cleared
      */
-    static QMenu* getActionsRecentlyOpenedFiles(QMenu* menu);
-    static void eraseRecentlyOpenedFiles();
+    QMenu* getActionsRecentlyOpenedFiles(QMenu* menu);
+    void eraseRecentlyOpenedFiles();
     /**
      * Save the theme chosen by the user
      */
-    static void saveTheme(QAction* ac);
-    static void loadTheme(QActionGroup* ag);
-    static void applyTheme(const QString& theme);
+    void saveTheme(QAction* ac);
+    void loadTheme(QActionGroup* ag);
+    void applyTheme(const QString& theme);
     /**
      * topLevel TagItems colors
      */
-    static void setTagItemColor(const QString& item, const QString& color);
-    static QHash<QString, QVariant> getTagItemColor();
-    static void clearColorItems();
-    static void setTagPinned(const QString& item);
-    static void setTagUnpinned(const QString& item);
-    static QStringList getTagPinned();
-    static void clearPinnedItems();
+    void setTagItemColor(const QString& item, const QString& color);
+    QHash<QString, QVariant> getTagItemColor();
+    void clearColorItems();
+    void setTagPinned(const QString& item);
+    void setTagUnpinned(const QString& item);
+    QStringList getTagPinned();
+    void clearPinnedItems();
     /**
      * use the integrated editor or not
      */
-    static void saveUseEditor(bool use);
-    static bool loadUseEditor();
-    static bool containsUseEditor();
+    void saveUseEditor(bool use);
+    bool loadUseEditor();
+    bool containsUseEditor();
 };
 
 #endif
