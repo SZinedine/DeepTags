@@ -175,9 +175,9 @@ void TagsContainer::addElement(Element* element) {
 
     for (const StringList& chain : tags) {
         for (std::string::size_type level = 0; level < chain.size(); level++) {
-            const QString particle(chain.at(level));   // item name to be treated
-            int index = (level == 0) ? find(particle, this)
-                                     : find(particle, prnt);   // index 0 == search fo a top level
+            const QString& particle(chain.at(level));         // item name to be treated
+            int index = (level == 0) ? find(particle, this)   // index 0 == search fo a top level
+                                     : find(particle, prnt);
 
             switch (index) {
             case -1: {   // create the tag
@@ -246,7 +246,8 @@ void TagsContainer::reloadElement(Element* element) {
     addElements(es);
 }
 
-void TagsContainer::removeEmptyItems() {    // sometimes, this should be called 2 times in order to remove all the empty items
+void TagsContainer::removeEmptyItems() {   // sometimes, this should be called 2 times in order to
+                                           // remove all the empty items
     QTreeWidgetItemIterator it(this);
     while (*it) {
         TagItem* current = real(*it);

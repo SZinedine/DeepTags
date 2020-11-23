@@ -44,9 +44,9 @@ public:
     inline void setPath(const QString& path) { m_path = path; }
     inline void setTitle(const QString& title) { m_title = title; }
     inline void setTags(const Tags& tags) { m_tags = tags; }
-    inline void setPinned(const bool& pinned) { m_pinned = pinned; }
-    inline void setFavorited(const bool& favorited) { m_favorited = favorited; }
-    inline void setDeleted(const bool& deleted) { m_deleted = deleted; }
+    inline void setPinned(const bool pinned) { m_pinned = pinned; }
+    inline void setFavorited(const bool favorited) { m_favorited = favorited; }
+    inline void setDeleted(const bool deleted) { m_deleted = deleted; }
     inline void setLocalHeader(const StringList& head) { m_header = head; }
 
     /**
@@ -68,9 +68,9 @@ public:
      * append a non existing line to the file's header
      */
     void addTitleLine(const QString& title);
-    void addPinnedLine(const bool& val);
-    void addFavoritedLine(const bool& val);
-    void addDeletedLine(const bool& val);
+    void addPinnedLine(const bool val);
+    void addFavoritedLine(const bool val);
+    void addDeletedLine(const bool val);
     void addTagsLine(const StringList& list);
     /**
      * Change the value of key inside the file

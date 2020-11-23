@@ -71,7 +71,7 @@ TagItem& TagItem::operator=(TagItem&& other) {
 }
 
 TagItem::~TagItem() {
-    delete m_elements;
+    if (m_elements) delete m_elements;
 }
 
 
@@ -83,14 +83,14 @@ void TagItem::removeElement(Element* element) {
 
 bool TagItem::empty() const {
     if (!m_elements->empty()) return false;
-    return allElements_().empty();
+    auto els = std::make_unique<QVector<Element*>>(*allElements());
+    return els->empty();
 }
 
 
 bool TagItem::contains(Element* e) {
-    for (Element* i : allElements_())
-        if (*i == *e) return true;
-    return false;
+    auto els = std::make_unique<QVector<Element*>>(*allElements());
+    return allElements()->contains(e);
 }
 
 
@@ -116,22 +116,17 @@ void TagItem::setPinned(bool pinned) {
         Settings::setTagUnpinned(label());
 }
 
-QVector<Element*>* TagItem::allElements() const {
-    return new QVector<Element*>(allElements_());
-}
 
-QVector<Element*> TagItem::allElements_() const {
-    QVector<Element*> res;
-    res += *m_elements;
-    auto f = [](TagItem* ti) -> QVector<Element*> {   // return the elements of children
+QVector<Element*>* TagItem::allElements() const {
+    auto res           = new QVector<Element*>(*m_elements);
+    auto elsInChildren = [](TagItem* ti) -> QVector<Element*> {   // return the elements of children
         QVector<Element*> qv;
-        qv += *ti->elements();
-        if (ti->hasChildren()) qv += ti->allElements_();
+        if (ti->hasChildren()) qv += *ti->allElements();
         return qv;
     };
     for (auto& c : children())
-        for (auto& e : f(c))
-            if (!res.contains(e)) res.push_back(e);
+        for (auto& e : elsInChildren(c))
+            if (!res->contains(e)) res->push_back(e);
     return res;
 }
 

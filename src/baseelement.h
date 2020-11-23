@@ -81,9 +81,9 @@ namespace BaseElement {
     }
 
     void setTitle(const QString& path, const QString& title);
-    void setPinned(const QString& path, const bool& pinned);
-    void setFavorited(const QString& path, const bool& favorite);
-    void setDeleted(const QString& path, const bool& deleted);
+    void setPinned(const QString& path, const bool pinned);
+    void setFavorited(const QString& path, const bool favorite);
+    void setDeleted(const QString& path, const bool deleted);
     /**
      * look for a string from its key in the header
      */
@@ -141,7 +141,7 @@ namespace BaseElement {
 
 
     QString composeStringItem(QString key, QString value);
-    QString composeBoolItem(QString key, const bool& value);
+    QString composeBoolItem(QString key, const bool value);
     QString composeArrayItem(QString key, const StringList& value);
 
     /**

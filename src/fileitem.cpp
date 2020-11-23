@@ -18,6 +18,10 @@
 #include "fileitem.h"
 #include "filescontainer.h"
 
+const QString pinnedIcon    = ":images/pin.png";
+const QString favoritedIcon = ":images/favorite.png";
+const QString favPinIcon    = ":images/favpin.png";
+
 FileItem::FileItem(FilesContainer* parent)
     : QListWidgetItem("", parent, 1600), m_element(nullptr) {}
 

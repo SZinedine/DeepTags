@@ -173,7 +173,7 @@ void BaseElement::setTitle(const QString& path, const QString& title) {
     replace(old_line, t, path);
 }
 
-void BaseElement::setPinned(const QString& path, const bool& pin) {
+void BaseElement::setPinned(const QString& path, const bool pin) {
     if (!hasPinnedKey(getHeader(path))) return;
     QString pinned = makePinnedLine(pin);
     QString old    = findPinned(getHeader(path));
@@ -181,7 +181,7 @@ void BaseElement::setPinned(const QString& path, const bool& pin) {
     replace(old, pinned, path);
 }
 
-void BaseElement::setFavorited(const QString& path, const bool& favorited) {
+void BaseElement::setFavorited(const QString& path, const bool favorited) {
     if (!hasFavoritedKey(getHeader(path))) return;
     QString fav = makeFavoritedLine(favorited);
     QString old = findFavorited(getHeader(path));
@@ -189,7 +189,7 @@ void BaseElement::setFavorited(const QString& path, const bool& favorited) {
     replace(old, fav, path);
 }
 
-void BaseElement::setDeleted(const QString& path, const bool& deleted) {
+void BaseElement::setDeleted(const QString& path, const bool deleted) {
     if (!hasDeletedKey(getHeader(path))) return;
     QString del = makeDeletedLine(deleted);
     QString old = findDeleted(getHeader(path));
@@ -298,7 +298,7 @@ QString BaseElement::composeStringItem(QString key, QString value) {
     return key + value;
 }
 
-QString BaseElement::composeBoolItem(QString key, const bool& value) {
+QString BaseElement::composeBoolItem(QString key, const bool value) {
     key       = key.simplified();
     QString v = ((value) ? "true" : "false");
     key.append(": " + v);

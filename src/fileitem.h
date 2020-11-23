@@ -22,9 +22,6 @@
 #include "element.h"
 
 class FilesContainer;
-const QString pinnedIcon    = ":images/pin.png";
-const QString favoritedIcon = ":images/favorite.png";
-const QString favPinIcon    = ":images/favpin.png";
 
 class FileItem : public QListWidgetItem {
 public:

@@ -95,21 +95,21 @@ ElementsList Element::constructElementList(const PathsList& f) {
 }
 
 
-void Element::addPinnedLine(const bool& val) {
+void Element::addPinnedLine(const bool val) {
     QString res = be::makePinnedLine(val);
     be::addPinnedItem(res, m_path);
     setPinned(val);
     reloadHeader();
 }
 
-void Element::addFavoritedLine(const bool& val) {
+void Element::addFavoritedLine(const bool val) {
     QString res = be::makeFavoritedLine(val);
     be::addFavoritedItem(res, m_path);
     setFavorited(val);
     reloadHeader();
 }
 
-void Element::addDeletedLine(const bool& val) {
+void Element::addDeletedLine(const bool val) {
     QString res = be::makeDeletedLine(val);
     be::addDeletedItem(res, m_path);
     setDeleted(val);

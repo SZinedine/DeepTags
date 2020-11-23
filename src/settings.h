@@ -35,8 +35,7 @@ class QAction;
 namespace Settings {
     void saveString(const QString& group, const QString& label, const QString& value);
     QString getString(const QString& group, const QString& label);
-    void saveStringList(const QString& group, const QString& label,
-                               const QStringList& value);
+    void saveStringList(const QString& group, const QString& label, const QStringList& value);
     QStringList getStringList(const QString& group, const QString& label);
 
     void openFileAction(QAction* action);
@@ -106,6 +105,6 @@ namespace Settings {
     void saveUseEditor(bool use);
     bool loadUseEditor();
     bool containsUseEditor();
-};
+};   // namespace Settings
 
 #endif

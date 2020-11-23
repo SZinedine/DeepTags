@@ -18,14 +18,14 @@
 #include "settings.h"
 #include <QApplication>
 #include <QDesktopServices>
+#include <QDir>
 #include <QMenu>
 #include <QMessageBox>
-#include <QDir>
-#include <QUrl>
 #include <QSettings>
 #include <QSplitter>
 #include <QStringList>
 #include <QTextStream>
+#include <QUrl>
 #include <QVariant>
 #include <thread>
 #include "element.h"

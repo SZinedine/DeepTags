@@ -48,8 +48,6 @@ public:
     /**
      * like selected, but the retained items are only
      * those of the current item without its children's
-     * TODO: this cannot work unless the way of adding
-     *       elements to items changes
      */
     void selectedExclusive();
     /**
