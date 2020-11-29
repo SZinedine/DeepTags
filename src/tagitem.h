@@ -53,6 +53,7 @@ public:
     void setColor(const QString& color);
     bool pinned() const { return m_pinned; }
     void setPinned(const bool pinned);
+    QString completeTag();
     QVector<Element*>* allElements() const;
     QVector<TagItem*> children() const;
 

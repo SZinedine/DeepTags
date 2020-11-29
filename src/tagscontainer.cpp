@@ -18,6 +18,7 @@
 #include "tagscontainer.h"
 #include <QAbstractItemView>
 #include <QApplication>
+#include <QClipboard>
 #include <QDrag>
 #include <QDragEnterEvent>
 #include <QMenu>
@@ -380,6 +381,7 @@ void TagsContainer::showContextMenu(QPoint pos) {
     auto displayAction = std::make_unique<QAction>(tr("Display"), menu.get());
     auto displayExclusiveAction =
         std::make_unique<QAction>(tr("Display without children's elements"), menu.get());
+    auto copyTag = std::make_unique<QAction>(tr("Copy Tag"), menu.get());
 
     auto colorMenu = std::make_unique<QMenu>(tr("Change the color"), menu.get());
     auto def       = std::make_unique<QAction>(tr("default color"), menu.get());
@@ -406,6 +408,7 @@ void TagsContainer::showContextMenu(QPoint pos) {
             sort();
         });
     }
+    if (!it->isSpecial()) menu->addAction(copyTag.get());
 
     connect(def.get(), &QAction::triggered, this, [it] { it->setColor(""); });
     connect(red.get(), &QAction::triggered, this, [it] { it->setColor("red"); });
@@ -417,6 +420,8 @@ void TagsContainer::showContextMenu(QPoint pos) {
     connect(orange.get(), &QAction::triggered, this, [it] { it->setColor("orange"); });
     connect(displayAction.get(), &QAction::triggered, this, [=] { selected(); });
     connect(displayExclusiveAction.get(), &QAction::triggered, this, [=] { selectedExclusive(); });
+    connect(copyTag.get(), &QAction::triggered, this,
+            [it] { qApp->clipboard()->setText(it->completeTag()); });
 
     menu->exec(mapToGlobal(pos));
 }

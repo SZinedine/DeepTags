@@ -116,6 +116,17 @@ void TagItem::setPinned(bool pinned) {
         Settings::setTagUnpinned(label());
 }
 
+QString TagItem::completeTag() {
+    auto castIt = [](QTreeWidgetItem* it) { return (it) ? static_cast<TagItem*>(it) : nullptr; };
+    TagItem* p  = castIt(parent());
+    QString tag = label();
+    while (p) {
+        tag.prepend(p->label() + '/');
+        p = castIt(p->parent());
+    }
+    return tag;
+}
+
 
 QVector<Element*>* TagItem::allElements() const {
     auto res           = new QVector<Element*>(*m_elements);
