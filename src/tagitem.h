@@ -40,7 +40,7 @@ public:
     }
     inline void addFile(Element* element) { m_elements->push_back(element); }
     inline void setLabel(const QString& label) { setText(0, label); }
-    inline QVector<Element*>* elements() const { return m_elements; }
+    inline QList<Element*>* elements() const { return m_elements; }
     inline QString label() const { return text(0); }
     inline int number() const { return m_elements->size(); }
     inline void remove(Element* e) { m_elements->removeAll(e); }
@@ -54,11 +54,11 @@ public:
     bool pinned() const { return m_pinned; }
     void setPinned(const bool pinned);
     QString completeTag();
-    QVector<Element*>* allElements() const;
+    QList<Element*>* allElements() const;
     QVector<TagItem*> children() const;
 
 private:
-    QVector<Element*>* m_elements;
+    QList<Element*>* m_elements;
     bool m_special;
     bool m_pinned;
 };

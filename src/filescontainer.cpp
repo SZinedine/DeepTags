@@ -28,6 +28,7 @@
 #include <QShortcut>
 #include <cstdlib>
 #include <memory>
+#include "benchmarks.h"
 #include "elementdialog.h"
 #include "settings.h"
 #define real(item) (static_cast<FileItem*>(item))
@@ -73,11 +74,14 @@ FilesContainer::~FilesContainer() {
 }
 
 
-void FilesContainer::addFiles(QVector<Element*>* items) {
+void FilesContainer::addFiles(QList<Element*>* items) {
     clearView();
-    for (Element* i : *items) addFile(i);
+    BEGIN_TIME;
+    for (auto& i : *items) addFile(i);
     sortAndPin();
     emit numberOfElementsChanged();
+    END_TIME("FilesContainer::addFiles");
+    SIZEOFCONTAINER("FileItems displayed (from FilesContainer::addFiles)", items->size());
 }
 
 void FilesContainer::clearView() {

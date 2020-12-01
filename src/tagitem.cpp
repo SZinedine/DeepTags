@@ -17,28 +17,29 @@
  *************************************************************************/
 #include "tagitem.h"
 #include <QApplication>
+#include <set>
 #include "settings.h"
 
 #define USER_TYPE_NUM 1500
 
 TagItem::TagItem(const QString& label, QTreeWidgetItem* parent)
-    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM),
-      m_elements(new QVector<Element*>()), m_special(false), m_pinned(false) {}
+    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM), m_elements(new QList<Element*>()),
+      m_special(false), m_pinned(false) {}
 
 TagItem::TagItem(const QString& label, QTreeWidget* parent)
-    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM),
-      m_elements(new QVector<Element*>()), m_special(false), m_pinned(false) {}
+    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM), m_elements(new QList<Element*>()),
+      m_special(false), m_pinned(false) {}
 
 TagItem::TagItem(const QString& label, const QString& icon, bool special, QTreeWidget* parent)
-    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM),
-      m_elements(new QVector<Element*>()), m_special(special), m_pinned(false) {
+    : QTreeWidgetItem(parent, QStringList(label), USER_TYPE_NUM), m_elements(new QList<Element*>()),
+      m_special(special), m_pinned(false) {
     if (!icon.isEmpty()) setIcon(0, QIcon(icon));
 }
 
 TagItem::TagItem(const TagItem& other) : QTreeWidgetItem(other) {
     m_special  = other.m_special;
     m_pinned   = other.m_pinned;
-    m_elements = new QVector<Element*>(*other.m_elements);
+    m_elements = new QList<Element*>(*other.m_elements);
 }
 
 TagItem::TagItem(TagItem&& other) : QTreeWidgetItem(other) {
@@ -77,20 +78,23 @@ TagItem::~TagItem() {
 
 void TagItem::removeElement(Element* element) {
     for (int i = 0; i < m_elements->size(); i++)
-        if (*m_elements->at(i) == *element) m_elements->remove(i);
+        if (*m_elements->at(i) == *element) m_elements->removeAt(i);
 }
 
 
 bool TagItem::empty() const {
     if (!m_elements->empty()) return false;
-    auto els = std::make_unique<QVector<Element*>>(*allElements());
-    return els->empty();
+    for (auto& child : children())
+        if (!child->empty()) return false;
+    return true;
 }
 
 
 bool TagItem::contains(Element* e) {
-    auto els = std::make_unique<QVector<Element*>>(*allElements());
-    return allElements()->contains(e);
+    if (m_elements->contains(e)) return true;
+    for (auto& child : children())
+        if (child->contains(e)) return true;
+    return false;
 }
 
 
@@ -127,18 +131,17 @@ QString TagItem::completeTag() {
     return tag;
 }
 
-
-QVector<Element*>* TagItem::allElements() const {
-    auto res           = new QVector<Element*>(*m_elements);
-    auto elsInChildren = [](TagItem* ti) -> QVector<Element*> {   // return the elements of children
-        QVector<Element*> qv;
-        if (ti->hasChildren()) qv += *ti->allElements();
-        return qv;
-    };
-    for (auto& c : children())
-        for (auto& e : elsInChildren(c))
-            if (!res->contains(e)) res->push_back(e);
-    return res;
+QList<Element*>* TagItem::allElements() const {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    QSet<Element*> res(m_elements->begin(), m_elements->end());
+#else
+    QSet<Element*> res(m_elements->toSet());
+#endif
+    for (auto& c : children()) {
+        for (auto& e : *c->allElements()) res += e;
+    }
+    auto lst = new QList<Element*>(res.values());
+    return lst;
 }
 
 QVector<TagItem*> TagItem::children() const {

@@ -31,7 +31,7 @@ public:
     explicit FilesContainer(QWidget* parent = nullptr);
     ~FilesContainer() override;
     void setupSignals();
-    void addFiles(QVector<Element*>* items);
+    void addFiles(QList<Element*>* items);
     /**
      *  open the file in a Markdown Editor (to be set beforehand)
      */

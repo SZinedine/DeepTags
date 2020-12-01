@@ -26,12 +26,14 @@
 #include <QShortcut>
 #include <QSystemTrayIcon>
 #include <memory>
+#include "benchmarks.h"
 #include "datadirdialog.h"
 #include "elementdialog.h"
 #include "externalreadersdialog.h"
 #include "settings.h"
 #include "settingsdialog.h"
 #include "ui_mainwindow.h"
+
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -241,6 +243,7 @@ void MainWindow::setupSignals() {
 }
 
 void MainWindow::startup() {
+    BEGIN_TIME;
     qApp->processEvents();
     if (!Settings::dataDirectoryIsSet() || !QFile::exists(Settings::dataDirectory())) {
         dataDirectoryDialog();
@@ -248,6 +251,7 @@ void MainWindow::startup() {
     }
     loadDataDirectoryContent();
     ui->tagsContainer->loadCollapseOrExpand();
+    END_TIME("complete startup");
 }
 
 void MainWindow::settingsDialog() {
@@ -271,8 +275,12 @@ void MainWindow::dataDirectoryDialog() {
 }
 
 void MainWindow::loadDataDirectoryContent() {
+    BEGIN_TIME;
     const PathsList paths       = be::fetch_files(Settings::dataDirectory());
     const ElementsList elements = Element::constructElementList(paths);
+    END_TIME("load DD & construct Elements");
+    SIZEOFCONTAINER("PathsList (from MainWindow)", paths.size());
+    SIZEOFCONTAINER("ElementsList (from MainWindow)", elements.size());
     if (!elements.empty()) openElements(elements);
 }
 
@@ -310,7 +318,7 @@ void MainWindow::search() {
     QStringList keywords{ line.split(' ') };
 
     const auto* lst = TagsContainer::real(ui->tagsContainer->topLevelItem(0))->elements();
-    auto res        = std::make_unique<QVector<Element*>>();
+    auto res        = std::make_unique<QList<Element*>>();
 
     auto contains = [&keywords](const QString& title) {
         for (const QString& s : keywords)
@@ -318,14 +326,16 @@ void MainWindow::search() {
         return true;
     };
 
-    for (Element* e : *lst)
+    for (auto& e : *lst)
         if (contains(e->title().simplified().toLower())) res->push_back(e);
 
     ui->filesContainer->addFiles(res.get());
 }
 
 void MainWindow::openElements(const ElementsList& els) {
+    BEGIN_TIME;
     ui->tagsContainer->addElements(els);
+    END_TIME("TagsContainer::addElements");
 }
 
 void MainWindow::disableSomeWidgets(const bool& disable) {

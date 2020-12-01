@@ -93,7 +93,7 @@ signals:
      *  when one or multiple tags are selected,
      *  send their content to be displayed
      */
-    void itemSelected(QVector<Element*>* item);
+    void itemSelected(QList<Element*>* item);
     /**
      *  emited when a list of Elements are loading
      */

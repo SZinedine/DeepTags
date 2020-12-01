@@ -78,12 +78,7 @@ void TagsContainer::init() {
 void TagsContainer::selected() {
     QList<TagItem*> lst;
     for (auto& i : selectedItems()) lst.push_back(real(i));
-
     if (lst.isEmpty()) return;
-    if (lst.size() == 1) {
-        emit itemSelected(lst.at(0)->allElements());
-        return;
-    }
 
     // check if the different TagItems contain a specific element
     auto sharedElement = [&](Element* e) -> bool {
@@ -92,11 +87,14 @@ void TagsContainer::selected() {
         return true;
     };
 
-    QSet<Element*> set;   // use a QSet because it includes only one instance of each Element
-    for (auto& l : lst)
-        for (auto e : *l->allElements())
+    QSet<Element*> set;
+    for (auto& l : lst) {
+        auto elements = l->allElements();
+        for (auto e : *elements)
             if (sharedElement(e)) set += e;
-    auto res = set.values().toVector();
+        delete elements;
+    }
+    auto res = set.values();
     itemSelected(&res);
 }
 
