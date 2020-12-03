@@ -18,6 +18,9 @@ jobs:
       dist: bionic
       env: DIST=bionic
     - os: linux
+      dist: focal
+      env: DIST=focal
+    - os: linux
       dist: trusty
       env: DIST=archlinux
 
@@ -57,7 +60,9 @@ install:
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 ;
     source /opt/qt5*/bin/qt5*-env.sh ;
   fi
-- if [ "$DIST" == "bionic" ] || [ "$DIST" == "xenial" ]; then sudo apt-get install -qq libgl1-mesa-dev g++ qt5-default qt5-qmake ; fi
+- if [ "$DIST" == "bionic" ] || [ "$DIST" == "xenial" ] || [ "$DIST" == "focal" ]; then
+    sudo apt-get install -qq libgl1-mesa-dev g++ qt5-default qt5-qmake ;
+  fi
 - sudo apt-get install -qq tree
 
 
@@ -75,8 +80,12 @@ script:
     wget -c https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage ;
     chmod +x linuxdeployqt-*.AppImage && ./appimage.sh --add-libstdc++ ;
   fi
-- if [ "$DIST" == "bionic" ] || [ "$DIST" == "xenial" ]; then ./deb.sh ; fi
-- if [ "$DIST" == "archlinux" ]; then curl -s https://raw.githubusercontent.com/mikkeloscar/arch-travis/master/arch-travis.sh | bash ; fi
+- if [ "$DIST" == "bionic" ] || [ "$DIST" == "xenial" ] || [ "$DIST" == "focal" ]; then
+    ./deb.sh ;
+  fi
+- if [ "$DIST" == "archlinux" ]; then
+    curl -s https://raw.githubusercontent.com/mikkeloscar/arch-travis/master/arch-travis.sh | bash ;
+  fi
 - cd "$TRAVIS_BUILD_DIR" && ls -lhXkN packaging/
 
 
