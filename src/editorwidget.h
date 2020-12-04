@@ -25,6 +25,7 @@ class EditorWidget : public QWidget {
     Q_OBJECT
 public:
     EditorWidget(QWidget* parent = nullptr);
+    ~EditorWidget();
 
     void open(QString path);
     void display(QString path);

@@ -24,9 +24,10 @@
 class FilesContainer;
 
 class FileItem : public QListWidgetItem {
-public:
     FileItem(FilesContainer* parent = nullptr);
+public:
     FileItem(Element* element, FilesContainer* parent = nullptr);
+    ~FileItem();
     FileItem(const FileItem& other);
     FileItem(FileItem&& other);
     FileItem& operator=(const FileItem& other);

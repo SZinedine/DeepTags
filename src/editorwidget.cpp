@@ -40,6 +40,10 @@ EditorWidget::EditorWidget(QWidget* parent)
     connect(m_editor, &MarkdownEditorWidget::toClose, this, &EditorWidget::closeFile);
 }
 
+EditorWidget::~EditorWidget() {
+    delete m_editor;
+    delete m_watcher;
+}
 
 void EditorWidget::open(QString path) {
     if (path == m_currentPath) {

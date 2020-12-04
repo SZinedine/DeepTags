@@ -17,6 +17,7 @@
  *************************************************************************/
 #include "fileitem.h"
 #include "filescontainer.h"
+#include <thread>
 
 const QString pinnedIcon    = ":images/pin.png";
 const QString favoritedIcon = ":images/favorite.png";
@@ -27,7 +28,12 @@ FileItem::FileItem(FilesContainer* parent)
 
 FileItem::FileItem(Element* element, FilesContainer* parent)
     : QListWidgetItem(element->title(), parent, 1600), m_element(element) {
-    reload();
+
+    std::thread([=]{ setupIcons(); }).detach();
+}
+
+FileItem::~FileItem() {
+    m_element = nullptr;
 }
 
 FileItem::FileItem(const FileItem& other) : QListWidgetItem(other), m_element(other.m_element) {}
@@ -38,17 +44,20 @@ FileItem::FileItem(FileItem&& other) : QListWidgetItem(other), m_element(other.m
 
 FileItem& FileItem::operator=(const FileItem& other) {
     m_element = other.m_element;
+    reload();
     return *this;
 }
 
 FileItem& FileItem::operator=(FileItem& other) {
     m_element = other.m_element;
+    reload();
     return *this;
 }
 
 FileItem& FileItem::operator=(FileItem&& other) {
     m_element       = other.m_element;
     other.m_element = nullptr;
+    reload();
     return *this;
 }
 

@@ -18,6 +18,8 @@
 #include "element.h"
 #include <QDebug>
 #include <QFileInfo>
+#include <thread>
+#include <mutex>
 
 Element::Element(const QString& path) : m_path(QFileInfo(path).absoluteFilePath()) {
     setup();
@@ -86,11 +88,23 @@ void Element::setup() {
 }
 
 ElementsList Element::constructElementList(const PathsList& f) {
+    std::mutex mutex;
     ElementsList elems;
+    auto add = [&elems, &mutex](Element* e) {
+        std::lock_guard<std::mutex> g(mutex);
+        elems.push_back(e);
+    };
+    auto construct = [&](const QString p) {
+        add(new Element(p));
+    };
+
+    std::vector<std::thread> threads;
     for (const QString& p : f) {
         if (!be::isMD(p)) continue;
-        elems.push_back(new Element(p));
+        threads.push_back( std::thread(construct, p) );
     }
+    for (auto& t : threads)
+        t.join();
     return elems;
 }
 

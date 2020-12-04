@@ -43,6 +43,10 @@ FilesContainer::FilesContainer(QWidget* parent) : QListWidget(parent) {
     setIconSize(QSize(35, 20));
 }
 
+FilesContainer::~FilesContainer() {
+    clearView();
+}
+
 void FilesContainer::setupSignals() {
     connect(this, &FilesContainer::itemDoubleClicked, this, &FilesContainer::openFile);
     connect(this, &FilesContainer::rightClick, this, &FilesContainer::showContextMenu);
@@ -67,10 +71,6 @@ void FilesContainer::setupSignals() {
         if (!currentItem()) return;
         emit itemPressed(currentItem());
     });
-}
-
-FilesContainer::~FilesContainer() {
-    clearView();
 }
 
 

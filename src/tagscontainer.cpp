@@ -121,16 +121,8 @@ int TagsContainer::find(const QString& label, QTreeWidget* parent) {
 
 void TagsContainer::addElements(const ElementsList& elements) {
     emit loadingFiles();
-    int i = 0;
     for (Element* e : elements) {
         addElement(e);
-
-        i++;
-        if (i % 500 == 0) {
-            sort();
-            qApp->processEvents();
-            applyColors();
-        }
     }
     sort();
     applyColors();
@@ -140,20 +132,13 @@ void TagsContainer::addElements(const ElementsList& elements) {
 
 void TagsContainer::addElement(Element* element) {
     /**
-     * TODO: THIS FUNCTION NEEDS TO BE OPTIMIZED. IT IS TOO SLOW AND TOO COMPLICATED
-     *
-     * Check if the element is deleted, if it is, append it to trash and return.
-     * add to the untagged/favorited if it requires so.
-     *
-     * iterate through the Tags (vector of vectors)
-     * single tag treatment:
-     *     * create a TagItem if it doesn't exist (index == -1)
-     *         * add it to topLevel if level == 0
-     *         * add it to prnt (previous parent) if level != 0
-     *     * append the entire Element to another item if it exists
-     *         * find the item to append to (by using the level variable)
-     *         * verify if the found item doesn't contain the Element.
-     *             * append it to it if it doesn't
+     * What the function does: analysing the Element instence to:
+     * * add it to the Trash tag if it is deleted
+     * * add it to the first tag (All Notes)
+     * * add it to the favorited tag if it is marked as favorited
+     * * add it to the untagged tag if it is untagged
+     * * fetch its tags and add it to other tags,
+     * or create them if they don't exist and add the Element to them
      */
 
     if (!element) return;
