@@ -276,6 +276,10 @@ void MainWindow::dataDirectoryDialog() {
 
 void MainWindow::loadDataDirectoryContent() {
     BEGIN_TIME;
+    if (!Settings::dataDirectoryIsSet()) {
+        QMessageBox::warning(this, tr("Data Directory"), tr("Data Directory is not set. Please set it"));
+        return;
+    }
     const PathsList paths       = be::fetch_files(Settings::dataDirectory());
     const ElementsList elements = Element::constructElementList(paths);
     END_TIME("load DD & construct Elements");
