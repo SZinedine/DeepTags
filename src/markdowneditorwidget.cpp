@@ -16,12 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 #include "markdowneditorwidget.h"
+#include <markdownhighlighter.h>
 #include <QContextMenuEvent>
 #include <QMenu>
 
 MarkdownEditorWidget::MarkdownEditorWidget(QWidget* parent)
-    : QMarkdownTextEdit(parent), m_occupied(false) {
+    : QPlainTextEdit(parent), m_occupied(false) {
     setReadOnly(true);
+    highlighter = new MarkdownHighlighter(document());
+}
+
+MarkdownEditorWidget::~MarkdownEditorWidget() {
+    delete highlighter;
 }
 
 void MarkdownEditorWidget::contextMenuEvent(QContextMenuEvent* event) {
@@ -44,6 +50,6 @@ void MarkdownEditorWidget::clear() {
 }
 
 void MarkdownEditorWidget::setText(const QString& text) {
-    QMarkdownTextEdit::setText(text);
+    QPlainTextEdit::setPlainText(text);
     setOccupied(true);
 }

@@ -15,13 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
-#include <qmarkdowntextedit.h>
+#include <QPlainTextEdit>
 
-class MarkdownEditorWidget : public QMarkdownTextEdit {
+class MarkdownHighlighter;
+
+class MarkdownEditorWidget : public QPlainTextEdit {
     Q_OBJECT
 public:
     explicit MarkdownEditorWidget(QWidget* parent = nullptr);
-    ~MarkdownEditorWidget(){};
+    ~MarkdownEditorWidget();
     void contextMenuEvent(QContextMenuEvent* event) override;
     inline void setOccupied(bool o) { m_occupied = o; }
     inline bool occupied() const { return m_occupied; }
@@ -32,6 +34,7 @@ signals:
     void toClose();
 
 private:
+    MarkdownHighlighter* highlighter;
     /* is there a file displayed or not */
     bool m_occupied;
 };
