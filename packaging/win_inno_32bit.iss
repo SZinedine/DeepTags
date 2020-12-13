@@ -2,8 +2,8 @@
 [Setup]
 AppId={{6A8627FB-DC01-4E7A-BA0E-C949729C4CE9}
 AppName=DeepTags
-AppVersion=0.6
-AppVerName=DeepTags 0.6
+AppVersion=0.7
+AppVerName=DeepTags 0.7
 AppPublisher=SZinedine
 AppPublisherURL=http://www.github.com/SZinedine/DeepTags
 AppSupportURL=http://www.github.com/SZinedine/DeepTags

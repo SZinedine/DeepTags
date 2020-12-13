@@ -218,62 +218,62 @@
         <translation type="vanished">Vous n&apos;avez pas défini la liseuse Markdown.</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="126"/>
+        <location filename="../src/filescontainer.cpp" line="130"/>
         <source>Pin to Top</source>
         <translation>Épingler</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="127"/>
+        <location filename="../src/filescontainer.cpp" line="131"/>
         <source>Favorite</source>
         <translation>Favoris</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="135"/>
+        <location filename="../src/filescontainer.cpp" line="139"/>
         <source>Open with</source>
         <translation>Ouvrir avec</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="128"/>
+        <location filename="../src/filescontainer.cpp" line="132"/>
         <source>Copy path</source>
         <translation>Copier l&apos;adresse</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="123"/>
+        <location filename="../src/filescontainer.cpp" line="127"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="124"/>
+        <location filename="../src/filescontainer.cpp" line="128"/>
         <source>Edit</source>
         <translation>Modifier</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="125"/>
+        <location filename="../src/filescontainer.cpp" line="129"/>
         <source>Add a new tag</source>
         <translation>Ajouter un nouveau tag</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="130"/>
+        <location filename="../src/filescontainer.cpp" line="134"/>
         <source>Restore</source>
         <translation>Restaurer</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="131"/>
+        <location filename="../src/filescontainer.cpp" line="135"/>
         <source>Delete Permanently</source>
         <translation>Supprimer définitivement</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="129"/>
+        <location filename="../src/filescontainer.cpp" line="133"/>
         <source>Move to Trash</source>
         <translation>Mettre à la corbeille</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="257"/>
+        <location filename="../src/filescontainer.cpp" line="261"/>
         <source>Permanently delete a file</source>
         <translation>Supprimer définitivement le fichier</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="258"/>
+        <location filename="../src/filescontainer.cpp" line="262"/>
         <source>The file will permanently be deleted. Do you want to proceed?</source>
         <translation>Le fichier sera définitivement supprimé. Voulez vous continuer ?</translation>
     </message>
@@ -286,17 +286,17 @@
         <translation type="vanished">Erreur. La suppréssion du fichier a échoué</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="295"/>
+        <location filename="../src/filescontainer.cpp" line="299"/>
         <source>Add the tag</source>
         <translation>Ajouter un tag</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="330"/>
+        <location filename="../src/filescontainer.cpp" line="334"/>
         <source>Write the new Tag to append</source>
         <translation>Écrire le tag à ajouter</translation>
     </message>
     <message>
-        <location filename="../src/filescontainer.cpp" line="331"/>
+        <location filename="../src/filescontainer.cpp" line="335"/>
         <source>Append New Tag</source>
         <translation>Ajouter un nouveau tag</translation>
     </message>
@@ -320,7 +320,7 @@
         <translation type="vanished">Recharger le fichier courant</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="67"/>
+        <location filename="../src/mainwindow.cpp" line="69"/>
         <source>Search</source>
         <translation>Recherche</translation>
     </message>
@@ -361,8 +361,8 @@
         <translation type="vanished">&amp;Définir une Liseuse MarkDown</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="77"/>
-        <location filename="../src/mainwindow.cpp" line="342"/>
+        <location filename="../src/mainwindow.cpp" line="79"/>
+        <location filename="../src/mainwindow.cpp" line="356"/>
         <source>no files</source>
         <translation>Pas de fichier</translation>
     </message>
@@ -386,7 +386,7 @@
     <message>
         <location filename="../src/mainwindow.ui" line="155"/>
         <source>Recently Opened Files</source>
-        <translation>Fichiers &amp;Récents</translation>
+        <translation>Fichiers Récents</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="172"/>
@@ -425,19 +425,19 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="230"/>
-        <location filename="../src/mainwindow.cpp" line="104"/>
+        <location filename="../src/mainwindow.cpp" line="106"/>
         <source>Native Style</source>
         <translation>Style Natif</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="235"/>
-        <location filename="../src/mainwindow.cpp" line="105"/>
+        <location filename="../src/mainwindow.cpp" line="107"/>
         <source>Dark Style</source>
         <translation>Style Sombre</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="240"/>
-        <location filename="../src/mainwindow.cpp" line="106"/>
+        <location filename="../src/mainwindow.cpp" line="108"/>
         <source>Light Style</source>
         <translation>Style Clair</translation>
     </message>
@@ -462,27 +462,37 @@
         <translation>Afficher la liseuse intégrée</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="130"/>
+        <location filename="../src/mainwindow.cpp" line="132"/>
         <source>Exit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="192"/>
+        <location filename="../src/mainwindow.cpp" line="194"/>
         <source>No data directory</source>
         <translation>Répertoire de données inexistant</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="193"/>
+        <location filename="../src/mainwindow.cpp" line="195"/>
         <source>Data directory hasn&apos;t been set.</source>
         <translation>Répertoire de données non défini.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="344"/>
+        <location filename="../src/mainwindow.cpp" line="280"/>
+        <source>Data Directory</source>
+        <translation>Répertoire de données</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="280"/>
+        <source>Data Directory is not set. Please set it</source>
+        <translation>Répertoire de données non défini. Définissez le SVP</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="358"/>
         <source>1 file</source>
         <translation>1 fichier</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="346"/>
+        <location filename="../src/mainwindow.cpp" line="360"/>
         <source> files</source>
         <translation> fichiers</translation>
     </message>
@@ -500,12 +510,12 @@
         <translation type="vanished">&amp;Aide</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="290"/>
+        <location filename="../src/mainwindow.cpp" line="302"/>
         <source>Data Directory is not set</source>
         <translation>Répertoire des données non défini</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="291"/>
+        <location filename="../src/mainwindow.cpp" line="303"/>
         <source>You have to set a Data Directory before creating a file</source>
         <translation>Vous devez définir un répertoire de données avant de créer des fichiers</translation>
     </message>
@@ -593,7 +603,7 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="266"/>
-        <location filename="../src/mainwindow.cpp" line="360"/>
+        <location filename="../src/mainwindow.cpp" line="374"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>
@@ -601,7 +611,7 @@
 <context>
     <name>MarkdownEditorWidget</name>
     <message>
-        <location filename="../src/markdowneditorwidget.cpp" line="29"/>
+        <location filename="../src/markdowneditorwidget.cpp" line="35"/>
         <source>Close File</source>
         <translation>Fermer le Fichier</translation>
     </message>
@@ -632,6 +642,21 @@
         <location filename="../src/baseelement.cpp" line="31"/>
         <source>untitled</source>
         <translation>sans titre</translation>
+    </message>
+    <message>
+        <location filename="../src/settings.cpp" line="194"/>
+        <source>Clear</source>
+        <translation>Éffacer tout</translation>
+    </message>
+    <message>
+        <location filename="../src/settings.cpp" line="225"/>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <location filename="../src/settings.cpp" line="225"/>
+        <source>This file doesn&apos;t exist</source>
+        <translation>Ce fichier n&apos;existe pas</translation>
     </message>
 </context>
 <context>
@@ -756,19 +781,16 @@
         <translation type="vanished">Ouvrir répertoire</translation>
     </message>
     <message>
-        <location filename="../src/settings.cpp" line="193"/>
         <source>Clear</source>
-        <translation>Éffacer tout</translation>
+        <translation type="vanished">Éffacer tout</translation>
     </message>
     <message>
-        <location filename="../src/settings.cpp" line="224"/>
         <source>Error</source>
-        <translation>Erreur</translation>
+        <translation type="vanished">Erreur</translation>
     </message>
     <message>
-        <location filename="../src/settings.cpp" line="224"/>
         <source>This file doesn&apos;t exist</source>
-        <translation>Ce fichier n&apos;existe pas</translation>
+        <translation type="vanished">Ce fichier n&apos;existe pas</translation>
     </message>
 </context>
 <context>
@@ -792,63 +814,68 @@
 <context>
     <name>TagsContainer</name>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="264"/>
-        <location filename="../src/tagscontainer.cpp" line="268"/>
+        <location filename="../src/tagscontainer.cpp" line="249"/>
+        <location filename="../src/tagscontainer.cpp" line="253"/>
         <source>Trash</source>
         <translation>Corbeille</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="379"/>
+        <location filename="../src/tagscontainer.cpp" line="364"/>
         <source>Display</source>
         <translation>Afficher</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="381"/>
+        <location filename="../src/tagscontainer.cpp" line="366"/>
         <source>Display without children&apos;s elements</source>
         <translation>Afficher sans les élements des enfants</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="383"/>
+        <location filename="../src/tagscontainer.cpp" line="367"/>
+        <source>Copy Tag</source>
+        <translation>Coper le tag</translation>
+    </message>
+    <message>
+        <location filename="../src/tagscontainer.cpp" line="369"/>
         <source>Change the color</source>
         <translation>Changer la couleur</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="384"/>
+        <location filename="../src/tagscontainer.cpp" line="370"/>
         <source>default color</source>
         <translation>couleur par défaut</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="385"/>
+        <location filename="../src/tagscontainer.cpp" line="371"/>
         <source>green</source>
         <translation>vert</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="387"/>
+        <location filename="../src/tagscontainer.cpp" line="373"/>
         <source>yellow</source>
         <translation>jaune</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="389"/>
+        <location filename="../src/tagscontainer.cpp" line="375"/>
         <source>orange</source>
         <translation>orange</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="390"/>
+        <location filename="../src/tagscontainer.cpp" line="376"/>
         <source>red</source>
         <translation>rouge</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="392"/>
+        <location filename="../src/tagscontainer.cpp" line="378"/>
         <source>magenta</source>
         <translation>violet</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="393"/>
+        <location filename="../src/tagscontainer.cpp" line="379"/>
         <source>blue</source>
         <translation>bleu</translation>
     </message>
     <message>
-        <location filename="../src/tagscontainer.cpp" line="394"/>
+        <location filename="../src/tagscontainer.cpp" line="380"/>
         <source>cyan</source>
         <translation>cyan</translation>
     </message>
