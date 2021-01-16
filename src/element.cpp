@@ -1,6 +1,6 @@
 /*************************************************************************
  * DeepTags, Markdown Notes Manager
- * Copyright (C) 2020  Zineddine Saibi
+ * Copyright (C) 2021  Zineddine Saibi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 #include "element.h"
 #include <QDebug>
 #include <QFileInfo>
-#include <thread>
 #include <mutex>
+#include <thread>
 
 Element::Element(const QString& path) : m_path(QFileInfo(path).absoluteFilePath()) {
     setup();
@@ -94,17 +94,14 @@ ElementsList Element::constructElementList(const PathsList& f) {
         std::lock_guard<std::mutex> g(mutex);
         elems.push_back(e);
     };
-    auto construct = [&](const QString p) {
-        add(new Element(p));
-    };
+    auto construct = [&](const QString p) { add(new Element(p)); };
 
     std::vector<std::thread> threads;
     for (const QString& p : f) {
         if (!be::isMD(p)) continue;
-        threads.push_back( std::thread(construct, p) );
+        threads.push_back(std::thread(construct, p));
     }
-    for (auto& t : threads)
-        t.join();
+    for (auto& t : threads) t.join();
     return elems;
 }
 

@@ -1,6 +1,6 @@
 /*************************************************************************
  * DeepTags, Markdown Notes Manager
- * Copyright (C) 2020  Zineddine Saibi
+ * Copyright (C) 2021  Zineddine Saibi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +277,8 @@ void MainWindow::dataDirectoryDialog() {
 void MainWindow::loadDataDirectoryContent() {
     BEGIN_TIME;
     if (!Settings::dataDirectoryIsSet()) {
-        QMessageBox::warning(this, tr("Data Directory"), tr("Data Directory is not set. Please set it"));
+        QMessageBox::warning(this, tr("Data Directory"),
+                             tr("Data Directory is not set. Please set it"));
         return;
     }
     const PathsList paths       = be::fetch_files(Settings::dataDirectory());

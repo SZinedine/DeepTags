@@ -1,6 +1,6 @@
 /*************************************************************************
  * DeepTags, Markdown Notes Manager
- * Copyright (C) 2020  Zineddine Saibi
+ * Copyright (C) 2021  Zineddine Saibi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 #include "fileitem.h"
-#include "filescontainer.h"
 #include <thread>
+#include "filescontainer.h"
 
 const QString pinnedIcon    = ":images/pin.png";
 const QString favoritedIcon = ":images/favorite.png";
@@ -28,8 +28,7 @@ FileItem::FileItem(FilesContainer* parent)
 
 FileItem::FileItem(Element* element, FilesContainer* parent)
     : QListWidgetItem(element->title(), parent, 1600), m_element(element) {
-
-    std::thread([=]{ setupIcons(); }).detach();
+    std::thread([=] { setupIcons(); }).detach();
 }
 
 FileItem::~FileItem() {
