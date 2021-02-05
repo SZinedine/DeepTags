@@ -486,9 +486,9 @@ StringList BaseElement::getFileContent(const QString& file) {
     }
 
     StringList entire_file;
-    QTextStream f(&qf);
-    f.setCodec("UTF-8");
-    while (!f.atEnd()) entire_file.push_back(f.readLine());
+    QTextStream stream(&qf);
+    stream.setCodec("UTF-8");
+    while (!stream.atEnd()) entire_file.push_back(stream.readLine());
     return entire_file;
 }
 
@@ -498,8 +498,10 @@ void BaseElement::writeContentToFile(const StringList& content, const QString& f
         qDebug() << "Error while trying to write content into: " << file;
         return;
     }
-    QTextStream f(&qf);
-    f.setCodec("UTF-8");
-    for (auto& line : content) f << line << "\n";
-    f.flush();
+    QTextStream stream(&qf);
+    stream.setCodec("UTF-8");
+    for (auto& line : content) stream << line << "\r\n";
+    stream.flush();
+    qf.close();
 }
+
