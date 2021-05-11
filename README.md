@@ -17,14 +17,16 @@ DeepTags supports nested tags and offers simple ways to edit them, for example b
 
 ## Features
 
-* **Nested tags**: You can create a hierarchy of tags to organize your notes in a directory-like structure. For example, the representation of the nested tag: `places/africa/algeria`, would be:
+* **Nested tags**: You can create a hierarchy of tags to organize your notes in a tree structure. For example, the representation of the nested tag: `places/africa/algeria`, would be:
 
 <p align="center">
 <img src="tag_hierarchy.png" alt="tag hierarchy">
 </p>
 
-* add a tag to a note simply by dragging and dropping it on the file.
-* set multiple markdown editors to open your notes with.
+* **Drag and Drop** a tag into a note to add it to it
+* **Search** through your notes by title
+* **No-Cloud**: DeepTags is running completely offfline.
+* **External Editors**: You can use your favorite markdown editor.
 
 
 ## Dependencies
