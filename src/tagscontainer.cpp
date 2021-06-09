@@ -380,6 +380,7 @@ void TagsContainer::showContextMenu(QPoint pos) {
     auto cyan = std::make_unique<QAction>(QIcon(":images/color_cyan"), tr("cyan"), menu.get());
     colorMenu->addActions({ def.get(), green.get(), yellow.get(), orange.get(), red.get(),
                             magenta.get(), blue.get(), cyan.get() });
+    std::unique_ptr<QAction> expandOrCollapseAction;
 
     menu->addAction(displayAction.get());
     if (item->childCount()) menu->addAction(displayExclusiveAction.get());
@@ -392,6 +393,12 @@ void TagsContainer::showContextMenu(QPoint pos) {
         });
     }
     if (!it->isSpecial()) menu->addAction(copyTag.get());
+    if (it->hasChildren()) {
+        const bool exp = it->isExpanded();
+        expandOrCollapseAction = std::make_unique<QAction>((exp) ? tr("Collapse") : tr("Expand"), menu.get());
+        connect(expandOrCollapseAction.get(), &QAction::triggered, this, [it, exp] { it->setExpanded(!exp); });
+        menu->addAction(expandOrCollapseAction.get());
+    }
 
     connect(def.get(), &QAction::triggered, this, [it] { it->setColor(""); });
     connect(red.get(), &QAction::triggered, this, [it] { it->setColor("red"); });
