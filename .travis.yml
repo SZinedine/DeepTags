@@ -1,16 +1,13 @@
 language: cpp
 compiler: gcc
 os: linux
-dist: trusty
+dist: xenial
 
 services:
 - docker
 
 jobs:
   include:
-    - os: linux
-      dist: trusty
-      env: DIST=trusty
     - os: linux
       dist: xenial
       env: DIST=xenial
@@ -21,7 +18,7 @@ jobs:
       dist: focal
       env: DIST=focal
     - os: linux
-      dist: trusty
+      dist: xenial
       env: DIST=archlinux
 
 
@@ -46,20 +43,10 @@ archlinux:
 
 before_install:
 - echo "building in $DIST"
-- if [ "$DIST" == "trusty" ]; then
-    sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test ;
-    sudo add-apt-repository --yes ppa:beineri/opt-qt-5.10.1-trusty ;
-  fi
 - sudo apt-get update -qq
 
 
 install:
-- if [ "$DIST" == "trusty" ]; then
-    sudo apt-get install -qq qt510-meta-minimal libgl1-mesa-dev g++-9 ;
-    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90 ;
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 90 ;
-    source /opt/qt5*/bin/qt5*-env.sh ;
-  fi
 - if [ "$DIST" == "bionic" ] || [ "$DIST" == "xenial" ] || [ "$DIST" == "focal" ]; then
     sudo apt-get install -qq libgl1-mesa-dev g++ qt5-default qt5-qmake ;
   fi
@@ -75,10 +62,6 @@ script:
 - if [ "$DIST" != "archlinux" ]; then
     make -j$(nproc) ;
     cd packaging/ ;
-  fi
-- if [ "$DIST" == "trusty" ]; then
-    wget -c https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage ;
-    chmod +x linuxdeployqt-*.AppImage && ./appimage.sh --add-libstdc++ ;
   fi
 - if [ "$DIST" == "bionic" ] || [ "$DIST" == "xenial" ] || [ "$DIST" == "focal" ]; then
     ./deb.sh ;

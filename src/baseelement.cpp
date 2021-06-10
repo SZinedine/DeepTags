@@ -59,8 +59,8 @@ PathsList BaseElement::fetch_files(const QString& dir) {
 
 
 bool BaseElement::isMD(const QString& f) {
-    QString ext = QFileInfo(f).suffix();
-    return (ext == "md" || ext == "markdown" || ext == "Markdown" || ext == "MD");
+    const QString ext = QFileInfo(f).suffix().toLower();
+    return (ext == "md" || ext == "markdown");
 }
 
 bool BaseElement::hasHeader(const QString& fi) {
@@ -320,7 +320,7 @@ QString BaseElement::composeArrayItem(QString key, const StringList& value) {
 bool BaseElement::validTagToAdd(const QString& tag) {
     // test if reserved tags
     if (tag.isEmpty()) return false;
-    for (const QString& s : { "All Notes", "Notebooks", "Favorite", "Untagged", "Trash" })
+    for (const QString s : { "All Notes", "Notebooks", "Favorite", "Untagged", "Trash" })
         if (s == tag) {
             std::cerr << "Error. Cannot add a basic tag to a file\n";
             return false;
