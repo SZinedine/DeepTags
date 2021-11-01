@@ -72,9 +72,11 @@ private:
     void addToSpecificTopLevel(Element* e, const QString& name);
     /**
      *  look for an item with a specific label in the children of a parent
+     *  if the parent is provided, it search in its children
+     *  if not, search in the topLevelItems
      */
-    int find(const QString& label, QTreeWidgetItem* parent);
-    int find(const QString& label, QTreeWidget* parent);
+    TagItem* find(const QString& label, TagItem* parent = nullptr);
+    /* int find(const QString& label, QTreeWidget* parent); */
     void pinBasicItems();
     void sort();   // sort and pin the basic items
     void toTrash(Element* element);
@@ -102,9 +104,6 @@ signals:
      *  emited when a list of Elements finished loading
      */
     void filesLoaded();
-
-private:
-    QTreeWidgetItem* prnt;   // keep track on the previous parent when the items are added
 };
 
 #endif   // TAGSCONTAINER_H

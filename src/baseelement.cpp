@@ -504,4 +504,3 @@ void BaseElement::writeContentToFile(const StringList& content, const QString& f
     stream.flush();
     qf.close();
 }
-
