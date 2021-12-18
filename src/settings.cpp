@@ -62,7 +62,6 @@ QStringList Settings::getStringList(const QString& group, const QString& label) 
     return val;
 }
 
-
 void Settings::saveUiSettings(const QSize& windowSize, const QByteArray& splitterState) {
     QSettings s;
     s.beginGroup("main");
@@ -92,7 +91,6 @@ void Settings::loadWindowSize(MainWindow* w) {
     s.endGroup();
 }
 
-
 void Settings::saveEditors(const QStringList& lst) {
     saveStringList("markdown_editors", "list", lst);
     if (!lst.isEmpty())
@@ -112,7 +110,6 @@ void Settings::saveMainEditor(const QString& editor) {
 QString Settings::mainMdEditor() {
     return getString("markdown_editors", "main");
 }
-
 
 bool Settings::setDataDirectory(QString dataDirectory) {
     if (dataDirectory.isEmpty()) return false;
@@ -137,14 +134,12 @@ bool Settings::dataDirectoryIsSet() {
     return res;
 }
 
-
 void Settings::expand(const bool& expanded) {
     QSettings s;
     s.beginGroup("main");
     s.setValue("expanded", expanded);
     s.endGroup();
 }
-
 
 bool Settings::expandedItems() {
     QSettings s;
@@ -153,7 +148,6 @@ bool Settings::expandedItems() {
     s.endGroup();
     return res;
 }
-
 
 void Settings::saveRecentlyOpenedFile(const QString& p) {
     QStringList paths = getRawRecentlyOpenedFiles();
@@ -211,14 +205,12 @@ QStringList Settings::getRawRecentlyOpenedFiles() {
     return getStringList("files", "recently_opened_files");
 }
 
-
 void Settings::openFileAction(QAction* action) {
     QVariant data = action->data();
     if (data.isNull()) return;   // in case clear is triggered
     QString p(action->data().toString());
     openFile("", p, action->parentWidget());
 }
-
 
 void Settings::openFile(QString editor, const QString& path, QWidget* parent) {
     if (!QFile::exists(path)) {
@@ -255,7 +247,6 @@ void Settings::loadTheme(QActionGroup* ag) {
         if (ac->data().toString() == theme) ac->setChecked(true);
 }
 
-
 void Settings::applyTheme(const QString& theme) {
     if (theme == "native" || theme == "") {
         qApp->setStyleSheet("");
@@ -266,7 +257,6 @@ void Settings::applyTheme(const QString& theme) {
     QTextStream ts(&f);
     qApp->setStyleSheet(ts.readAll());
 }
-
 
 void Settings::setTagItemColor(const QString& item, const QString& color) {
     auto map  = getTagItemColor();
@@ -293,7 +283,6 @@ void Settings::clearColorItems() {
     s.remove("item_color");
     s.endGroup();
 }
-
 
 void Settings::setTagPinned(const QString& item) {
     auto lst = getTagPinned();

@@ -375,7 +375,6 @@ void MainWindow::about() {
     QMessageBox::about(this, tr("About"), str);
 }
 
-
 void MainWindow::closeEvent(QCloseEvent* event) {
     Settings::saveUiSettings(size(), ui->splitter->saveState());
     event->accept();

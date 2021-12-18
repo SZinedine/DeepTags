@@ -45,7 +45,6 @@ Element::Element(Element&& other) noexcept {
     m_header    = std::move(other.m_header);
 }
 
-
 Element& Element::operator=(Element&& other) {
     m_path      = std::move(other.m_path);
     m_title     = std::move(other.m_title);
@@ -105,7 +104,6 @@ ElementsList Element::constructElementList(const PathsList& f) {
     return elems;
 }
 
-
 void Element::addPinnedLine(const bool val) {
     QString res = be::makePinnedLine(val);
     be::addPinnedItem(res, m_path);
@@ -127,7 +125,6 @@ void Element::addDeletedLine(const bool val) {
     reloadHeader();
 }
 
-
 void Element::addTagsLine(const StringList& list) {
     QString line = be::makeTagsLine(list);
     be::addTagsItem(line, m_path);
@@ -142,7 +139,6 @@ void Element::addTitleLine(const QString& title) {
     setTitle(t);
     reloadHeader();
 }
-
 
 void Element::changeTitle(const QString& title) {
     if (!hasTitleLine()) {
@@ -183,7 +179,6 @@ void Element::changeFavorited(bool favorited) {
     reloadHeader();
 }
 
-
 void Element::changeDeleted(bool deleted) {
     if (!hasDeletedLine() && deleted) {
         addDeletedLine(deleted);
@@ -197,7 +192,6 @@ void Element::changeDeleted(bool deleted) {
     setDeleted(deleted);
     reloadHeader();
 }
-
 
 void Element::overrideTags(const StringList& list) {
     if (list.empty()) {   // if the list is empty, remove the tag item from the file
@@ -223,7 +217,6 @@ void Element::overrideTags(const StringList& list) {
     loadTags();
 }
 
-
 bool Element::appendTag(QString tag) {
     be::processTag(tag);
     if (!be::validTagToAdd(tag)) return false;
@@ -246,7 +239,6 @@ bool Element::appendTag(QString tag) {
 
     return ret;
 }
-
 
 void Element::removePinnedLine() {
     be::removePinnedItemFromHeader(m_path);
@@ -271,7 +263,6 @@ void Element::removeTagsLine() {
     setTags(Tags());
     reloadHeader();
 }
-
 
 void Element::loadTags(const StringList& header) {
     setTags(be::getParsedTags(header));

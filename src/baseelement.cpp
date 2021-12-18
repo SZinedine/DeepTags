@@ -57,7 +57,6 @@ PathsList BaseElement::fetch_files(const QString& dir) {
     return list;
 }
 
-
 bool BaseElement::isMD(const QString& f) {
     const QString ext = QFileInfo(f).suffix().toLower();
     return (ext == "md" || ext == "markdown");
@@ -67,11 +66,9 @@ bool BaseElement::hasHeader(const QString& fi) {
     return (nbItemsInHeader(fi) > 0);
 }
 
-
 int BaseElement::nbItemsInHeader(const QString& fi) {
     return getHeader(fi).size();
 }
-
 
 StringList BaseElement::getHeader(const QString& path) {
     StringList header;
@@ -91,7 +88,6 @@ StringList BaseElement::getHeader(const QString& path) {
 
     return header;
 }
-
 
 QString BaseElement::getTitle(const StringList& header) {
     QString found = findTitle(header);
@@ -136,7 +132,6 @@ bool BaseElement::isDeleted(const StringList& header) {
     return parseBool(found);
 }
 
-
 QString BaseElement::getTitle(const QString& path) {
     return getTitle(getHeader(path));
 }
@@ -153,7 +148,6 @@ bool BaseElement::isDeleted(const QString& path) {
     return isDeleted(getHeader(path));
 }
 
-
 // used by all other functions that search for a key in a header
 QString BaseElement::findLine(const QString& key, const StringList& header) {
     const QString k = key.simplified() + ":";
@@ -163,7 +157,6 @@ QString BaseElement::findLine(const QString& key, const StringList& header) {
     }
     return QString("");
 }
-
 
 void BaseElement::setTitle(const QString& path, const QString& title) {
     if (!hasTitleKey(getHeader(path))) return;
@@ -197,7 +190,6 @@ void BaseElement::setDeleted(const QString& path, const bool deleted) {
     replace(old, del, path);
 }
 
-
 QString BaseElement::getValue(QString line) {
     line    = line.simplified();
     int pos = line.indexOf(':') + 2;
@@ -205,11 +197,9 @@ QString BaseElement::getValue(QString line) {
     return ref.toString().simplified();
 }
 
-
 QString BaseElement::parseString(const QString& line) {
     return getValue(line);
 }
-
 
 bool BaseElement::parseBool(const QString& line) {
     QString val = getValue(line);
@@ -226,7 +216,6 @@ StringList BaseElement::parseArray(const QString& line) {
 
     return res;
 }
-
 
 void BaseElement::unwrap(QString& str, QString before, QString after) {
     if (str.isEmpty()) return;
@@ -246,14 +235,12 @@ void BaseElement::remove_quotations(QString& str) {
     unwrap(str, "\'", "\'");
 }
 
-
 StringList BaseElement::split(const QString& s, const QString& delimiter) {
     auto qsl = s.split(delimiter);
     StringList res;
     for (QString i : qsl) res.push_back(i);
     return res;
 }
-
 
 void BaseElement::createHeader(const QString& file, const QString& title) {
     if (hasHeader(file)) return;
@@ -267,12 +254,10 @@ void BaseElement::createHeader(const QString& file, const QString& title) {
     writeContentToFile(header, file);
 }
 
-
 QString BaseElement::makeTitleLine(QString title) {
     title = (title.isEmpty()) ? "untitled" : title;
     return composeStringItem("title", title);
 }
-
 
 QString BaseElement::makePinnedLine(const bool& pinned) {
     return composeBoolItem("pinned", pinned);
@@ -289,7 +274,6 @@ QString BaseElement::makeDeletedLine(const bool& del) {
 QString BaseElement::makeTagsLine(const StringList& lst) {
     return composeArrayItem("tags", lst);
 }
-
 
 QString BaseElement::composeStringItem(QString key, QString value) {
     key = key.simplified();
@@ -337,7 +321,6 @@ bool BaseElement::validTagToAdd(const QString& tag) {
     return true;
 }
 
-
 void BaseElement::addItemToHeader(const QString& item, const QString& path) {
     if (!hasHeader(path)) createHeader(path, QFileInfo(path).baseName());
 
@@ -356,7 +339,6 @@ void BaseElement::addItemToHeader(const QString& item, const QString& path) {
     writeContentToFile(newFile, path);
 }
 
-
 void BaseElement::addPinnedItem(QString pinnedLine, const QString& path) {
     if (hasPinnedKey(getHeader(path))) return;
     pinnedLine = pinnedLine.simplified();
@@ -371,14 +353,12 @@ void BaseElement::addFavoritedItem(QString favoritedLine, const QString& path) {
         addItemToHeader(favoritedLine, path);
 }
 
-
 void BaseElement::addDeletedItem(QString deletedLine, const QString& path) {
     if (hasDeletedKey(getHeader(path))) return;
     deletedLine = deletedLine.simplified();
     if (deletedLine == "deleted: true" || deletedLine == "deleted: false")
         addItemToHeader(deletedLine, path);
 }
-
 
 void BaseElement::addTagsItem(QString tagsLine, const QString& path) {
     if (hasTagsKey(getHeader(path))) return;
@@ -406,13 +386,11 @@ void BaseElement::removeLineFromHeader(const QString& line, const QString& path)
     writeContentToFile(newContent, path);
 }
 
-
 void BaseElement::removePinnedItemFromHeader(const QString& path) {
     if (!hasPinnedKey(getHeader(path))) return;
     QString str = findPinned(getHeader(path));
     removeLineFromHeader(str, path);
 }
-
 
 void BaseElement::removeFavoritedItemFromHeader(const QString& path) {
     if (!hasFavoritedKey(getHeader(path))) return;
@@ -432,7 +410,6 @@ void BaseElement::removeTagsItemFromHeader(const QString& path) {
     removeLineFromHeader(str, path);
 }
 
-
 void BaseElement::removeTitleItemFromHeader(const QString& path) {
     if (!hasTitleKey(getHeader(path))) return;
     QString str = findTitle(getHeader(path));
@@ -446,7 +423,6 @@ QString& BaseElement::processTag(QString& tag) {
     return tag;
 }
 
-
 QString BaseElement::combineTags(const StringList& chain) {
     QString res;
     for (StringList::size_type i = 0; i < chain.size(); i++) {
@@ -455,7 +431,6 @@ QString BaseElement::combineTags(const StringList& chain) {
     }
     return res;
 }
-
 
 bool BaseElement::replace(const QString& old_str, const QString& new_str, const QString& path) {
     if (old_str == new_str) return true;
@@ -476,7 +451,6 @@ bool BaseElement::replace(const QString& old_str, const QString& new_str, const 
     writeContentToFile(entire_file, path);
     return true;
 }
-
 
 StringList BaseElement::getFileContent(const QString& file) {
     QFile qf(file);

@@ -74,7 +74,6 @@ void TagsContainer::init() {
     createBasicTags();
 }
 
-
 void TagsContainer::selected() {
     QList<TagItem*> lst;
     for (auto& i : selectedItems()) lst.push_back(real(i));
@@ -126,7 +125,6 @@ TagItem* TagsContainer::find(const QString& label, TagItem* parent) {
     return nullptr;   // not found at all
 }
 
-
 void TagsContainer::addElements(const ElementsList& elements) {
     emit loadingFiles();
     for (Element* e : elements) {
@@ -136,7 +134,6 @@ void TagsContainer::addElements(const ElementsList& elements) {
     applyColors();
     emit filesLoaded();
 }
-
 
 void TagsContainer::addElement(Element* element) {
     if (!element) return;
@@ -176,18 +173,15 @@ void TagsContainer::addElement(Element* element) {
     for (const StringList& sl : element->tags()) constructChain(sl, 0, nullptr);
 }
 
-
 void TagsContainer::addToSpecificTopLevel(Element* e, const QString& name) {
     auto it = find(name);
     if (it) it->addFile(e);
 }
 
-
 void TagsContainer::pinBasicItems() {
     for (auto i = basicTags.rbegin(); i != basicTags.rend(); i++)
         insertTopLevelItem(0, takeTopLevelItem(indexOfTopLevelItem(find(*i))));
 }
-
 
 void TagsContainer::sort() {
     sortByColumn(0, Qt::AscendingOrder);
@@ -197,7 +191,6 @@ void TagsContainer::sort() {
 bool TagsContainer::alreadyAdded(Element* element) {
     return (real(topLevelItem(0)))->contains(element);   // search inside All notes
 }
-
 
 void TagsContainer::restoreElement(Element* element) {
     element->changeDeleted(false);
@@ -241,7 +234,6 @@ void TagsContainer::toTrash(Element* element) {
     if (!trash->contains(element)) trash->addFile(element);
 }
 
-
 void TagsContainer::permatentlyDelete(Element* element) {
     pullElement(element);
     QString file(element->path());
@@ -266,7 +258,6 @@ void TagsContainer::dragEnterEvent(QDragEnterEvent* event) {
         event->ignore();
 }
 
-
 void TagsContainer::dragMoveEvent(QDragMoveEvent* event) {
     if (event->mimeData()->hasText()) {
         event->setDropAction(Qt::CopyAction);
@@ -275,7 +266,6 @@ void TagsContainer::dragMoveEvent(QDragMoveEvent* event) {
         event->ignore();
 }
 
-
 void TagsContainer::dropEvent(QDropEvent* event) {
     if (event->mimeData()->hasText()) {
         event->setDropAction(Qt::CopyAction);
@@ -283,7 +273,6 @@ void TagsContainer::dropEvent(QDropEvent* event) {
     } else
         event->ignore();
 }
-
 
 void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
     TagItem* item = real(currentItem());
@@ -309,18 +298,15 @@ void TagsContainer::startDrag(Qt::DropActions /*supportedActions*/) {
     delete drag;
 }
 
-
 void TagsContainer::collapseItems() {
     collapseAll();
     Settings::expand(false);
 }
 
-
 void TagsContainer::expandItems() {
     expandAll();
     Settings::expand(true);
 }
-
 
 void TagsContainer::loadCollapseOrExpand() {
     if (Settings::expandedItems())
@@ -408,7 +394,6 @@ void TagsContainer::applyColors() {
         if (it) it->setColor(i.value().toString());
     }
 }
-
 
 void TagsContainer::pinTags() {
     QStringList lst = Settings::getTagPinned();

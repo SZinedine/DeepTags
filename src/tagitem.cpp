@@ -75,12 +75,10 @@ TagItem::~TagItem() {
     if (m_elements) delete m_elements;
 }
 
-
 void TagItem::removeElement(Element* element) {
     for (int i = 0; i < m_elements->size(); i++)
         if (*m_elements->at(i) == *element) m_elements->removeAt(i);
 }
-
 
 bool TagItem::empty() const {
     if (!m_elements->empty()) return false;
@@ -89,14 +87,12 @@ bool TagItem::empty() const {
     return true;
 }
 
-
 bool TagItem::contains(Element* e) {
     if (m_elements->contains(e)) return true;
     for (auto& child : children())
         if (child->contains(e)) return true;
     return false;
 }
-
 
 void TagItem::setColor(const QString& color) {
     if (color.isEmpty())

@@ -59,7 +59,6 @@ void EditorWidget::open(QString path) {
     m_watcher->addPath(path);
 }
 
-
 void EditorWidget::display(QString path) {
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return;

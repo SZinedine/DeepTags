@@ -55,7 +55,6 @@ void ExternalReadersListSettingsWidget::accept() {
     emit accepted();
 }
 
-
 void ExternalReadersListSettingsWidget::addItem() {
     QString editor = ui->editorLine->text().simplified();
     if (editor.isEmpty()) return;
@@ -89,7 +88,6 @@ void ExternalReadersListSettingsWidget::itemUp() {
     ui->listWidget->insertItem(row - 1, item);
     ui->listWidget->setCurrentItem(item);
 }
-
 
 void ExternalReadersListSettingsWidget::itemDown() {
     int row   = ui->listWidget->currentRow();

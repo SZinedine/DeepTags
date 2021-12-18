@@ -31,7 +31,6 @@ ElementDialog::ElementDialog(QWidget* parent)
     setup(false);
 }
 
-
 ElementDialog::ElementDialog(Element* element, QWidget* parent)
     : QDialog(parent), ui(new Ui::ElementDialog), m_element(element) {
     ui->setupUi(this);
@@ -66,7 +65,6 @@ void ElementDialog::setup(bool visiblePath) {
 
     setupKeyboard();
 }
-
 
 void ElementDialog::setupKeyboard() {
     auto t = new QShortcut(QKeySequence("Ctrl+t"), this);
@@ -110,7 +108,6 @@ void ElementDialog::save() {
     accept();
 }
 
-
 StringList ElementDialog::tags() const {
     return ui->m_tags->tags();
 }
@@ -134,7 +131,6 @@ void ElementDialog::formatFilename(QString& str) {
     str.replace("?", "");
     if (!hasMdExtension(str)) str.append(".md");
 }
-
 
 void ElementDialog::accept_() {
     if (ui->m_title->text().simplified().isEmpty()) {
@@ -160,7 +156,6 @@ void ElementDialog::accept_() {
     m_element->setPath(newFilePath);
     accept();
 }
-
 
 QString ElementDialog::title() const {
     return ui->m_title->text().simplified();
@@ -191,7 +186,6 @@ TagsWidget::TagsWidget(QWidget* parent) : QListWidget(parent) {
     connect((new QShortcut(QKeySequence("Return"), this)), &QShortcut::activated, this,
             &TagsWidget::persistentEditor);
 }
-
 
 TagsWidget::TagsWidget(StringList labels, QWidget* parent) : TagsWidget(parent) {
     setTags(labels);

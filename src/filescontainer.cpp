@@ -73,7 +73,6 @@ void FilesContainer::setupSignals() {
     });
 }
 
-
 void FilesContainer::addFiles(QList<Element*>* items) {
     clearView();
     BEGIN_TIME;
@@ -226,7 +225,6 @@ void FilesContainer::starSelected() {
     sortAndPin();
 }
 
-
 void FilesContainer::sortAndPin() {
     QListWidgetItem* current = currentItem();
     sortItems(Qt::AscendingOrder);
@@ -254,7 +252,6 @@ void FilesContainer::moveToTrash(QListWidgetItem* item) {
     delete takeItem(row(item));
 }
 
-
 void FilesContainer::permanentlyDelete(QListWidgetItem* item) {
     if (!hasFocus()) return;
     auto ok =
@@ -268,14 +265,12 @@ void FilesContainer::permanentlyDelete(QListWidgetItem* item) {
     delete real(takeItem(row(item)));
 }
 
-
 void FilesContainer::dragEnterEvent(QDragEnterEvent* event) {
     if (event->mimeData()->hasText() && count() > 0)
         event->accept();
     else
         event->ignore();
 }
-
 
 void FilesContainer::dragMoveEvent(QDragMoveEvent* event) {
     if (event->mimeData()->hasText()) {
@@ -285,7 +280,6 @@ void FilesContainer::dragMoveEvent(QDragMoveEvent* event) {
         event->ignore();
     }
 }
-
 
 void FilesContainer::dropEvent(QDropEvent* event) {
     if (event->mimeData()->hasText() && !event->mimeData()->text().isEmpty()) {
@@ -312,14 +306,12 @@ void FilesContainer::dropEvent(QDropEvent* event) {
         event->ignore();
 }
 
-
 void FilesContainer::appendTagToItem(const QString& tag, FileItem* item) {
     if (!item) return;
     item->element()->appendTag(tag);
     emit elementChanged(item->element());
     item->setText(item->element()->title());
 }
-
 
 void FilesContainer::overrideTags(const StringList& tags, FileItem* item) {
     if (!item) return;
@@ -329,7 +321,6 @@ void FilesContainer::overrideTags(const StringList& tags, FileItem* item) {
     emit elementChanged(item->element());
 }
 
-
 void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
     const QString lb = tr("Write the new Tag to append");
     QString tag      = QInputDialog::getText(this, tr("Append New Tag"), lb, QLineEdit::Normal);
@@ -338,7 +329,6 @@ void FilesContainer::appendNewTagToItem(QListWidgetItem* item) {
     real(item)->element()->reload();
     emit elementChanged(real(item)->element());
 }
-
 
 void FilesContainer::editElement(QListWidgetItem* item) {
     if (!item) return;
@@ -354,7 +344,6 @@ void FilesContainer::editElement(QListWidgetItem* item) {
     overrideTags(edit->tags(), it);
     sortAndPin();
 }
-
 
 FileItem* FilesContainer::itemFromPath(const QString& path) {
     for (int i = 0; i < count(); i++) {

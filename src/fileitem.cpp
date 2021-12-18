@@ -28,14 +28,16 @@ FileItem::FileItem(FilesContainer* parent)
 
 FileItem::FileItem(Element* element, FilesContainer* parent)
     : QListWidgetItem(element->title(), parent, 1600), m_element(element) {
-    std::thread([=] { setupIcons(); }).detach();
+    setupIcons();
 }
 
 FileItem::~FileItem() {
     m_element = nullptr;
 }
 
-FileItem::FileItem(const FileItem& other) : QListWidgetItem(other), m_element(other.m_element) {}
+FileItem::FileItem(const FileItem& other) : QListWidgetItem(other), m_element(other.m_element) {
+
+}
 
 FileItem::FileItem(FileItem&& other) : QListWidgetItem(other), m_element(other.m_element) {
     other.m_element = nullptr;
