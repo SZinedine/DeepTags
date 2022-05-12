@@ -19,6 +19,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMutex>
 #include "element.h"
 #ifdef INSIDE_EDITOR
     #include "editorwidget.h"
@@ -118,6 +119,7 @@ private:
     QLabel* spinnerLabel;
     QSystemTrayIcon* systray;
     QAction* systrayExitAction;
+    QMutex m_mutex;
 #ifdef INCLUDE_QBREEZE
     QActionGroup* themesActionGroup;
 #endif

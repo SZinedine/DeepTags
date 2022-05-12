@@ -23,9 +23,11 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QMovie>
+#include <QMutexLocker>
 #include <QShortcut>
 #include <QSystemTrayIcon>
 #include <memory>
+#include <mutex>
 #include "benchmarks.h"
 #include "datadirdialog.h"
 #include "elementdialog.h"
@@ -33,7 +35,6 @@
 #include "settings.h"
 #include "settingsdialog.h"
 #include "ui_mainwindow.h"
-
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -314,6 +315,7 @@ void MainWindow::newFile() {
 }
 
 void MainWindow::search() {
+    QMutexLocker lock(&m_mutex);
     const QString line = searchLineEdit->text().simplified().toLower();
     ui->filesContainer->clearView();
     ui->tagsContainer->clearSelection();
