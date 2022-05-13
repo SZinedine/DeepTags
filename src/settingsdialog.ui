@@ -37,6 +37,41 @@
         <widget class="DataDirWidget" name="dataDirWidget" native="true"/>
        </item>
        <item>
+        <widget class="QGroupBox" name="lineSeparatorGroupBox">
+         <property name="toolTip">
+          <string>This is applied when a file is written from DeepTags (like when adding a tag)</string>
+         </property>
+         <property name="title">
+          <string>Line Separator Type</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QRadioButton" name="crlfRadio">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Carriage return and line feet (CRLF)</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="lfRadio">
+            <property name="text">
+             <string>Line Feed (LF)</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

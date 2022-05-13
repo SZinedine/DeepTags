@@ -20,7 +20,7 @@
 
 #include <QString>
 #include <vector>
-
+#include "settings.h"
 
 class Element;
 typedef std::vector<QString> StringList;

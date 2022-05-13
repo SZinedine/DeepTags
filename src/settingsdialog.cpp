@@ -18,11 +18,13 @@
 #include "settingsdialog.h"
 #include <QButtonGroup>
 #include <QDialogButtonBox>
+#include "settings.h"
 #include "ui_settingsdialog.h"
 
 SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent), ui(new Ui::SettingsDialog) {
     ui->setupUi(this);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, [=] { accept(); });
+    loadLineBreak();
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -34,6 +36,21 @@ void SettingsDialog::accept() {
             [=] { emit dataDirectoryChanged(); });
     ui->dataDirWidget->accept();
     ui->mdReaders->accept();
+    saveLineBreak();
     disconnect(ui->dataDirWidget, nullptr, nullptr, nullptr);
     QDialog::accept();
+}
+
+void SettingsDialog::loadLineBreak() {
+    if (Settings::getSavedLineBreakName() == "lf")
+        ui->lfRadio->setChecked(true);
+    else
+        ui->crlfRadio->setChecked(true);
+}
+
+void SettingsDialog::saveLineBreak() {
+    if (ui->lfRadio->isChecked())
+        Settings::saveLineBreak("lf");
+    else
+        Settings::saveLineBreak("crlf");
 }

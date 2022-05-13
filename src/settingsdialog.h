@@ -32,6 +32,8 @@ public:
     SettingsDialog(QWidget* parent = nullptr);
     ~SettingsDialog();
     void accept() override;
+    void loadLineBreak();
+    void saveLineBreak();
 signals:
     void dataDirectoryChanged();
 

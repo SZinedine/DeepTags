@@ -25,6 +25,9 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include "settings.h"
+
+QString LineBreak = "\r\n";
 
 void BaseElement::createNewFile(const QString& p, QString title) {
     title = title.simplified();
@@ -472,9 +475,10 @@ void BaseElement::writeContentToFile(const StringList& content, const QString& f
         qDebug() << "Error while trying to write content into: " << file;
         return;
     }
+
     QTextStream stream(&qf);
     stream.setCodec("UTF-8");
-    for (auto& line : content) stream << line << "\r\n";
+    for (auto& line : content) stream << line << LineBreak;
     stream.flush();
     qf.close();
 }

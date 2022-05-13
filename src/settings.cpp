@@ -328,3 +328,24 @@ bool Settings::containsUseEditor() {
     s.endGroup();
     return res;
 }
+
+void Settings::saveLineBreak(const QString& lb) {
+    const QString x = (lb == "lf") ? "lf" : "crlf";
+    saveString("main", "line_break", x);
+    loadLineBreak();
+}
+
+const QString Settings::getSavedLineBreakName() {
+    const QString s(getString("main", "line_break").toLower());
+    return (s == "lf" || s == "crlf") ? s : "crlf";
+}
+
+QString Settings::getSavedLineBreak() {
+    return (getSavedLineBreakName() == "lf") ? "\n" : "\r\n";
+}
+
+extern QString LineBreak;
+
+void Settings::loadLineBreak() {
+    LineBreak = getSavedLineBreak();
+}

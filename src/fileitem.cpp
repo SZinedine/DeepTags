@@ -35,9 +35,7 @@ FileItem::~FileItem() {
     m_element = nullptr;
 }
 
-FileItem::FileItem(const FileItem& other) : QListWidgetItem(other), m_element(other.m_element) {
-
-}
+FileItem::FileItem(const FileItem& other) : QListWidgetItem(other), m_element(other.m_element) {}
 
 FileItem::FileItem(FileItem&& other) : QListWidgetItem(other), m_element(other.m_element) {
     other.m_element = nullptr;

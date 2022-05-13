@@ -105,6 +105,13 @@ namespace Settings {
     void saveUseEditor(bool use);
     bool loadUseEditor();
     bool containsUseEditor();
+    /**
+     * line break type : LF or CRLF
+     */
+    void saveLineBreak(const QString& ls);
+    const QString getSavedLineBreakName();   // return lf or crlf
+    QString getSavedLineBreak();             // return \n or \r\n
+    void loadLineBreak();
 };   // namespace Settings
 
 #endif

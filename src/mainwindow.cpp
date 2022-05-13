@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     Settings::loadWindowSize(this);
     Settings::loadSplitterState(ui->splitter);
+    Settings::loadLineBreak();
 
 #ifdef INCLUDE_QBREEZE   // use QBreeze if it exists
     Settings::loadTheme(themesActionGroup);
