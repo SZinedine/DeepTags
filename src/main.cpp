@@ -1,6 +1,6 @@
 /*************************************************************************
  * DeepTags, Markdown Notes Manager
- * Copyright (C) 2021  Zineddine Saibi
+ * Copyright (C) 2022  Zineddine Saibi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 
 #define HELP_MESSAGE                                                                   \
     "DeepTags " DEEPTAGS_VERSION " (" DEEPTAGS_WEBSITE ")\n"                           \
-    "Copyright (C) 2021 Zineddine SAIBI <saibi.zineddine@yahoo.com>.\n"                \
+    "Copyright (C) 2022 Zineddine SAIBI <saibi.zineddine@yahoo.com>.\n"                \
     "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\n" \
     "This is free software: you are free to change and redistribute it.\n"
 
