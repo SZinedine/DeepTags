@@ -33,12 +33,16 @@ class QByteArray;
 class QAction;
 
 namespace Settings {
-    void saveString(const QString& group, const QString& label, const QString& value);
-    QString getString(const QString& group, const QString& label);
-    void saveStringList(const QString& group, const QString& label, const QStringList& value);
-    QStringList getStringList(const QString& group, const QString& label);
-
-    void openFileAction(QAction* action);
+    /**
+     * helper functions to save, retrieve and check for setting values
+     */
+    void saveValue(const QString& group, const QString& label, const QVariant& value);
+    QVariant getValue(const QString& group, const QString& label);
+    bool contains(const QString& group, const QString& label);
+    /**
+     * open notes with the appropriate reader (saved ones)
+     */
+    void openFileAction(QAction* action);   // open one of the recently opened files
     void openFile(QString editor, const QString& path, QWidget* parent = nullptr);
     /**
      * save the main window related settings
@@ -50,7 +54,7 @@ namespace Settings {
     void loadSplitterState(QSplitter* splitter);
     void saveSplitterState(QSplitter* splitter);
     void loadWindowSize(MainWindow* w);
-    bool setDataDirectory(QString dataDirectory);
+    void setDataDirectory(QString dataDirectory);
     QString dataDirectory();
     bool dataDirectoryIsSet();
     /**
@@ -98,7 +102,6 @@ namespace Settings {
     void setTagPinned(const QString& item);
     void setTagUnpinned(const QString& item);
     QStringList getTagPinned();
-    void clearPinnedItems();
     /**
      * use the integrated editor or not
      */

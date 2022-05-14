@@ -31,68 +31,51 @@
 #include "element.h"
 #include "mainwindow.h"
 
-void Settings::saveString(const QString& group, const QString& label, const QString& value) {
+
+void Settings::saveValue(const QString& group, const QString& label, const QVariant& value) {
     QSettings s;
     s.beginGroup(group);
-    s.setValue(label, QVariant(value));
+    s.setValue(label, value);
     s.endGroup();
 }
 
-QString Settings::getString(const QString& group, const QString& label) {
+QVariant Settings::getValue(const QString& group, const QString& label) {
     QSettings s;
     s.beginGroup(group);
-    QString val = s.value(label).toString();
+    QVariant val = s.value(label);
     s.endGroup();
     return val;
 }
 
-void Settings::saveStringList(const QString& group, const QString& label,
-                              const QStringList& value) {
+bool Settings::contains(const QString& group, const QString& label) {
     QSettings s;
     s.beginGroup(group);
-    s.setValue(label, QVariant(value));
-    s.endGroup();
-}
-
-QStringList Settings::getStringList(const QString& group, const QString& label) {
-    QSettings s;
-    s.beginGroup(group);
-    QStringList val = s.value(label).toStringList();
+    const bool val = s.contains(label);
     s.endGroup();
     return val;
 }
 
 void Settings::saveUiSettings(const QSize& windowSize, const QByteArray& splitterState) {
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("window_size", QVariant(windowSize));   // size of the window
-    s.setValue("splitter_size", splitterState);
-    s.endGroup();
+    saveValue("main", "window_size", QVariant(windowSize));   // size of the window
+    saveValue("main", "splitter_size", QVariant(splitterState));
 }
 
 void Settings::loadSplitterState(QSplitter* splitter) {
-    QSettings s;
-    s.beginGroup("main");
-    splitter->restoreState(s.value("splitter_size").toByteArray());
-    s.endGroup();
+    const auto val = getValue("main", "splitter_size").toByteArray();
+    splitter->restoreState(val);
 }
 
 void Settings::saveSplitterState(QSplitter* splitter) {
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("splitter_size", splitter->saveState());
-    s.endGroup();
+    saveValue("main", "splitter_size", splitter->saveState());
 }
 
 void Settings::loadWindowSize(MainWindow* w) {
-    QSettings s;
-    s.beginGroup("main");
-    w->resize(s.value("window_size").toSize());
-    s.endGroup();
+    const auto val = getValue("main", "window_size").toSize();
+    w->resize(val);
 }
 
 void Settings::saveEditors(const QStringList& lst) {
-    saveStringList("markdown_editors", "list", lst);
+    saveValue("markdown_editors", "list", lst);
     if (!lst.isEmpty())
         saveMainEditor(lst.at(0));
     else
@@ -100,53 +83,37 @@ void Settings::saveEditors(const QStringList& lst) {
 }
 
 QStringList Settings::mdEditors() {
-    return getStringList("markdown_editors", "list");
+    return getValue("markdown_editors", "list").toStringList();
 }
 
 void Settings::saveMainEditor(const QString& editor) {
-    saveString("markdown_editors", "main", editor);
+    saveValue("markdown_editors", "main", editor);
 }
 
 QString Settings::mainMdEditor() {
-    return getString("markdown_editors", "main");
+    return getValue("markdown_editors", "main").toString();
 }
 
-bool Settings::setDataDirectory(QString dataDirectory) {
-    if (dataDirectory.isEmpty()) return false;
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("data_dir", dataDirectory);
-    if (!s.contains("last_dir")) s.setValue("last_dir", dataDirectory);
-    s.endGroup();
-    return true;
+void Settings::setDataDirectory(QString dataDirectory) {
+    if (dataDirectory.isEmpty()) return;
+    saveValue("main", "data_dir", dataDirectory);
 }
 
 QString Settings::dataDirectory() {
     if (!dataDirectoryIsSet()) return QDir::homePath();
-    return getString("main", "data_dir");
+    return getValue("main", "data_dir").toString();
 }
 
 bool Settings::dataDirectoryIsSet() {
-    QSettings s;
-    s.beginGroup("main");
-    bool res = s.contains("data_dir");
-    s.endGroup();
-    return res;
+    return contains("main", "data_dir");
 }
 
 void Settings::expand(const bool& expanded) {
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("expanded", expanded);
-    s.endGroup();
+    saveValue("main", "expanded", expanded);
 }
 
 bool Settings::expandedItems() {
-    QSettings s;
-    s.beginGroup("main");
-    bool res = s.value("expanded").toBool();
-    s.endGroup();
-    return res;
+    return getValue("main", "expanded").toBool();
 }
 
 void Settings::saveRecentlyOpenedFile(const QString& p) {
@@ -159,14 +126,9 @@ void Settings::saveRecentlyOpenedFile(const QString& p) {
 }
 
 void Settings::saveRecentlyOpenedFiles(QStringList& paths) {
-    // only save the first 15 files
-    const int maxSize = 15;
+    const int maxSize = 15;   // only save the first 15 files
     while (paths.length() > maxSize) paths.removeLast();
-
-    QSettings s;
-    s.beginGroup("files");
-    s.setValue("recently_opened_files", paths);
-    s.endGroup();
+    saveValue("files", "recently_opened_files", paths);
 }
 
 QMenu* Settings::getActionsRecentlyOpenedFiles(QMenu* menu) {
@@ -202,7 +164,7 @@ void Settings::eraseRecentlyOpenedFiles() {
 }
 
 QStringList Settings::getRawRecentlyOpenedFiles() {
-    return getStringList("files", "recently_opened_files");
+    return getValue("files", "recently_opened_files").toStringList();
 }
 
 void Settings::openFileAction(QAction* action) {
@@ -232,16 +194,13 @@ void Settings::openFile(QString editor, const QString& path, QWidget* parent) {
 }
 
 void Settings::saveTheme(QAction* ac) {
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("theme", ac->data());
-    s.endGroup();
+    saveValue("main", "theme", ac->data());
     ac->setChecked(true);
     applyTheme(ac->data().toString());
 }
 
 void Settings::loadTheme(QActionGroup* ag) {
-    QString theme = getString("main", "theme");
+    QString theme = getValue("main", "theme").toString();
     applyTheme(theme);
     for (QAction* ac : ag->actions())
         if (ac->data().toString() == theme) ac->setChecked(true);
@@ -262,19 +221,11 @@ void Settings::setTagItemColor(const QString& item, const QString& color) {
     auto map  = getTagItemColor();
     map[item] = QVariant(color);
     if (color.isEmpty()) map.remove(item);
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("item_color", map);
-    s.endGroup();
+    saveValue("main", "item_color", map);
 }
 
 QHash<QString, QVariant> Settings::getTagItemColor() {
-    QHash<QString, QVariant> map;
-    QSettings s;
-    s.beginGroup("main");
-    map = s.value("item_color").toHash();
-    s.endGroup();
-    return map;
+    return getValue("main", "item_color").toHash();
 }
 
 void Settings::clearColorItems() {
@@ -288,55 +239,40 @@ void Settings::setTagPinned(const QString& item) {
     auto lst = getTagPinned();
     if (lst.contains(item)) return;
     lst.append(item);
-    saveStringList("main", "item_pinned", lst);
+    saveValue("main", "item_pinned", lst);
 }
 
 void Settings::setTagUnpinned(const QString& item) {
     auto lst = getTagPinned();
     if (!lst.contains(item)) return;
     lst.removeAll(item);
-    saveStringList("main", "item_pinned", lst);
+    saveValue("main", "item_pinned", lst);
 }
 
 QStringList Settings::getTagPinned() {
-    return getStringList("main", "item_pinned");
-}
-
-void Settings::clearPinnedItems() {
-    saveStringList("main", "item_pinned", {});
+    return getValue("main", "item_pinned").toStringList();
 }
 
 void Settings::saveUseEditor(bool use) {
-    QSettings s;
-    s.beginGroup("main");
-    s.setValue("use_integrated_editor", QVariant(use));
-    s.endGroup();
+    saveValue("main", "use_integrated_editor", QVariant(use));
 }
 
 bool Settings::loadUseEditor() {
-    QSettings s;
-    s.beginGroup("main");
-    bool res = s.value("use_integrated_editor").toBool();
-    s.endGroup();
-    return res;
+    return getValue("main", "use_integrated_editor").toBool();
 }
 
 bool Settings::containsUseEditor() {
-    QSettings s;
-    s.beginGroup("main");
-    bool res = s.contains("use_integrated_editor");
-    s.endGroup();
-    return res;
+    return contains("main", "use_integrated_editor");
 }
 
 void Settings::saveLineBreak(const QString& lb) {
     const QString x = (lb == "lf") ? "lf" : "crlf";
-    saveString("main", "line_break", x);
+    saveValue("main", "line_break", x);
     loadLineBreak();
 }
 
 const QString Settings::getSavedLineBreakName() {
-    const QString s(getString("main", "line_break").toLower());
+    const QString s(getValue("main", "line_break").toString().toLower());
     return (s == "lf" || s == "crlf") ? s : "crlf";
 }
 
