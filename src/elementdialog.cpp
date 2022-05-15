@@ -123,12 +123,14 @@ void ElementDialog::formatFilename(QString& str) {
     };
     str.replace(":", ";");
     str.replace("/", "-");
+    str.replace("\\", "-");
     str.replace("|", "-");
     str.replace("<", "(");
     str.replace(">", ")");
-    str.replace("*", "");
-    str.replace("\\", "-");
+    str.replace("*", "-");
     str.replace("?", "");
+    str.replace('"', "'");
+    while (str.endsWith(".")) str.remove(str.size()-1, 1);
     if (!hasMdExtension(str)) str.append(".md");
 }
 
