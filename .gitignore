@@ -12,4 +12,5 @@ packaging/*.AppImage
 packaging/*.deb
 packaging/deeptags*
 !packaging/deeptags.install
-
+.cache/
+compile_commands.json
