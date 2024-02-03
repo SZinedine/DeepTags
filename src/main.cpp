@@ -1,81 +1,70 @@
-/*************************************************************************
- * DeepTags, Markdown Notes Manager
- * Copyright (C) 2020  Zineddine Saibi
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *************************************************************************/
 #include <QApplication>
-#include <QLibraryInfo>
 #include <QTranslator>
+#include <SingleApplication>
 #include <cstring>
-#include <iostream>
-#include "mainwindow.h"
-
-#define NAME             "DeepTags"
-#define DEEPTAGS_WEBSITE "https://github.com/SZinedine/DeepTags"
-#define ORG_WEBSITE      "https://github.com/SZinedine"
-
-
-#ifdef INCLUDE_SINGLE_APPLICATION
-    #include <SingleApplication>
-    #define _QAPP SingleApplication
-#else
-    #define _QAPP QApplication
-#endif
-
+#include "MainWindow.h"
 
 #ifndef DEEPTAGS_VERSION
     #error "The DEEPTAGS_VERSION flag isn't defined. Please define it and proceed"
 #endif
 
-
-#define HELP_MESSAGE                                                                   \
-    "DeepTags " DEEPTAGS_VERSION " (" DEEPTAGS_WEBSITE ")\n"                           \
-    "Copyright (C) 2020 Zineddine SAIBI <saibi.zineddine@yahoo.com>.\n"                \
-    "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\n" \
-    "This is free software: you are free to change and redistribute it.\n"
+int error();
+const auto NAME             = QStringLiteral("DeepTagsRewrite");
+const auto DEEPTAGS_WEBSITE = QStringLiteral("https://github.com/SZinedine/DeepTags");
+const auto ORG_WEBSITE      = QStringLiteral("https://github.com/SZinedine");
+const auto VERSION          = QStringLiteral(DEEPTAGS_VERSION);
 
 
 int main(int argc, char* argv[]) {
-    if (argc == 2) {
+    switch (argc) {
+    case 1:
+        break;
+    case 2: {
         if (std::strcmp(argv[1], "-v") == 0 || std::strcmp(argv[1], "--version") == 0) {
-            std::cout << DEEPTAGS_VERSION << std::endl;
+            std::puts(QString("%1 %2").arg(NAME, VERSION).toStdString().c_str());
             return 0;
         } else if (std::strcmp(argv[1], "-h") == 0 || std::strcmp(argv[1], "--help") == 0) {
-            std::cout << HELP_MESSAGE << std::endl;
+            const QString HELP_MESSAGE =
+                QString("DeepTags %1 (%2)\n").arg(VERSION, DEEPTAGS_WEBSITE) +
+                "Copyright (C) 2024 Zineddine SAIBI <saibi.zineddine@yahoo.com>.\n" +
+                "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\n" +
+                "This is free software: you are free to change and redistribute it.\n";
+            std::puts(HELP_MESSAGE.toStdString().c_str());
+
             return 0;
         } else {
-            std::cout << "ERROR. Try to run DeepTags without any argument." << std::endl;
-            return 1;
+            return error();
         }
     }
-    _QAPP app(argc, argv);
-    app.setApplicationName(NAME);
-    app.setApplicationVersion(DEEPTAGS_VERSION);
-    app.setOrganizationDomain(ORG_WEBSITE);
-    app.setOrganizationName(NAME);
+    default: {
+        return error();
+    }
+    }
 
-    QString locale = ":locale/deeptags_" + QLocale::system().name().section('_', 0, 0) + ".qm";
-    QTranslator tran;
-    // tran.load(":locale/deeptags_fr.qm");		// for test
-    tran.load(locale);
-    app.installTranslator(&tran);
+    SingleApplication app(argc, argv);
+    QApplication::setApplicationName(NAME);
+    QApplication::setOrganizationName(NAME);
+    QApplication::setApplicationVersion(VERSION);
+    QApplication::setOrganizationDomain(ORG_WEBSITE);
 
-    MainWindow w;
-    w.setWindowTitle(QString(NAME));
-    w.setWindowIcon(QIcon(":images/icon128.png"));
-    w.show();
+    auto locale = QLocale::system().name().section('_', 0, 0);
+    // locale = "fr";      // for test
+    auto translationFile = QString(":locale/DeepTags_%1.qm").arg(locale);
+    QTranslator tr;
+    tr.load(translationFile);
+    QApplication::installTranslator(&tr);
 
-    return app.exec();
+    MainWindow win;
+    win.setWindowTitle(NAME);
+    win.setWindowIcon(QIcon((QStringLiteral(":images/icon128.png"))));
+    QObject::connect(&app, &SingleApplication::instanceStarted, &win, &QMainWindow::raise);
+    win.show();
+
+    return QApplication::exec();
+}
+
+
+int error() {
+    std::puts("Error. Invalid arguments");
+    return 1;
 }
