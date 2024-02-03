@@ -31,8 +31,8 @@ DeepTags supports nested tags and offers simple ways to edit them, for example b
 
 ## Dependencies
 
-- The Qt framework (>=)5.5
-- A C++14 compiler
+- A C++17 compiler
+- The Qt framework 5.15
 
 
 ## Downloads
@@ -46,7 +46,8 @@ You can download the latest release [here](https://github.com/SZinedine/DeepTags
 ```bash
 git clone --recursive https://github.com/SZinedine/DeepTags.git
 cd DeepTags
-qmake && make
+mkdir build && cd build
+cmake .. && make
 ```
 
 #### Install on Arch Linux
@@ -62,7 +63,10 @@ or
 yay -S deeptags
 ```
 
+
 ## Credit
-- [QMarkdownTextEdit](https://github.com/pbek/qmarkdowntextedit) used as an integrated reader.
+
+- [QMarkdownTextEdit](https://github.com/pbek/qmarkdowntextedit)
+- [SingleApplication](https://github.com/itay-grudev/SingleApplication)
 - Yannick Lung's [icons](https://www.iconfinder.com/yanlu) are used throughout the app.
 
