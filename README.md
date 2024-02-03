@@ -4,9 +4,9 @@
 
 <h1 align="center">DeepTags</h1>
 
-<div align="center">
-<a href="https://github.com/SZinedine/DeepTags/releases"><img src="https://img.shields.io/github/v/release/SZinedine/DeepTags" alt="Github Releases" /></a> <a href="https://travis-ci.org/SZinedine/DeepTags"><img src="https://travis-ci.org/SZinedine/DeepTags.svg?branch=master" alt="Build Status" /></a> <a href="https://ci.appveyor.com/project/SZinedine/DeepTags"><img src="https://ci.appveyor.com/api/projects/status/github/SZinedine/DeepTags" alt="Build Status Windows" /></a>
-</div>
+<!-- <div align="center"> -->
+<!-- <a href="https://github.com/SZinedine/DeepTags/releases"><img src="https://img.shields.io/github/v/release/SZinedine/DeepTags" alt="Github Releases" /></a> <a href="https://travis-ci.org/SZinedine/DeepTags"><img src="https://travis-ci.org/SZinedine/DeepTags.svg?branch=master" alt="Build Status" /></a> <a href="https://ci.appveyor.com/project/SZinedine/DeepTags"><img src="https://ci.appveyor.com/api/projects/status/github/SZinedine/DeepTags" alt="Build Status Windows" /></a> -->
+<!-- </div> -->
 
 **DeepTags** is a Markdown notes manager that organizes notes according to tags.
 

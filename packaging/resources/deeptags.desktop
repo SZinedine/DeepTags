@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Categories=Utility;
+Categories=Utility;Office;Qt;
 Name=DeepTags
 Comment=A markdown notes manager that organizes notes according to tags
 TryExec=deeptags

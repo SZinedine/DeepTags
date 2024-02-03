@@ -1,0 +1,46 @@
+# Maintainer: Zineddine SAIBI <saibi.zineddine@yahoo.com>
+
+pkgname=deeptags
+pkgver=0.8.0
+pkgrel=1
+pkgdesc="A Markdown notes manager"
+arch=('x86_64')
+url="https://github.com/SZinedine/DeepTags"
+license=('GPL3')
+depends=('qt5-base' 'qt5-svg')
+makedepends=('qt5-tools' 'git' 'gcc' 'make')
+# source=("$pkgname::git+https://github.com/SZinedine/DeepTags.git#tag=$pkgver")
+source=("$pkgname"::"git+file:///home/szinedine/Documents/Scripts/DeepTagsRewrite")
+conflicts=("deeptags-git")
+# install=$pkgname.install
+sha256sums=('SKIP')
+
+prepare() {
+    cd "$pkgname"
+    # git submodule update --init --recursive
+    cp -r /home/szinedine/Documents/Scripts/DeepTagsRewrite/src/3rdParty/* /home/szinedine/Programs/deeptagsrewrite/src/deeptags/src/3rdParty/
+    mkdir -p build
+}
+
+build() {
+    cd "$pkgname"
+    cd build
+    cmake -DBENCHMARK=OFF -DTEST=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt ..
+    make -j10
+}
+
+package() {
+    cd $pkgname/
+    DESTDIR="${pkgdir}" cmake --install build
+
+    local rcdir="packaging/resources"
+    install -Dm 644 $rcdir/$pkgname.appdata.xml    $pkgdir/usr/share/metainfo/$pkgname.appdata.xml;
+    install -Dm 644 $rcdir/$pkgname.desktop        $pkgdir/usr/share/applications/$pkgname.desktop
+    install -Dm 644 LICENSE                        $pkgdir/usr/share/licenses/$pkgname/LICENSE
+
+    for icon in 16x16 32x32 48x48 64x64 80x80 96x96 128x128 192x192 256x256 384x384 512x512; do
+        install -Dm 644 $rcdir/icons/hicolor/$icon/apps/$pkgname.png  $pkgdir/usr/share/icons/hicolor/$icon/apps/$pkgname.png
+    done
+    install -Dm 644 $rcdir/icons/hicolor/scalable/apps/$pkgname.svg   $pkgdir/usr/share/icons/hicolor/scalable/apps/$pkgname.svg
+}
+

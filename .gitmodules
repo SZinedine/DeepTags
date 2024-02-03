@@ -1,9 +1,9 @@
-[submodule "3rdParty/QBreeze"]
-	path = 3rdParty/QBreeze
-	url = https://github.com/SZinedine/QBreeze
-[submodule "3rdParty/qmarkdowntextedit"]
-	path = 3rdParty/qmarkdowntextedit
-	url = https://github.com/pbek/qmarkdowntextedit
-[submodule "3rdParty/SingleApplication"]
-	path = 3rdParty/SingleApplication
+[submodule "src/3rdParty/SingleApplication"]
+	path = src/3rdParty/SingleApplication
 	url = https://github.com/itay-grudev/SingleApplication
+[submodule "src/3rdParty/qmarkdowntextedit"]
+	path = src/3rdParty/qmarkdowntextedit
+	url = https://github.com/pbek/qmarkdowntextedit
+[submodule "src/3rdParty/QBreeze"]
+	path = src/3rdParty/QBreeze
+	url = https://github.com/SZinedine/QBreeze
