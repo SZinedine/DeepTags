@@ -83,7 +83,7 @@ bool writeContentToFile(const QStringVector& content, const QString& filepath);
 /**
  * check if a file as a markdown extension
  */
-[[nodiscard]] bool isMD(QStringView file);
+[[nodiscard]] bool isMD(const QString& file);
 /**
  *  produce a header entry line
  */

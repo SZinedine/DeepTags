@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QTextStream>
+#include <cctype>
 #include "Document.h"
 #include "TagTreeItem.h"
 
@@ -278,11 +279,12 @@ QStringVector getPathList(const QString& directory) {
 }
 
 
-bool isMD(QStringView file) {
+bool isMD(const QString& file) {
+    const auto file_ = file.toLower();
     static const std::vector<QString> extension{ ".md",    ".markdown", ".mdwn", ".mdown",
                                                  ".mdtxt", ".mdtext",   ".mkd" };
     return std::any_of(extension.begin(), extension.end(),
-                       [file](auto ext) { return file.endsWith(ext); });
+                       [&file_](auto ext) { return file_.endsWith(ext); });
 }
 
 
