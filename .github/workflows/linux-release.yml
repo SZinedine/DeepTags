@@ -1,0 +1,113 @@
+name: Linux Release
+
+
+on:
+  workflow_dispatch:
+
+
+env:
+  BUILD_DIR_PATH: ${{github.workspace}}/build
+  QT_VERSION: 5.12.2
+  QT_ARCH: gcc_64
+  TAG: ${{github.ref_name}}
+  DEEPTAGS_DIR_NAME: DeepTags_${{ github.ref_name }}
+
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v4
+      with:
+        path: ../Qt
+        key: ${{runner.os}}-${{env.QT_ARCH}}-QtCache-${{env.QT_VERSION}}
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: 5.15.2
+        arch: gcc_64
+        aqtversion: '==2.0.0'
+        setup-python: false
+        cache: true
+
+
+    - name: Configure CMake
+      run: >
+        cmake -B build/
+        -DCMAKE_CXX_COMPILER=g++
+        -DCMAKE_C_COMPILER=gcc
+        -DCMAKE_BUILD_TYPE=Release
+        -S ${{ github.workspace }}
+
+
+    - name: Building
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release
+
+
+    - name: Create .deb file
+      run: |
+        ./packaging/package-deb.sh
+        mv packaging/*.deb .
+
+
+
+    - name: Setup linuxdeploy
+      run: |
+        curl -fLO --retry 10 https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        chmod +x linuxdeploy-x86_64.AppImage
+
+
+    - name: Setup Qt plugin for linuxdeploy
+      run: |
+        curl -fLO --retry 10 https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+        chmod +x linuxdeploy-plugin-qt-x86_64.AppImage
+
+
+    - name: 'prepare AppImage directory structure'
+      run: |
+        ls -l build
+        ./linuxdeploy-x86_64.AppImage --appdir      ${{env.DEEPTAGS_DIR_NAME}}/
+        cp packaging/resources/deeptags.desktop     ${{env.DEEPTAGS_DIR_NAME}}//usr/share/applications/
+        cp -r packaging/resources/icons             ${{env.DEEPTAGS_DIR_NAME}}/usr/share/
+        cp build/deeptags                           ${{env.DEEPTAGS_DIR_NAME}}/usr/bin/
+        cp deeptags.png                             ${{env.DEEPTAGS_DIR_NAME}}/
+        tree ${{env.DEEPTAGS_DIR_NAME}}/
+
+
+    - name: 'Run linuxdeployqt'
+      run: |
+        ./linuxdeploy-x86_64.AppImage --appdir ${{env.DEEPTAGS_DIR_NAME}} --plugin qt --output appimage
+        mv DeepTags*.AppImage DeepTags_${{ env.TAG }}-x86_64.AppImage
+        ls -la
+
+
+    - name: Create release
+      uses: Roang-zero1/github-create-release-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        version_regex: ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+
+
+
+    - name: Upload release artifacts
+      uses: Roang-zero1/github-upload-release-artifacts-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: "DeepTags*.AppImage *amd64.deb"
+

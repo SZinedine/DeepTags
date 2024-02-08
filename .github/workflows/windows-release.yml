@@ -1,0 +1,120 @@
+name: Windows Release
+
+
+on:
+  workflow_dispatch:
+
+
+env:
+  BUILD_DIR_PATH: ${{github.workspace}}/build
+  QT_VERSION: 5.12.2
+  QT_ARCH: win64_msvc2019_64
+  MSVC_ARCH: x64
+
+
+jobs:
+  build:
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{env.MSVC_ARCH}}
+
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v4
+      with:
+        path: ../Qt
+        key: ${{runner.os}}-${{env.QT_ARCH}}-QtCache-${{env.QT_VERSION}}
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: 5.15.2
+        arch: win64_msvc2019_64
+        aqtversion: '==2.0.0'
+        setup-python: false
+        cache: true
+
+
+    - name: Configuration and Build
+      run: |
+        cmake -B ${{env.BUILD_DIR_PATH}} -DCMAKE_CXX_COMPILER=cl
+        cmake --build ${{env.BUILD_DIR_PATH}} --config Release
+
+
+    - name: create the dir and copy the binary to it
+      shell: bash
+      run: |
+        mkdir -p DeepTags
+        mkdir -p DeepTags/translations
+        cp build/Release/deeptags DeepTags/
+        cp deeptags.png DeepTags/
+        cp LICENSE DeepTags/
+        cp images/DeepTags.ico DeepTags/
+        cp locale/*.ts DeepTags/translations/
+        ls -l DeepTags
+
+    - name: execute windeployqt
+      shell: bash
+      run: |
+        cd DeepTags
+        windeployqt.exe .
+        cd ..
+
+
+    - name: copy runtime dlls
+      run: |
+        Copy-Item $env:VCToolsRedistDir\x64\Microsoft.VC142.CRT\msvcp140.dll DeepTags
+        Copy-Item $env:VCToolsRedistDir\x64\Microsoft.VC142.CRT\msvcp140_1.dll DeepTags
+        Copy-Item $env:VCToolsRedistDir\x64\Microsoft.VC142.CRT\vcruntime140.dll DeepTags
+        Copy-Item $env:VCToolsRedistDir\x64\Microsoft.VC142.CRT\vcruntime140_1.dll DeepTags
+        dir DeepTags
+
+
+    - name: ZIP
+      run: |
+        7z a DeepTags-${{github.ref_name}}-win-x64.zip DeepTags
+
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: DeepTags-${{github.ref_name}}-win-x64.zip
+        path: DeepTags-${{github.ref_name}}-win-x64.zip
+
+
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: DeepTags-${{github.ref_name}}-win-x64.zip
+
+
+    - name: Create release
+      uses: Roang-zero1/github-create-release-action@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        version_regex: ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+
+
+
+    - name: Upload deb file 
+      uses: Roang-zero1/github-upload-release-artifacts-action@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: DeepTags-${{github.ref_name}}-win-x64.zip
+

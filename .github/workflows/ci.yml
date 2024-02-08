@@ -1,0 +1,62 @@
+name: Running Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+
+env:
+  BUILD_TYPE: Debug
+  QT_VERSION: 5.12.2
+  QT_ARCH: gcc_64
+  BUILD_DIR: ${{github.workspace}}/build
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v4
+      with:
+        path: ../Qt
+        key: ${{runner.os}}-${{env.QT_ARCH}}-QtCache-${{env.QT_VERSION}}
+
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{env.QT_VERSION}}
+        arch: ${{env.QT_ARCH}}
+        aqtversion: '==2.0.0'
+        setup-python: false
+        cache: true
+
+
+    - name: Configure CMake for testing
+      run: cmake -B ${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBENCHMARK=ON -DTEST=ON 
+
+
+    - name: Build for testing
+      run: |
+        cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}} --parallel $(nproc)
+        ${{env.BUILD_DIR}}/deeptags
+
+
+    - name: Re-Configure CMake for regular build
+      run: cmake -B ${{env.BUILD_DIR}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBENCHMARK=ON -DTEST=OFF 
+
+
+    - name: Launch a regular build
+      run: cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}} --parallel $(nproc)
+
