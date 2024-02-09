@@ -9,7 +9,7 @@
 #endif
 
 int error();
-const auto NAME             = QStringLiteral("DeepTagsRewrite");
+const auto NAME             = QStringLiteral("DeepTags");
 const auto DEEPTAGS_WEBSITE = QStringLiteral("https://github.com/SZinedine/DeepTags");
 const auto ORG_WEBSITE      = QStringLiteral("https://github.com/SZinedine");
 const auto VERSION          = QStringLiteral(DEEPTAGS_VERSION);
