@@ -24,6 +24,7 @@ void saveSplitterState();
  */
 void saveDocumentViewerVisibility(bool use);
 bool loadDocumentViewerVisibility();
+bool hasLoadDocumentViewerVisibility();
 
 /**
  * Save/Load the Data Directory

@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include <QAction>
 #include <QDesktopServices>
+#include <QDir>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -100,7 +101,11 @@ void MainWindow::setupSettings() {
         ui->splitter->restoreState(splitterData);
     }
 
-    // visibility of the Document Viewer
+    // Document Viewer visible by default
+    if (!Settings::hasLoadDocumentViewerVisibility()) {
+        Settings::saveDocumentViewerVisibility(true);
+    }
+
     bool visibleDocumentViewer = Settings::loadDocumentViewerVisibility();
     Settings::saveDocumentViewerVisibility(visibleDocumentViewer);
     ui->documentContentView->setVisible(visibleDocumentViewer);
@@ -241,12 +246,12 @@ void MainWindow::loadDocuments() {
     ui->documentContentView->reset();
     clearDocuments();
 
-    QString dataDirectory = Ui::Settings::loadDataDirectory();
-    if (dataDirectory.isEmpty()) {
+    QString dataDirectory = Ui::Settings::loadDataDirectory();;
+    if (dataDirectory.isEmpty() || !QDir(dataDirectory).exists()) {
         onChangeDataDirAction();
+        return;
     }
 
-    dataDirectory = Ui::Settings::loadDataDirectory();
     auto pathList = Doc::Utils::getPathList(dataDirectory);
     mDocuments    = Document::constructDocumentList(pathList);
 

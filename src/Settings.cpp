@@ -76,6 +76,11 @@ bool loadDocumentViewerVisibility() {
 }
 
 
+bool hasLoadDocumentViewerVisibility() {
+    return contains(mainGroup, documentViewerVisibilityLabel);
+}
+
+
 void saveDataDirectory(const QString& value) {
     saveValue(mainGroup, dataDirectoryLabel, value);
 }
