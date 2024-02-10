@@ -7,6 +7,7 @@ on:
 
 env:
   BUILD_DIR_PATH: ${{github.workspace}}/build
+  QT_LOC: ${{github.workspace}}/Qt
   QT_VERSION: 5.12.2
   QT_ARCH: gcc_64
   TAG: ${{github.ref_name}}
@@ -33,15 +34,16 @@ jobs:
       id: cache-qt
       uses: actions/cache@v4
       with:
-        path: ../Qt
+        path: ${{env.QT_LOC}}
         key: ${{runner.os}}-${{env.QT_ARCH}}-QtCache-${{env.QT_VERSION}}
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
         version: 5.15.2
+        dir: ${{env.QT_LOC}}
         arch: gcc_64
-        aqtversion: '==2.0.0'
+        aqtversion: '==3.1.11'
         setup-python: false
         cache: true
 

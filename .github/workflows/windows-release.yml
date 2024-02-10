@@ -89,6 +89,7 @@ jobs:
       with:
         name: DeepTags-${{github.ref_name}}-win-x64.zip
         path: DeepTags-${{github.ref_name}}-win-x64.zip
+        retention-days: 1
 
 
 

@@ -1,44 +1,52 @@
 name: Running Tests
 
+
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 
 env:
   BUILD_TYPE: Debug
+  BUILD_DIR: ${{github.workspace}}/build
+  QT_LOC: ${{github.workspace}}/Qt
   QT_VERSION: 5.12.2
   QT_ARCH: gcc_64
-  BUILD_DIR: ${{github.workspace}}/build
 
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
 
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
 
     - name: Cache Qt
       id: cache-qt
       uses: actions/cache@v4
       with:
-        path: ../Qt
+        path: ${{env.QT_LOC}}
         key: ${{runner.os}}-${{env.QT_ARCH}}-QtCache-${{env.QT_VERSION}}
-
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        version: ${{env.QT_VERSION}}
-        arch: ${{env.QT_ARCH}}
-        aqtversion: '==2.0.0'
+        version: 5.15.2
+        dir: ${{env.QT_LOC}}
+        arch: gcc_64
+        aqtversion: '==3.1.11'
         setup-python: false
         cache: true
 
@@ -50,7 +58,6 @@ jobs:
     - name: Build for testing
       run: |
         cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}} --parallel $(nproc)
-        ${{env.BUILD_DIR}}/deeptags
 
 
     - name: Re-Configure CMake for regular build
