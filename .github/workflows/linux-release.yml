@@ -12,6 +12,7 @@ env:
   QT_ARCH: gcc_64
   TAG: ${{github.ref_name}}
   DEEPTAGS_DIR_NAME: DeepTags_${{ github.ref_name }}
+  APPIMAGE_FILENAME: DeepTags_${{ github.ref_name }}-x86_64.AppImage
 
 
 jobs:
@@ -94,8 +95,14 @@ jobs:
     - name: 'Run linuxdeployqt'
       run: |
         ./linuxdeploy-x86_64.AppImage --appdir ${{env.DEEPTAGS_DIR_NAME}} --plugin qt --output appimage
-        mv DeepTags*.AppImage DeepTags_${{ env.TAG }}-x86_64.AppImage
+        mv DeepTags*.AppImage ${{env.APPIMAGE_FILENAME}}
         ls -la
+
+
+    - name: 'Generate hash for tha Appimage'
+      run: |
+        sha256sum ${{env.APPIMAGE_FILENAME}} > ${{env.APPIMAGE_FILENAME}}.sha256sum
+        ls -l
 
 
     - name: Create release
@@ -111,5 +118,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        args: "DeepTags*.AppImage *amd64.deb"
+        args: "DeepTags*.AppImage DeepTags*.AppImage.sha256sum  deeptags*amd64.deb"
+
 

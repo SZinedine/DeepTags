@@ -1,0 +1,56 @@
+name: Source Code Release
+
+
+on:
+  workflow_dispatch:
+
+
+env:
+  ARCHIVE_FILENAME: DeepTags_${{ github.ref_name }}.tar.xz
+
+
+jobs:
+  archive:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+
+    - name: Remove unnecessary files
+      shell: bash
+      run: |
+        rm -rf .git .github .gitmodules .gitignore
+        rm -rf src/3rdParty/*/{.git,.github,.gitignore}
+
+
+    - name: Build Archive
+      run: |
+        tar cJvf ../${{env.ARCHIVE_FILENAME}} .
+        mv ../${{env.ARCHIVE_FILENAME}} .
+
+
+    - name: Generate Hashes
+      run: |
+        md5sum ${{env.ARCHIVE_FILENAME}} > ${{env.ARCHIVE_FILENAME}}.md5sum
+        sha256sum ${{env.ARCHIVE_FILENAME}} > ${{env.ARCHIVE_FILENAME}}.sha256sum
+        ls -l
+
+
+    - name: Create release
+      uses: Roang-zero1/github-create-release-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        version_regex: ^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+
+
+
+    - name: Upload release artifacts
+      uses: Roang-zero1/github-upload-release-artifacts-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: "*.tar.xz *.md5sum *.sha256sum"
+
