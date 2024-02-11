@@ -7,39 +7,48 @@ pkgdesc="A Markdown notes manager"
 arch=('x86_64')
 url="https://github.com/SZinedine/DeepTags"
 license=('GPL3')
-depends=('qt5-base' 'qt5-svg')
-makedepends=('qt5-tools' 'git' 'gcc' 'make' 'cmake')
-source=("$pkgname::git+https://github.com/SZinedine/DeepTags.git#tag=$pkgver")
+depends=(
+    'qt5-base'
+    'qt5-svg'
+)
+makedepends=(
+    'qt5-tools'
+    'git'
+    'gcc'
+    'make'
+)
+source=(
+    "https://github.com/SZinedine/DeepTags/releases/download/${pkgver}/DeepTags-${pkgver}.tar.xz"
+)
+sha256sums=(
+    '5b3163323c3ce90f83fb2372b113039fb586ef4e75bdd4626ce7fa6b109232d1'
+)
 conflicts=("deeptags-git")
-install=$pkgname.install
-sha256sums=('SKIP')
+
 
 prepare() {
-    cd "$pkgname"
-    git submodule update --init --recursive
-    mkdir -p build
+    cmake                               \
+        -B build/                       \
+        -DCMAKE_CXX_COMPILER=g++
 }
 
 build() {
-    cd "$pkgname"
-    cd build
-    cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/opt ..
-    make
+    cmake                               \
+        --build build/                  \
+        --config Release
 }
 
 package() {
-    cd $pkgname/
-    DESTDIR="${pkgdir}" cmake --install build
+    install -Dm 755 build/deeptags                               "${pkgdir}/usr/bin/deeptags"
+    install -Dm 644 "packaging/resources/${pkgname}.appdata.xml" "${pkgdir}/usr/share/metainfo/${pkgname}.appdata.xml"
+    install -Dm 644 "packaging/resources/${pkgname}.desktop"     "${pkgdir}/usr/share/applications/${pkgname}.desktop"
+    install -Dm 644 LICENSE                                      "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 
-    local rcdir="packaging/resources"
-    install -Dm 644 $rcdir/$pkgname.appdata.xml    $pkgdir/usr/share/metainfo/$pkgname.appdata.xml;
-    install -Dm 644 $rcdir/$pkgname.desktop        $pkgdir/usr/share/applications/$pkgname.desktop
-    install -Dm 644 LICENSE                        $pkgdir/usr/share/licenses/$pkgname/LICENSE
-
-    local icodst="$pkgdir/usr/share/icons/hicolor"
+    local srcIco=packaging/resources/icons/hicolor
+    local destIco=${pkgdir}/usr/share/icons/hicolor
     for icon in 16x16 32x32 48x48 64x64 80x80 96x96 128x128 192x192 256x256 384x384 512x512; do
-        install -Dm 644 $rcdir/icons/hicolor/$icon/apps/$pkgname.png  $icodst/$icon/apps/$pkgname.png
+        install -Dm 644 "${srcIco}/${icon}/apps/${pkgname}.png"  "${destIco}/${icon}/apps/${pkgname}.png"
     done
 
-    install -Dm 644 $rcdir/icons/hicolor/scalable/apps/$pkgname.svg   $icodst/scalable/apps/$pkgname.svg
+    install -Dm 644 "${srcIco}/scalable/apps/${pkgname}.svg"   "${destIco}/scalable/apps/${pkgname}.svg"
 }
