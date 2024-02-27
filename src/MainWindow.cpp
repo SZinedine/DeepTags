@@ -246,7 +246,8 @@ void MainWindow::loadDocuments() {
     ui->documentContentView->reset();
     clearDocuments();
 
-    QString dataDirectory = Ui::Settings::loadDataDirectory();;
+    QString dataDirectory = Ui::Settings::loadDataDirectory();
+
     if (dataDirectory.isEmpty() || !QDir(dataDirectory).exists()) {
         onChangeDataDirAction();
         return;
@@ -348,7 +349,16 @@ void MainWindow::openFile(QString path, QString editor) {
     if (editor.isEmpty()) {
         QDesktopServices::openUrl(QUrl::fromLocalFile(path));
     } else {
-        QProcess::startDetached(editor, { path });
+        editor = editor.simplified();
+        if (editor.indexOf(' ') == -1) {
+            QProcess::startDetached(editor, { path });
+        } else {
+            QStringList args = editor.split(" ");
+            const QString ed = args.at(0);
+            args.removeAt(0);
+            args.append(path);
+            QProcess::startDetached(ed, args);
+        }
     }
 
     Ui::Settings::addRecentFile(path);
