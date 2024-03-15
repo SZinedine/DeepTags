@@ -57,6 +57,7 @@ private slots:
     void onDocumentPermanentlyDeleted(Doc::Document* document);
     void onSystemTryIconActivated(int reason);
     void applyTheme(const QString& theme);
+    void on_ReturnPressed();
     void about();
 
 signals:
@@ -70,7 +71,6 @@ private:
     std::unique_ptr<QLineEdit> mSearchBar;
     std::unique_ptr<QAction> mSearchBarEraseText;
     std::unique_ptr<QLabel> mNumberOfFilesLabel;
-    std::unique_ptr<QShortcut> mSearchShortcut;
     std::unique_ptr<QSystemTrayIcon> mSystemTrayIcon;
     std::unique_ptr<QMenu> mSystemTrayMenu;
 };

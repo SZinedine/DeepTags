@@ -177,7 +177,7 @@ void MainWindow::setupMenu() {
         ui->nativeThemeAction->setChecked(true);
     }
 
-    connect(themesActionGroup, &QActionGroup::triggered, this, [=](QAction* act) {
+    connect(themesActionGroup, &QActionGroup::triggered, this, [this](QAction* act) {
         applyTheme(act->data().toString());
         Settings::saveTheme(act->data().toString());
         act->setChecked(true);
@@ -197,8 +197,22 @@ void MainWindow::setupMenu() {
 
 
 void MainWindow::setupKeyboardShortcuts() {
-    const auto ctrl_f = QKeySequence::fromString(QStringLiteral("Ctrl+f"));
-    mSearchShortcut   = make_unique<QShortcut>(ctrl_f, this, [this] { mSearchBar->setFocus(); });
+    const auto ctrl_f  = QKeySequence::fromString(QStringLiteral("Ctrl+f"));
+    const auto return_ = QKeySequence::fromString(QStringLiteral("Return"));
+
+    new QShortcut(ctrl_f, this, [this] { mSearchBar->setFocus(); });
+    new QShortcut(return_, this, [this] { on_ReturnPressed(); });
+}
+
+
+void MainWindow::on_ReturnPressed() {
+    if (ui->documentsListView->hasFocus()) {
+        ui->documentsListView->openCurrentDocument();
+    } else if (ui->tagsTreeView->hasFocus()) {
+        ui->tagsTreeView->onClicked({});
+    } else if (mSearchBar->hasFocus()) {
+        search(mSearchBar->text());
+    }
 }
 
 

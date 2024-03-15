@@ -25,7 +25,7 @@ public slots:
     void changeTagColor(const QModelIndex& index, const QString& color);
     void pinTag(const QModelIndex& index, bool pin);
 
-private slots:
+public slots:
     void onClicked(const QModelIndex& index);
 
 private:

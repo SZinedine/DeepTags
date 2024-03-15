@@ -17,11 +17,10 @@ using Ui::Delegates::DocumentListDelegate;
 using std::make_unique;
 namespace Settings = Ui::Settings;
 
-const auto ctrl_p  = QKeySequence::fromString(QStringLiteral("Ctrl+p"));
-const auto ctrl_s  = QKeySequence::fromString(QStringLiteral("Ctrl+s"));
-const auto ctrl_e  = QKeySequence::fromString(QStringLiteral("Ctrl+e"));
-const auto return_ = QKeySequence::fromString(QStringLiteral("Return"));
-const auto space_  = QKeySequence::fromString(QStringLiteral("Space"));
+const auto ctrl_p = QKeySequence::fromString(QStringLiteral("Ctrl+p"));
+const auto ctrl_s = QKeySequence::fromString(QStringLiteral("Ctrl+s"));
+const auto ctrl_e = QKeySequence::fromString(QStringLiteral("Ctrl+e"));
+const auto space_ = QKeySequence::fromString(QStringLiteral("Space"));
 constexpr QSize iconSize_(35, 20);
 
 DocumentsListView::DocumentsListView(QWidget* parent)
@@ -42,12 +41,10 @@ DocumentsListView::DocumentsListView(QWidget* parent)
     connect(this, &DocumentsListView::customContextMenuRequested, this,
             &DocumentsListView::onCustomContextMenuRequested);
 
-    auto openDoc_      = [this] { openDocumentAt(currentIndex()); };
     auto toggleBoolPin = [this] { toggleBool(currentIndex(), DocumentListModel::PinnedRole); };
     auto toggleBoolFav = [this] { toggleBool(currentIndex(), DocumentListModel::FavoritedRole); };
     auto launchDID     = [this] { launchDocumentInfoDialog(currentIndex()); };
     auto docSelected   = [this] { onDocumentSelected(currentIndex()); };
-    mShortcuts.push_back(make_unique<QShortcut>(return_, this, openDoc_));
     mShortcuts.push_back(make_unique<QShortcut>(ctrl_p, this, toggleBoolPin));
     mShortcuts.push_back(make_unique<QShortcut>(ctrl_s, this, toggleBoolFav));
     mShortcuts.push_back(make_unique<QShortcut>(ctrl_e, this, launchDID));
@@ -57,6 +54,11 @@ DocumentsListView::DocumentsListView(QWidget* parent)
 
 DocumentsListView::~DocumentsListView() {
     delete mDeletegate;
+}
+
+
+void DocumentsListView::openCurrentDocument() {
+    openDocumentAt(currentIndex());
 }
 
 

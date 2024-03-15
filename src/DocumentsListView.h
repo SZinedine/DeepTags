@@ -30,6 +30,9 @@ public:
     explicit DocumentsListView(QWidget* parent = nullptr);
     ~DocumentsListView() override;
 
+public slots:
+    void openCurrentDocument();
+
 private slots:
     void onCustomContextMenuRequested(const QPoint& pos);
     void onDocumentSelected(const QModelIndex& index);
